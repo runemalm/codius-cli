@@ -1,0 +1,50 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.so
+
+# Pipenv environment files
+Pipfile.lock
+
+# macOS metadata
+.DS_Store
+
+# PyCharm project files
+.idea/
+
+# Python virtual environments
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+*.log
+
+# IPython history
+.history
+
+# Test/coverage outputs
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+.pytest_cache/
+.cache/
+
+# VS Code (in case some contributors use it)
+.vscode/
+
+# Output folders
+dist/
+build/
+*.egg-info/
+.eggs/
+
+scratch
