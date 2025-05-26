@@ -7,15 +7,17 @@ from ui.shell import run_shell
 
 
 def main():
-    # Setup DI container
     setup_di()
 
-    # Initialize configuration and logging
     container = DependencyContainer.get_instance()
-    container.resolve(ConfigService).ensure_config_exists()
-    container.resolve(LoggingService).configure()
 
-    # Run shell
+    config_service = container.resolve(ConfigService)
+    config_service.ensure_config_file_exists()
+    config_service.load_config_from_file()
+
+    logging_service = container.resolve(LoggingService)
+    logging_service.configure()
+
     run_shell()
 
 

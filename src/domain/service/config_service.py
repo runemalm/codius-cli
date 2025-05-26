@@ -1,5 +1,6 @@
 from pathlib import Path
 import yaml
+from typing import Optional
 
 from domain.model.config.config import Config
 from infrastructure.adapter.openai.openai_config import OpenAiConfig
@@ -14,14 +15,14 @@ class ConfigService:
             "model": "gpt-4o",
             "api_key": "sk-... # Replace with your OpenAI API key"
         },
-        "debug": False
+        "debug": False,
+        "debug_llm": False
     }
 
-    def __init__(self):
-        self._raw_config = None
-        self._structured_config = None
+    def __init__(self, config: Optional[Config] = None):
+        self._structured_config: Optional[Config] = config
 
-    def ensure_config_exists(self) -> None:
+    def ensure_config_file_exists(self) -> None:
         if not self.CONFIG_FILE.exists():
             print("🛠  Project configuration not found. Creating .openddd/config.yaml...")
             self.CONFIG_DIR.mkdir(parents=True, exist_ok=True)
@@ -31,30 +32,23 @@ class ConfigService:
         else:
             print(f"📦 Using project config: {self.CONFIG_FILE}")
 
-    def _load_config(self) -> dict:
-        self.ensure_config_exists()
+    def load_config_from_file(self) -> None:
         with self.CONFIG_FILE.open("r") as f:
-            return yaml.safe_load(f) or {}
+            raw = yaml.safe_load(f) or {}
+        self._structured_config = self._parse_structured(raw)
 
-    def _load_structured_config(self) -> Config:
-        openai_section = self._raw_config.get("openai", {})
+    def _parse_structured(self, raw: dict) -> Config:
+        openai_section = raw.get("openai", {})
         return Config(
             openai=OpenAiConfig(
                 model=openai_section.get("model", "gpt-4o"),
                 api_key=openai_section.get("api_key", "")
             ),
-            debug=self._raw_config.get("debug", False)
+            debug=raw.get("debug", False),
+            debug_llm=raw.get("debug_llm", False),
         )
 
-    def _ensure_loaded(self):
-        if self._raw_config is None:
-            self._raw_config = self._load_config()
-            self._structured_config = self._load_structured_config()
-
-    def get(self, key: str, default=None):
-        self._ensure_loaded()
-        return self._raw_config.get(key, default)
-
     def get_config(self) -> Config:
-        self._ensure_loaded()
+        if self._structured_config is None:
+            raise RuntimeError("Config has not been loaded. Call `load_config_from_file()` first.")
         return self._structured_config

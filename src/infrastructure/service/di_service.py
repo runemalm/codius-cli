@@ -1,5 +1,6 @@
 from dependency_injection.container import DependencyContainer
 
+from domain.model.config.config import Config
 from domain.model.port.llm_port import LlmPort
 from domain.service.config_service import ConfigService
 from infrastructure.adapter.openai.openai_llm_adapter import OpenAiLlmAdapter
@@ -10,8 +11,15 @@ from infrastructure.service.logging_service import LoggingService
 def setup_di():
     container = DependencyContainer.get_instance()
 
-    # Register all dependencies
-    container.register_singleton(ConfigService)
+    # When py-dependency-injection supports optional arguments in constructors (Config),
+    # we simply register config service and call ensure_file_exist from main instead..
+    config_service = ConfigService()
+    config_service.ensure_config_file_exists()
+    config_service.load_config_from_file()
+    container.register_instance(Config, config_service.get_config())
+    container.register_instance(ConfigService, config_service)
+
+    # Register rest of dependencies
     container.register_singleton(LoggingService)
     container.register_transient(LlmService)
     container.register_transient(LlmPort, OpenAiLlmAdapter,

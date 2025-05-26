@@ -6,3 +6,4 @@ from infrastructure.adapter.openai.openai_config import OpenAiConfig
 class Config:
     openai: OpenAiConfig
     debug: bool = False
+    debug_llm: bool = False
