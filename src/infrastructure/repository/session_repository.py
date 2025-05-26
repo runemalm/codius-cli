@@ -19,7 +19,7 @@ class SessionRepository(BaseRepository[Session]):
         # Load state
         if state_path.exists():
             state_data = json.loads(state_path.read_text())
-            state = State(**state_data)
+            state = State.from_dict(state_data)
         else:
             state = State()
 
@@ -48,7 +48,7 @@ class SessionRepository(BaseRepository[Session]):
         (session_path / "generated").mkdir(exist_ok=True)
 
         # Save state and history
-        (session_path / "state.json").write_text(json.dumps(session.state.__dict__, indent=2))
+        (session_path / "state.json").write_text(json.dumps(session.state.to_dict(), indent=2))
         messages = [m.__dict__ for m in session.history.messages]
         (session_path / "history.json").write_text(json.dumps(messages, indent=2))
 

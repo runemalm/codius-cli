@@ -1,6 +1,4 @@
 import logging
-import re
-import json
 import time
 
 import openai
@@ -21,49 +19,53 @@ class OpenAiLlmAdapter(LlmPort):
         else:
             self.client = openai.OpenAI(api_key=self.api_key)
 
-    def call(self, prompt: str) -> dict:
+    def call_prompt(self, prompt: str) -> str:
         if not self.client:
-            return {
-                "intent": None,
-                "error": "Missing or invalid OpenAI API key in .openddd/config.yaml"
-            }
+            raise Exception("Missing or invalid OpenAI API key in .openddd/config.yaml")
 
-        try:
-            prompt_len = len(prompt)
-            token_estimate = prompt_len // 4  # Roughly: 1 token ≈ 4 chars
+        prompt_len = len(prompt)
+        token_estimate = prompt_len // 4  # Roughly: 1 token ≈ 4 chars
 
-            logger.debug("Using OpenAI model: %s", self.model)
-            logger.debug("Prompt length: %d chars (~%d tokens)", prompt_len,
-                         token_estimate)
+        logger.debug("Using OpenAI model: %s", self.model)
+        logger.debug("Prompt length: %d chars (~%d tokens)", prompt_len,
+                     token_estimate)
 
-            start = time.time()
+        start = time.time()
 
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.0
-            )
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.0
+        )
 
-            duration = int((time.time() - start) * 1000)  # ms
-            content = response.choices[0].message.content
-            logger.debug("LLM response length: %d chars | Duration: %d ms", len(content),
-                         duration)
+        duration = int((time.time() - start) * 1000)  # ms
+        content = response.choices[0].message.content
+        logger.debug("LLM response length: %d chars | Duration: %d ms", len(content), duration)
+        return content
 
-            match = re.search(r"```(?:json)?\s*(.*?)```", content, re.DOTALL)
-            json_text = match.group(1).strip() if match else content.strip()
+    def call_chat(self, messages: list[dict]) -> str:
+        if not self.client:
+            raise Exception("Missing or invalid OpenAI API key in .openddd/config.yaml")
 
-            parsed = json.loads(json_text)
-            logger.debug("LLM response parsed successfully")
+        total_input_chars = sum(len(m["content"]) for m in messages)
+        token_estimate = total_input_chars // 4
 
-            return parsed
+        logger.debug("Using OpenAI model: %s", self.model)
+        logger.debug("Estimated input: %d chars (~%d tokens)", total_input_chars,
+                     token_estimate)
 
-        except json.JSONDecodeError as e:
-            logger.warning("Failed to decode JSON from response: %s", e)
-            return {"intent": None, "raw": content}
+        start = time.time()
 
-        except Exception as e:
-            logger.exception("Unexpected error during LLM call")
-            return {"intent": None, "error": str(e)}
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=0.0
+        )
+
+        duration = int((time.time() - start) * 1000)
+        content = response.choices[0].message.content
+        logger.debug("LLM response length: %d chars | Duration: %d ms", len(content), duration)
+        return content

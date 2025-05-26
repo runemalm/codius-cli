@@ -1,4 +1,6 @@
 import logging
+import re
+import json
 
 from domain.model.config.config import Config
 from domain.model.port.llm_port import LlmPort
@@ -12,15 +14,39 @@ class LlmService:
         self.llm = llm_port
         self.config = config
 
-    def call(self, prompt: str) -> dict:
-        logger.debug("Calling LLM service via port...")
+    def call_prompt(self, prompt: str) -> str:
+        logger.debug("Calling LLM service with prompt...")
         if self.config.debug_llm:
             print_highlighted(prompt, title="📨 Prompt Sent to LLM")
 
-        response = self.llm.call(prompt)
+        response = self.llm.call_prompt(prompt)
 
         if self.config.debug_llm:
-            result_str = response if isinstance(response, str) else str(response)
-            print_highlighted(result_str, title="🧠 LLM Response")
+            print_highlighted(response, title="🧠 LLM Response")
 
         return response
+
+    def call_chat(self, messages: list[dict]) -> str:
+        logger.debug("Calling LLM service with chat messages...")
+        if self.config.debug_llm:
+            for msg in messages:
+                print_highlighted(msg["content"],
+                                  title=f"📨 {msg['role'].title()} Message")
+
+        response = self.llm.call_chat(messages)
+
+        if self.config.debug_llm:
+            print_highlighted(response, title="🧠 LLM Response")
+
+        return response
+
+    def try_extract_json(self, response: str) -> dict:
+        """Try to parse a JSON object from a markdown-wrapped LLM response."""
+        match = re.search(r"```(?:json)?\s*(.*?)```", response, re.DOTALL)
+        json_text = match.group(1).strip() if match else response.strip()
+
+        try:
+            return json.loads(json_text)
+        except json.JSONDecodeError as e:
+            logger.warning("Failed to parse JSON from LLM response: %s", e)
+            return {"error": "invalid_json", "raw": response}

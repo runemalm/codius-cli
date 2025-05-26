@@ -14,7 +14,8 @@ def run_graph(session: Session, user_input: str) -> str:
     # Prepare LangGraph input
     graph_input = {
         "user_input": session.state.user_input,
-        "domain_summary": session.state.domain_summary,
+        "project_namespace": session.state.project_namespace,
+        "building_blocks": [bb.__dict__ for bb in session.state.building_blocks],
         "history": [m.__dict__ for m in session.history.recent()]
     }
 
@@ -23,11 +24,7 @@ def run_graph(session: Session, user_input: str) -> str:
     result = graph.invoke(graph_input)
 
     # Update session state
-    session.state.intent = result.get("intent")
-    session.state.plan = result.get("plan")
-    session.state.generated_files = result.get("generated_files", [])
-    session.state.final_output = result.get("final_output")
-    session.state.status = result.get("status", "complete")
+    session.state.update_with_graph_result(result)
 
     # Append assistant response to history
     assistant_message = session.state.final_output or "⚠️ No output from assistant."

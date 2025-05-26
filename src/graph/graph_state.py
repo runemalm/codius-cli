@@ -1,9 +1,10 @@
-from typing import TypedDict
+from typing import Self, TypedDict
+
+from infrastructure.service.code_scanner.model.building_block import BuildingBlock
 
 
 class GraphState(TypedDict, total=False):
     user_input: str
-    domain_summary: str
     intent: dict
     plan: dict
     generated_files: list[dict]
@@ -11,3 +12,5 @@ class GraphState(TypedDict, total=False):
     approval: str
     session_id: str
     history: list[dict]
+    project_namespace: str
+    building_blocks: list[dict]

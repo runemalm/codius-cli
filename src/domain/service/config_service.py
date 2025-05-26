@@ -16,7 +16,8 @@ class ConfigService:
             "api_key": "sk-... # Replace with your OpenAI API key"
         },
         "debug": False,
-        "debug_llm": False
+        "debug_llm": False,
+        "log_level": "warning"
     }
 
     def __init__(self, config: Optional[Config] = None):
@@ -39,6 +40,17 @@ class ConfigService:
 
     def _parse_structured(self, raw: dict) -> Config:
         openai_section = raw.get("openai", {})
+
+        log_level = raw.get("log_level", "warning")
+        if isinstance(log_level, str):
+            log_level = log_level.lower()
+            allowed_levels = {"debug", "info", "warning", "error", "critical"}
+            if log_level not in allowed_levels:
+                print(f"⚠️ Unknown log_level '{log_level}', falling back to 'warning'")
+                log_level = "warning"
+        else:
+            log_level = "warning"
+
         return Config(
             openai=OpenAiConfig(
                 model=openai_section.get("model", "gpt-4o"),
@@ -46,6 +58,7 @@ class ConfigService:
             ),
             debug=raw.get("debug", False),
             debug_llm=raw.get("debug_llm", False),
+            log_level=log_level,
         )
 
     def get_config(self) -> Config:

@@ -19,17 +19,33 @@ def generate_domain_vision(state: dict) -> dict:
     # Build a summary string of building blocks
     summary = "\n".join(f"- {bb['type']}: {bb['name']}" for bb in domain_model)
 
-    prompt = (
-        "You are a software architect analyzing a domain-driven design codebase.\n"
-        "Here is a list of domain model building blocks:\n\n"
-        f"{summary}\n\n"
-        "Write a short vision statement (2–3 sentences) that summarizes what this domain models, "
-        "its main aggregates, and its overall purpose. Use natural language."
-    )
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a software architect specializing in domain-driven design (DDD) "
+                "and responsible for analyzing codebases built with the OpenDDD.NET framework. "
+                "OpenDDD.NET enforces clear separation of concerns between aggregates, actions, domain services, events, "
+                "and infrastructure components. The goal is to enable maintainable, modular systems with clearly defined responsibilities."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Below is a list of domain model building blocks, categorized by their type.\n\n"
+                f"{summary}\n\n"
+                "Based on this, write a short **vision statement** (2–3 sentences) that:\n"
+                "- Identifies the **domain’s primary purpose** (e.g. e-commerce, medical records)\n"
+                "- Describes the **main aggregate roots** and their roles\n"
+                "- Highlights how the structure reflects DDD best practices\n"
+                "- Avoids vague or overly general phrasing\n\n"
+                "Use clear, directive language suitable for grounding AI-powered code generation."
+            )
+        }
+    ]
 
     logger.debug("Calling LLM with domain model summary...")
-    response = llm_service.call(prompt)
 
-    state["domain_vision"] = response.get("text") or response.get("raw") or "⚠️ No vision returned."
+    state["domain_vision"] = llm_service.call_chat(messages).strip()
 
     return state

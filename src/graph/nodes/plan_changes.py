@@ -1,30 +1,39 @@
 import logging
 
-from dependency_injection.container import DependencyContainer
-
-from domain.model.prompt.plan_prompt import PlanPrompt
-from infrastructure.service.llm_service import LlmService
-
 logger = logging.getLogger(__name__)
 
 
 def plan_changes(state: dict) -> dict:
-    intent = state.get("intent")
-    if not intent:
-        logger.warning("No intent found in state. Skipping planning.")
-        state["plan"] = "⚠️ No intent found. Cannot plan changes."
+    intent = state.get("intent", {})
+
+    if not isinstance(intent, dict):
+        logger.warning("Expected structured intent but got: %s", intent)
+        state["plan"] = []
         return state
 
-    logger.debug("Planning changes for intent: %s", intent.get("intent", "unknown"))
+    if intent.get("intent") == "add_aggregate":
+        aggregate_name = intent.get("target")
+        layer = intent.get("layer", "domain")
+        details = intent.get("details", {})
 
-    prompt = PlanPrompt(intent=intent).as_prompt()
-    logger.debug("Constructed plan prompt (%d chars)", len(prompt))
+        # Build change plan
+        changes = [{
+            "type": "create_file",
+            "path": f"{layer.capitalize()}/{aggregate_name}/{aggregate_name}.cs",
+            "description": f"Create aggregate root class for {aggregate_name}",
+            "template": "aggregate_root",
+            "context": {
+                "aggregate_name": aggregate_name,
+                "namespace": f"{state['project_namespace']}.{layer.capitalize()}.{aggregate_name}",
+                "description": details.get("description", ""),
+                "properties": details.get("properties", []),
+                "events": details.get("events", []),
+                "commands": details.get("commands", [])
+            }
+        }]
+        state["plan"] = changes
+        return state
 
-    container = DependencyContainer.get_instance()
-    llm_service = container.resolve(LlmService)
-
-    response = llm_service.call(prompt)
-    logger.debug("LLM plan response received: %s", response)
-
-    state["plan"] = response.get("plan") or response.get("raw") or "⚠️ No plan returned."
+    # fallback
+    state["plan"] = []
     return state

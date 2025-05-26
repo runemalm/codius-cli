@@ -15,7 +15,6 @@ def scan_building_blocks(project_root: Path) -> List[BuildingBlock]:
     )
 
 
-# === Domain Layer ===
 def scan_domain_layer(project_root: Path) -> List[BuildingBlock]:
     blocks = []
 
@@ -44,7 +43,7 @@ def scan_domain_layer(project_root: Path) -> List[BuildingBlock]:
     return blocks
 
 
-# === Application Layer ===
+
 def scan_application_layer(project_root: Path) -> List[BuildingBlock]:
     blocks = []
 
@@ -68,7 +67,6 @@ def scan_application_layer(project_root: Path) -> List[BuildingBlock]:
     return blocks
 
 
-# === Infrastructure Layer ===
 def scan_infrastructure_layer(project_root: Path) -> List[BuildingBlock]:
     blocks = []
 
@@ -87,6 +85,24 @@ def scan_infrastructure_layer(project_root: Path) -> List[BuildingBlock]:
     return blocks
 
 
-# === Helper ===
 def _bb(block_type: BuildingBlockType, name: str, file_path: Path) -> BuildingBlock:
-    return BuildingBlock(type=block_type, name=name, file_path=file_path)
+    content = file_path.read_text(encoding="utf-8", errors="ignore")
+
+    # Extract namespace
+    namespace_match = re.search(r'namespace\s+([\w\.]+)', content)
+    namespace = namespace_match.group(1) if namespace_match else None
+
+    # Extract public properties (simple heuristic)
+    properties = re.findall(r'public\s+\w+\s+(\w+)\s*\{', content)
+
+    # Extract public methods (skip constructors and properties)
+    methods = re.findall(r'public\s+\w+\s+(\w+)\s*\([^)]*\)\s*\{', content)
+
+    return BuildingBlock(
+        type=block_type,
+        name=name,
+        file_path=file_path,
+        namespace=namespace,
+        properties=sorted(set(properties)),
+        methods=sorted(set(methods)),
+    )

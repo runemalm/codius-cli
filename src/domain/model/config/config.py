@@ -7,3 +7,4 @@ class Config:
     openai: OpenAiConfig
     debug: bool = False
     debug_llm: bool = False
+    log_level: str = "info"
