@@ -10,6 +10,7 @@ prompt-toolkit = "*"
 langgraph = "*"
 langchain = "*"
 langchain-openai = "*"
+py-dependency-injection = "*"
 
 [dev-packages]
 pytest = "*"

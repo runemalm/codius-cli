@@ -6,14 +6,6 @@ from infrastructure.service.code_scanner.model.building_block import BuildingBlo
 from infrastructure.service.code_scanner.model.building_block_type import BuildingBlockType
 
 
-@pytest.fixture
-def project_path() -> Path:
-    """
-    Override this fixture when running locally by pointing to your actual project root.
-    """
-    return Path("~/Projects/OpenDDD.NET/samples/Bookstore").expanduser()
-
-
 def test_scan_building_blocks_returns_expected_structure(project_path: Path):
     result = scan_building_blocks(project_path)
 

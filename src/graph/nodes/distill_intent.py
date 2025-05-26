@@ -1,9 +1,11 @@
 from pathlib import Path
 import logging
 
+from dependency_injection.container import DependencyContainer
+
 from domain.model.prompt.distill_intent_prompt import DistillIntentPrompt
 from infrastructure.service.code_scanner.code_scanner import scan_building_blocks
-from infrastructure.service.llm_service import call_llm
+from infrastructure.service.llm_service import LlmService
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +33,11 @@ def distill_intent(state: dict) -> dict:
     logger.debug("Constructed distill intent prompt (%d chars)", len(prompt))
 
     # Call LLM
+    container = DependencyContainer.get_instance()
+    llm_service = container.resolve(LlmService)
+
     logger.debug("Calling LLM to distill intent...")
-    response = call_llm(prompt)
+    response = llm_service.call(prompt)
     logger.debug("LLM response received: %s", response)
 
     # Update state

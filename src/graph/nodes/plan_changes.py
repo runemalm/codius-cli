@@ -1,8 +1,12 @@
 import logging
+
+from dependency_injection.container import DependencyContainer
+
 from domain.model.prompt.plan_prompt import PlanPrompt
-from infrastructure.service.llm_service import call_llm
+from infrastructure.service.llm_service import LlmService
 
 logger = logging.getLogger(__name__)
+
 
 def plan_changes(state: dict) -> dict:
     intent = state.get("intent")
@@ -16,7 +20,10 @@ def plan_changes(state: dict) -> dict:
     prompt = PlanPrompt(intent=intent).as_prompt()
     logger.debug("Constructed plan prompt (%d chars)", len(prompt))
 
-    response = call_llm(prompt)
+    container = DependencyContainer.get_instance()
+    llm_service = container.resolve(LlmService)
+
+    response = llm_service.call(prompt)
     logger.debug("LLM plan response received: %s", response)
 
     state["plan"] = response.get("plan") or response.get("raw") or "⚠️ No plan returned."

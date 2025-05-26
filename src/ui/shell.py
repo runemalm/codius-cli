@@ -4,12 +4,14 @@ from rich.console import Console
 from rich.panel import Panel
 from pathlib import Path
 
+from domain.service.config_service import ConfigService
 from domain.service.session_service import create_and_activate_session, \
     get_active_session, \
     get_or_create_active_session, save_session
-from domain.service.config_service import load_config
 from infrastructure.service.graph_service import run_graph
-from infrastructure.service.logging_service import configure_logging
+
+from dependency_injection.container import DependencyContainer
+
 
 console = Console()
 
@@ -46,9 +48,12 @@ def render_header():
 
 
 def render_session_info():
+    container = DependencyContainer.get_instance()
+    config_service = container.resolve(ConfigService)
+
     session = get_or_create_active_session()
     workdir = get_project_root()
-    model = load_config().get("model", "openai/gpt-4o")
+    model = config_service.get_config().openai.model
 
     console.print(Panel.fit(
         f"[bold]Session:[/bold] {session.id}\n"
@@ -92,7 +97,6 @@ def dispatch_command(command):
 
 
 def run_shell():
-    configure_logging()
     console.clear()
     render_header()
     render_session_info()
