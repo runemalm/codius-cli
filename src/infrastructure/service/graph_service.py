@@ -33,7 +33,4 @@ def run_graph(session: Session, user_input: str) -> str:
     assistant_message = session.state.final_output or "⚠️ No output from assistant."
     session.append_assistant_message(assistant_message)
 
-    # Save updated session
-    _repo.save(session)
-
     return assistant_message

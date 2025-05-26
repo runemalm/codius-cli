@@ -1,14 +1,23 @@
+import logging
 from domain.model.prompt.plan_prompt import PlanPrompt
 from infrastructure.service.llm_service import call_llm
 
+logger = logging.getLogger(__name__)
 
 def plan_changes(state: dict) -> dict:
-    prompt = PlanPrompt(
-        intent=state["intent"],
-        domain_summary=state.get("domain_summary", "")
-    ).as_prompt()
+    intent = state.get("intent")
+    if not intent:
+        logger.warning("No intent found in state. Skipping planning.")
+        state["plan"] = "⚠️ No intent found. Cannot plan changes."
+        return state
+
+    logger.debug("Planning changes for intent: %s", intent.get("intent", "unknown"))
+
+    prompt = PlanPrompt(intent=intent).as_prompt()
+    logger.debug("Constructed plan prompt (%d chars)", len(prompt))
 
     response = call_llm(prompt)
-    state["plan"] = response.get("plan")
+    logger.debug("LLM plan response received: %s", response)
 
+    state["plan"] = response.get("plan") or response.get("raw") or "⚠️ No plan returned."
     return state

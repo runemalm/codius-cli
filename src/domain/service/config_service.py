@@ -5,8 +5,10 @@ CONFIG_DIR = Path(".openddd")
 CONFIG_FILE = CONFIG_DIR / "config.yaml"
 
 DEFAULT_CONFIG = {
-    "openai_api_key": "sk-... # Replace with your OpenAI API key"
+    "openai_api_key": "sk-... # Replace with your OpenAI API key",
+    "debug": False
 }
+
 
 def ensure_project_config_exists() -> None:
     if not CONFIG_FILE.exists():
@@ -18,10 +20,12 @@ def ensure_project_config_exists() -> None:
     else:
         print(f"📦 Using project config: {CONFIG_FILE}")
 
+
 def load_config() -> dict:
     ensure_project_config_exists()
     with CONFIG_FILE.open("r") as f:
         return yaml.safe_load(f)
+
 
 def get_config_value(key: str, default=None):
     config = load_config()

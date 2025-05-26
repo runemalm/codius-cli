@@ -15,3 +15,6 @@ class History:
 
     def recent(self, n=4) -> list[Message]:
         return self.messages[-n:]
+
+    def clear(self):
+        self.messages.clear()

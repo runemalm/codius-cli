@@ -10,6 +10,7 @@ class State:
     generated_files: list[dict] = field(default_factory=list)
     final_output: Optional[str] = None
     status: str = "new"
+    summary: str | None = None
 
     def update_with_graph_result(self, result: dict):
         self.intent = result.get("intent")

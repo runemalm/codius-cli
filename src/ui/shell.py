@@ -4,10 +4,12 @@ from rich.console import Console
 from rich.panel import Panel
 from pathlib import Path
 
-from domain.service.session_service import get_active_session, \
+from domain.service.session_service import create_and_activate_session, \
+    get_active_session, \
     get_or_create_active_session, save_session
 from domain.service.config_service import load_config
 from infrastructure.service.graph_service import run_graph
+from infrastructure.service.logging_service import configure_logging
 
 console = Console()
 
@@ -18,6 +20,7 @@ SLASH_COMMANDS = {
     "/compact": "Compact conversation history with optional summary",
     "/history": "Open command history",
     "/sessions": "Browse previous sessions",
+    "/new": "Start a new modeling session",
     "/help": "Show list of commands",
     "/model": "Open model selection panel",
     "/approval": "Open approval mode selection panel",
@@ -27,8 +30,10 @@ SLASH_COMMANDS = {
 
 slash_completer = WordCompleter(SLASH_COMMANDS.keys(), sentence=True)
 
+
 def get_project_root() -> str:
     return str(Path(".").resolve())
+
 
 def render_header():
     console.print(
@@ -38,6 +43,7 @@ def render_header():
             border_style="cyan",
         )
     )
+
 
 def render_session_info():
     session = get_or_create_active_session()
@@ -51,6 +57,7 @@ def render_session_info():
         border_style="green",
     ))
 
+
 def render_assistant_message(message: str):
     console.print(Panel.fit(
         message,
@@ -59,7 +66,33 @@ def render_assistant_message(message: str):
         padding=(1, 2),
     ))
 
+
+def dispatch_command(command):
+    session = get_active_session()
+
+    if command == "/clear":
+        session.clear()
+        console.print("[green]✅ Session state and history cleared.[/green]")
+        save_session(session)
+
+    elif command == "/clearhistory":
+        session.clear_history()
+        console.print("[green]✅ History cleared but modeling context preserved.[/green]")
+        save_session(session)
+
+    elif command.startswith("/compact"):
+        session.compact_history()
+        console.print("[green]✅ History compacted with summary retained in context.[/green]")
+        save_session(session)
+
+    elif command == "/new":
+        session = create_and_activate_session()
+        console.print(f"[green]✅ Created new session:[/green] {session.id}")
+        save_session(session)
+
+
 def run_shell():
+    configure_logging()
     console.clear()
     render_header()
     render_session_info()
@@ -75,27 +108,28 @@ def run_shell():
                 console.print("[dim]Goodbye![/dim] 👋")
                 break
 
+            # Get active session
+            session = get_active_session()
+
             # Handle slash-commands
             if user_input.startswith("/"):
                 command = user_input.strip().split()[0]
                 if command in SLASH_COMMANDS:
                     console.print(f"[bold yellow]Running command:[/bold yellow] {command}")
-                    # TODO: Dispatch command handlers here
+                    dispatch_command(command)
+                    render_session_info()
                 else:
                     console.print(f"[red]Unknown command:[/red] {command}")
                 continue
 
-            # Handle user input to assistant
-            session = get_active_session()
-
             # Run assistant, get assistant_message
             assistant_message = run_graph(session, user_input)
-            session.append_assistant_message(assistant_message)
 
+            # Save session
             save_session(session)
-            render_assistant_message(assistant_message)
 
-            # Optional: Save updated state.json (depends on your state management design)
+            # Render final message
+            render_assistant_message(assistant_message)
 
         except KeyboardInterrupt:
             console.print("\n[dim]Exited with Ctrl+C[/dim]")
