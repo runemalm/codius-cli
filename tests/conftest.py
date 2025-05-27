@@ -9,10 +9,12 @@ from pathlib import Path
 from dependency_injection.container import DependencyContainer
 
 from domain.model.config.config import Config
+from domain.model.config.llm_provider import LlmProvider
 from domain.model.port.llm_port import LlmPort
 from domain.service.config_service import ConfigService
-from infrastructure.adapter.openai.openai_config import OpenAiConfig
-from infrastructure.adapter.openai.openai_llm_adapter import OpenAiLlmAdapter
+from infrastructure.adapter.llm.llm_config import LlmConfig
+from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
+from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
 from infrastructure.service.llm_service import LlmService
 
 
@@ -40,9 +42,12 @@ def container(request: SubRequest):
         container = DependencyContainer.get_instance()
 
         config = Config(
-            openai=OpenAiConfig(
-                model="gpt-4o",
-                api_key="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"
+            llm=LlmConfig(
+                provider=LlmProvider.OPENAI,
+                openai=OpenAiConfig(
+                    model="gpt-4o",
+                    api_key="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",
+                )
             ),
             debug=True,
             debug_llm=True,
@@ -57,7 +62,7 @@ def container(request: SubRequest):
         )
         container.register_transient(LlmService)
         container.register_transient(LlmPort, OpenAiLlmAdapter,
-             constructor_args={"config": config.openai}
+             constructor_args={"config": config.llm.openai}
         )
 
         yield container
