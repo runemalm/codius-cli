@@ -4,7 +4,7 @@ import time
 import openai
 
 from domain.model.port.llm_port import LlmPort
-from infrastructure.adapter.openai.openai_config import OpenAiConfig
+from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 
 logger = logging.getLogger(__name__)
 

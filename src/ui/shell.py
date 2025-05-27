@@ -40,7 +40,7 @@ def get_project_root() -> str:
 def render_header():
     console.print(
         Panel.fit(
-            "● [bold cyan]OpenDDD CLI Assistant[/bold cyan] [dim](MVP)[/dim]",
+            "● [bold cyan]OpenDDD.NET CLI Assistant[/bold cyan] [dim](Alpha)[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )
@@ -53,7 +53,7 @@ def render_session_info():
 
     session = get_or_create_active_session()
     workdir = get_project_root()
-    model = config_service.get_config().openai.model
+    model = config_service.get_config().llm.openai.model
     log_level = config_service.get_config().log_level
 
     console.print(Panel.fit(

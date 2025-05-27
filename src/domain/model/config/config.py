@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from infrastructure.adapter.openai.openai_config import OpenAiConfig
+from infrastructure.adapter.llm.llm_config import LlmConfig
 
 
 @dataclass
 class Config:
-    openai: OpenAiConfig
+    llm: LlmConfig
     debug: bool = False
     debug_llm: bool = False
     log_level: str = "info"

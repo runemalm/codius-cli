@@ -3,7 +3,14 @@ import yaml
 from typing import Optional
 
 from domain.model.config.config import Config
-from infrastructure.adapter.openai.openai_config import OpenAiConfig
+from domain.model.config.llm_provider import LlmProvider
+
+from infrastructure.adapter.llm.anthropic.anthropic_config import AnthropicConfig
+from infrastructure.adapter.llm.google.google_config import GoogleConfig
+from infrastructure.adapter.llm.groq.groq_config import GroqConfig
+from infrastructure.adapter.llm.llm_config import LlmConfig
+from infrastructure.adapter.llm.mistral.mistral_config import MistralConfig
+from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 
 
 class ConfigService:
@@ -11,9 +18,12 @@ class ConfigService:
     CONFIG_FILE = CONFIG_DIR / "config.yaml"
 
     DEFAULT_CONFIG = {
-        "openai": {
-            "model": "gpt-4o",
-            "api_key": "sk-... # Replace with your OpenAI API key"
+        "llm": {
+            "provider": "openai",
+            "openai": {
+                "model": "gpt-4o",
+                "api_key": "sk-... # Replace with your OpenAI API key"
+            }
         },
         "debug": False,
         "debug_llm": False,
@@ -39,23 +49,56 @@ class ConfigService:
         self._structured_config = self._parse_structured(raw)
 
     def _parse_structured(self, raw: dict) -> Config:
-        openai_section = raw.get("openai", {})
+        llm_section = raw.get("llm", {})
+        provider_str = llm_section.get("provider")
+        try:
+            provider = LlmProvider(provider_str)
+        except ValueError:
+            raise ValueError(f"Unsupported LLM provider: {provider_str}")
 
-        log_level = raw.get("log_level", "warning")
-        if isinstance(log_level, str):
-            log_level = log_level.lower()
-            allowed_levels = {"debug", "info", "warning", "error", "critical"}
-            if log_level not in allowed_levels:
-                print(f"⚠️ Unknown log_level '{log_level}', falling back to 'warning'")
-                log_level = "warning"
+        llm_config = LlmConfig(provider=provider)
+
+        if provider == "openai":
+            openai = llm_section.get("openai", {})
+            llm_config.openai = OpenAiConfig(
+                model=openai.get("model", "gpt-4o"),
+                api_key=openai.get("api_key", "")
+            )
+        elif provider == "anthropic":
+            anthropic = llm_section.get("anthropic", {})
+            llm_config.anthropic = AnthropicConfig(
+                model=anthropic.get("model", "claude-3-opus"),
+                api_key=anthropic.get("api_key", "")
+            )
+        elif provider == "google":
+            google = llm_section.get("google", {})
+            llm_config.google = GoogleConfig(
+                model=google.get("model", "gemini-pro"),
+                api_key=google.get("api_key", "")
+            )
+        elif provider == "mistral":
+            mistral = llm_section.get("mistral", {})
+            llm_config.mistral = MistralConfig(
+                model=mistral.get("model", "mistral-small"),
+                api_key=mistral.get("api_key", "")
+            )
+        elif provider == "groq":
+            groq = llm_section.get("groq", {})
+            llm_config.groq = GroqConfig(
+                model=groq.get("model", "mixtral-8x7b"),
+                api_key=groq.get("api_key", "")
+            )
         else:
+            raise ValueError(f"Unsupported LLM provider: {provider}")
+
+        log_level = raw.get("log_level", "warning").lower()
+        allowed_levels = {"debug", "info", "warning", "error", "critical"}
+        if log_level not in allowed_levels:
+            print(f"⚠️ Unknown log_level '{log_level}', falling back to 'warning'")
             log_level = "warning"
 
         return Config(
-            openai=OpenAiConfig(
-                model=openai_section.get("model", "gpt-4o"),
-                api_key=openai_section.get("api_key", "")
-            ),
+            llm=llm_config,
             debug=raw.get("debug", False),
             debug_llm=raw.get("debug_llm", False),
             log_level=log_level,
