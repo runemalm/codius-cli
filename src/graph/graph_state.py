@@ -12,5 +12,5 @@ class GraphState(TypedDict, total=False):
     approval: str
     session_id: str
     history: list[dict]
-    project_namespace: str
+    project_metadata: dict
     building_blocks: list[dict]

@@ -14,9 +14,9 @@ def run_graph(session: Session, user_input: str) -> str:
     # Prepare LangGraph input
     graph_input = {
         "user_input": session.state.user_input,
-        "project_namespace": session.state.project_namespace,
+        "history": [m.__dict__ for m in session.history.recent()],
+        "project_metadata": session.state.project_metadata,
         "building_blocks": [bb.__dict__ for bb in session.state.building_blocks],
-        "history": [m.__dict__ for m in session.history.recent()]
     }
 
     # Run LangGraph

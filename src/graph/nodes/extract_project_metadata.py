@@ -11,8 +11,8 @@ def extract_project_metadata(state: dict) -> dict:
     container = DependencyContainer.get_instance()
     scanner = container.resolve(ProjectScannerService)
 
-    namespace = scanner.extract_project_namespace()
-    state["project_namespace"] = namespace
+    metadata = scanner.extract_project_metadata()
+    state["project_metadata"] = metadata
 
-    logger.info("Extracted project_namespace: %s", namespace)
+    logger.info("Extracted project metadata: %s", metadata)
     return state

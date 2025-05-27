@@ -12,6 +12,7 @@ from infrastructure.service.graph_service import run_graph
 
 from dependency_injection.container import DependencyContainer
 
+from infrastructure.service.project_metadata_service import ProjectMetadataService
 
 console = Console()
 
@@ -128,7 +129,17 @@ def run_shell():
                     console.print(f"[red]Unknown command:[/red] {command}")
                 continue
 
-            # Run assistant, get assistant_message
+            # Get DI container
+            container = DependencyContainer.get_instance()
+            project_metadata_service = container.resolve(ProjectMetadataService)
+
+            # Clear memory state
+            session.clear_state()
+
+            # Clear on-disk files
+            project_metadata_service.clear_generated_files()
+
+            # Run assistant
             assistant_message = run_graph(session, user_input)
 
             # Save session

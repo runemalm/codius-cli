@@ -6,6 +6,7 @@ from domain.service.config_service import ConfigService
 from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
 from infrastructure.service.llm_service import LlmService
 from infrastructure.service.logging_service import LoggingService
+from infrastructure.service.project_metadata_service import ProjectMetadataService
 from infrastructure.service.project_scanner_service import ProjectScannerService
 
 
@@ -22,6 +23,7 @@ def setup_di():
 
     # Register rest of dependencies
     container.register_singleton(LoggingService)
+    container.register_transient(ProjectMetadataService)
     container.register_transient(ProjectScannerService)
     container.register_transient(LlmService)
     container.register_transient(LlmPort, OpenAiLlmAdapter,

@@ -1,7 +1,5 @@
-import xml.etree.ElementTree as ET
 from pathlib import Path
 import logging
-from typing import List
 
 logger = logging.getLogger(__name__)
 
@@ -9,43 +7,56 @@ logger = logging.getLogger(__name__)
 class ProjectScannerService:
     def __init__(self):
         self.project_root = Path(".").resolve()
+        self.source_path = self.project_root / "src"
 
-    def extract_project_namespace(self) -> str:
-        candidates = []
+    def extract_project_metadata(self) -> dict:
+        solution_path = self._find_solution_file()
+        project_name = solution_path.stem
+        root_namespace = project_name
 
-        for csproj in self.project_root.rglob("*.csproj"):
-            name = csproj.stem.lower()
-            if "test" in name:
-                continue  # skip test projects
+        return {
+            "project_name": project_name,
+            "root_namespace": root_namespace,
+            "source_path": "src/",
+            "domain_path": self._detect_layer_path("Domain"),
+            "application_path": self._detect_layer_path("Application"),
+            "infrastructure_path": self._detect_layer_path("Infrastructure"),
+            "interchange_path": self._detect_layer_path("Interchange"),
+            "tests_path": self._detect_tests_path(project_name),
+        }
 
-            try:
-                tree = ET.parse(csproj)
-                root = tree.getroot()
-                ns_tag = root.find(".//RootNamespace")
-                if ns_tag is not None and ns_tag.text:
-                    candidates.append(ns_tag.text.strip())
-                else:
-                    candidates.append(csproj.stem)
-            except Exception as e:
-                logger.warning("Failed to parse %s: %s", csproj, e)
+    def _find_solution_file(self) -> Path:
+        slns = list(self.source_path.glob("*.sln"))
+        if not slns:
+            raise FileNotFoundError("No .sln file found in src/")
+        return slns[0]
 
-        if not candidates:
-            return "MyProject"
+    def _detect_tests_path(self, project_name: str) -> str:
+        test_folder = self.source_path / f"{project_name}.Tests"
+        if test_folder.exists():
+            return str(test_folder.relative_to(self.project_root))
 
-        return self._shortest_shared_prefix(candidates)
+        # Fallback: look for *.csproj with "test" in name
+        for csproj in self.source_path.rglob("*.csproj"):
+            if "test" in csproj.stem.lower():
+                return str(csproj.parent.relative_to(self.project_root))
 
-    def _shortest_shared_prefix(self, namespaces: List[str]) -> str:
-        if not namespaces:
-            return "MyProject"
+        return "src/Tests"
 
-        # Split each namespace into parts
-        split = [ns.split('.') for ns in namespaces]
-        common = []
+    def _detect_layer_path(self, layer: str) -> str:
+        """
+        Detects the `layer` folder only inside the folder that matches the solution/project name.
+        e.g., src/MyProject/Domain ✅
+              src/SomeLib/Domain   ❌
+        """
+        project_name = self._find_solution_file().stem
+        candidate = self.source_path / project_name / layer
 
-        for parts in zip(*split):
-            if all(p == parts[0] for p in parts):
-                common.append(parts[0])
-            else:
-                break
+        if candidate.is_dir() and not self._is_under_tests(candidate):
+            return str(candidate.relative_to(self.project_root))
 
-        return '.'.join(common) if common else namespaces[0]
+        raise FileNotFoundError(
+            f"No valid `{layer}` folder found under src/{project_name}/")
+
+    def _is_under_tests(self, path: Path) -> bool:
+        return any(part.lower() in ["tests", "test"] for part in path.parts)

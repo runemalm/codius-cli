@@ -13,7 +13,7 @@ class State:
     final_output: Optional[str] = None
     status: str = "new"
     summary: Optional[str] = None
-    project_namespace: Optional[str] = None
+    project_metadata: Optional[dict] = None
     building_blocks: List[BuildingBlock] = field(default_factory=list)
 
     def update_with_graph_result(self, result: dict):
@@ -22,8 +22,8 @@ class State:
         self.generated_files = result.get("generated_files", [])
         self.final_output = result.get("final_output")
         self.status = result.get("status", "completed")
-        if "project_namespace" in result:
-            self.project_namespace = result.get("project_namespace")
+        if "project_metadata" in result:
+            self.project_metadata = result.get("project_metadata")
         if "building_blocks" in result:
             self.building_blocks = [
                 BuildingBlock.from_dict(bb) for bb in result["building_blocks"]
@@ -38,7 +38,7 @@ class State:
             "final_output": self.final_output,
             "status": self.status,
             "summary": self.summary,
-            "project_namespace": self.project_namespace,
+            "project_metadata": self.project_metadata,
             "building_blocks": [
                 bb.to_dict() if hasattr(bb, "to_dict") else bb
                 for bb in self.building_blocks
@@ -55,7 +55,7 @@ class State:
             final_output=data.get("final_output"),
             status=data.get("status", "new"),
             summary=data.get("summary"),
-            project_namespace=data.get("project_namespace"),
+            project_metadata=data.get("project_metadata"),
             building_blocks=[
                 BuildingBlock.from_dict(bb)
                 for bb in data.get("building_blocks", [])

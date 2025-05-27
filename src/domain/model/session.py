@@ -16,6 +16,10 @@ class Session:
     def append_assistant_message(self, content: str):
         self.history.append("assistant", content)
 
+    def clear_state(self):
+        """Resets both state and history."""
+        self.state = State()
+
     def clear(self):
         """Resets both state and history."""
         self.state = State()
