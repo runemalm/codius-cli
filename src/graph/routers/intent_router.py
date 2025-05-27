@@ -1,9 +1,20 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 def route_by_intent(state: dict) -> str:
-    intent_data = state.get("intent")
+    intents = state.get("intent", [])
+    logger.debug("Routing by intent. Intents: %s", intents)
 
-    if isinstance(intent_data, dict):
-        intent_type = intent_data.get("intent", "").strip().lower()
-        if intent_type and intent_type not in {"none", "greeting", "unsure"}:
-            return "valid"
+    if isinstance(intents, list):
+        for intent in intents:
+            if not isinstance(intent, dict):
+                continue
+            intent_type = intent.get("intent", "").strip().lower()
+            logger.debug("Intent type found: %s", intent_type)
+            if intent_type and intent_type not in {"none", "greeting", "unsure"}:
+                return "valid"
 
+    logger.debug("No valid intent found, routing to 'unclear'")
     return "unclear"

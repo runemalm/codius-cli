@@ -22,7 +22,15 @@ def distill_intent(state: dict) -> dict:
     logger.debug("LLM response received.")
 
     parsed = llm_service.try_extract_json(response)
-    state["intent"] = parsed
-    logger.debug("Extracted intent: %s", parsed.get("intent"))
+
+    if isinstance(parsed, list):
+        logger.debug("Multiple intents detected (%d)", len(parsed))
+        state["intent"] = parsed
+    elif isinstance(parsed, dict):
+        logger.debug("Extracted intent: %s", parsed.get("intent"))
+        state["intent"] = [parsed]  # always normalize to list
+    else:
+        logger.warning("Unexpected intent format: %s", type(parsed))
+        state["intent"] = []
 
     return state

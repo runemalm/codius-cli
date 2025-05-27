@@ -21,6 +21,9 @@ def get_or_create_active_session() -> Session:
 def get_active_session():
     return _repo.get_active_session()
 
+def get_active_session_id() -> str:
+    return get_active_session().id
+
 def list_sessions():
     return _repo.get_all()
 
