@@ -1,4 +1,3 @@
-import pytest
 from pathlib import Path
 
 from infrastructure.service.code_scanner.code_scanner import scan_building_blocks

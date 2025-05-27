@@ -5,7 +5,6 @@ from typing import List
 @dataclass(frozen=True)
 class GenerateCodePrompt:
     plan: dict
-    project_namespace: str
     building_blocks: List[dict]
     example: str = ""
 

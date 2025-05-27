@@ -28,7 +28,6 @@ def generate_code(state: dict) -> dict:
 
         prompt = GenerateCodePrompt(
             plan=file_plan,
-            project_namespace=state.get("project_namespace", ""),
             building_blocks=state.get("building_blocks", []),
             example=example
         ).as_prompt()

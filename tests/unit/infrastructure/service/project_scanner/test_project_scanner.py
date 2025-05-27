@@ -47,13 +47,15 @@ def test_extract_project_metadata_with_nested_layers(fs):
 
     assert metadata == {
         'source_path': 'src/',
-        'tests_path': 'src/Orientera.Tests',
         'domain_path': 'src/Orientera/Domain',
         'application_path': 'src/Orientera/Application',
         'infrastructure_path': 'src/Orientera/Infrastructure',
         'interchange_path': 'src/Orientera/Interchange',
+        'tests_path': 'src/Orientera.Tests',
         'project_name': 'Orientera',
-        'root_namespace': 'Orientera'
+        'root_namespace': 'Orientera',
+        'persistence_provider': 'OpenDdd',
+        'database_provider': 'Postgres',
     }
 
 
@@ -115,3 +117,73 @@ def test_only_solution_named_project_is_used(fs):
 
     domain_path = scanner._detect_layer_path("Domain")
     assert domain_path == 'src/Orientera/Domain'
+
+
+def test_extracts_provider_settings_from_correct_config_file(fs):
+    """
+    GIVEN this structure:
+
+    /project/
+    └── src/
+        ├── Orientera.sln
+        ├── Orientera/
+        │   ├── Domain/
+        │   ├── Application/
+        │   ├── Infrastructure/
+        │   ├── Interchange/
+        │   ├── appsettings.json (contains valid OpenDDD config)
+        ├── Orientera.Tests/
+        │   ├── appsettings.json (should be ignored)
+        ├── SomeLib/
+        │   ├── appsettings.json (should be ignored)
+
+    EXPECT:
+    - PersistenceProvider and DatabaseProvider are loaded from Orientera/appsettings.json
+    """
+
+    # Required folders to satisfy layer detection
+    fs.create_dir('/project/src/Orientera/Domain')
+    fs.create_dir('/project/src/Orientera/Application')
+    fs.create_dir('/project/src/Orientera/Infrastructure')
+    fs.create_dir('/project/src/Orientera/Interchange')
+
+    # Appsettings file to be read
+    fs.create_file('/project/src/Orientera/appsettings.json', contents="""
+    {
+        "OpenDDD": {
+            "PersistenceProvider": "EfCore",
+            "DatabaseProvider": "Postgres"
+        }
+    }
+    """)
+
+    # Other noise folders/files
+    fs.create_dir('/project/src/Orientera.Tests')
+    fs.create_dir('/project/src/SomeLib')
+
+    fs.create_file('/project/src/Orientera.Tests/appsettings.json', contents="""
+    {
+        "OpenDDD": {
+            "PersistenceProvider": "OpenDdd",
+            "DatabaseProvider": "SqlLite"
+        }
+    }
+    """)
+
+    fs.create_file('/project/src/SomeLib/appsettings.json', contents="""
+    {
+        "OpenDDD": {
+            "PersistenceProvider": "OpenDdd",
+            "DatabaseProvider": "Mongo"
+        }
+    }
+    """)
+
+    fs.create_file('/project/src/Orientera.sln')
+
+    os.chdir('/project')
+    scanner = ProjectScannerService()
+    metadata = scanner.extract_project_metadata()
+
+    assert metadata["persistence_provider"] == "EfCore"
+    assert metadata["database_provider"] == "Postgres"

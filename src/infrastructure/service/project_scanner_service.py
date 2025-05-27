@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import logging
 
@@ -14,7 +15,7 @@ class ProjectScannerService:
         project_name = solution_path.stem
         root_namespace = project_name
 
-        return {
+        metadata = {
             "project_name": project_name,
             "root_namespace": root_namespace,
             "source_path": "src/",
@@ -24,6 +25,11 @@ class ProjectScannerService:
             "interchange_path": self._detect_layer_path("Interchange"),
             "tests_path": self._detect_tests_path(project_name),
         }
+
+        provider_settings = self._detect_provider_settings()
+        metadata.update(provider_settings)
+
+        return metadata
 
     def _find_solution_file(self) -> Path:
         slns = list(self.source_path.glob("*.sln"))
@@ -44,11 +50,6 @@ class ProjectScannerService:
         return "src/Tests"
 
     def _detect_layer_path(self, layer: str) -> str:
-        """
-        Detects the `layer` folder only inside the folder that matches the solution/project name.
-        e.g., src/MyProject/Domain ✅
-              src/SomeLib/Domain   ❌
-        """
         project_name = self._find_solution_file().stem
         candidate = self.source_path / project_name / layer
 
@@ -60,3 +61,48 @@ class ProjectScannerService:
 
     def _is_under_tests(self, path: Path) -> bool:
         return any(part.lower() in ["tests", "test"] for part in path.parts)
+
+    def _load_appsettings(self) -> dict:
+        """
+        Searches all project folders under /src that start with the solution name
+        (e.g., Orientera, Orientera.API) for appsettings files.
+        Excludes test folders.
+        """
+        project_name = self._find_solution_file().stem.lower()
+        priority_names = [
+            "appsettings.Development.json",
+            "appsettings.Production.json",
+            "appsettings.json"
+        ]
+
+        for name in priority_names:
+            for candidate_dir in self.source_path.iterdir():
+                dir_name = candidate_dir.name.lower()
+                if not candidate_dir.is_dir():
+                    continue
+                if not dir_name.startswith(project_name):
+                    continue
+                if "test" in dir_name:
+                    continue
+
+                config_file = candidate_dir / name
+                if config_file.exists():
+                    try:
+                        with open(config_file) as f:
+                            return json.load(f)
+                    except Exception as e:
+                        logger.warning(f"Failed to parse {config_file}: {e}")
+
+        return {}
+
+    def _detect_provider_settings(self) -> dict:
+        config = self._load_appsettings()
+
+        open_ddd_config = config.get("OpenDDD", {})
+        persistence = open_ddd_config.get("PersistenceProvider", "OpenDdd")
+        database = open_ddd_config.get("DatabaseProvider", "Postgres")
+
+        return {
+            "persistence_provider": persistence,
+            "database_provider": database
+        }

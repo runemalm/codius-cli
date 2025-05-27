@@ -19,22 +19,20 @@ Use the following JSON format:
 
 {{
   "intent": "add_aggregate",              // intent type
-  "target": "Order",                      // the name of the concept (e.g. aggregate, action)
-  "layer": "domain",                      // which layer it belongs to
+  "target": "Order",                      // the name of the concept (e.g. aggregate, action, repository)
   "details": {{
-    "description": "Represents a customer order",
-    "properties": [
-      {{ "name": "id", "type": "Guid" }},
-      {{ "name": "customerId", "type": "Guid" }},
-      {{ "name": "lineItems", "type": "List<LineItem>" }}
-    ],
-    "events": ["OrderPlaced"],
-    "commands": ["PlaceOrder"]
+      // Intent-specific fields go here.
+      // For "add_aggregate": include description, properties, events, commands.
+      // For "add_repository": include custom_methods, implementations (e.g. persistence/database providers).
+      // For other intents: include any additional details the user provided.
   }}
 }}
 
+Note: You do **not** need to include a "layer" field — the assistant will infer the layer automatically based on the intent type.
+
 Supported values for "intent" include:
 - "add_aggregate"
+- "add_repository"
 - "generate_action"
 - "create_domain_event"
 - "generate_adapter"
