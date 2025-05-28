@@ -12,7 +12,7 @@ Built with LangGraph and powered by OpenAI, the assistant helps you:
 
 - ✅ Natural-language modeling (e.g. “Add product bundles to Order”)
 - 🧠 Intent distillation and tactical DDD planning
-- ⚙️ Code generation for aggregates, services, and value objects
+- ⚙️ Code generation for aggregates, repositories, and other building blocks
 - 🧪 Preview diffs before applying changes
 - 💾 Session-based memory with domain grounding
 - 🔌 LangGraph architecture with node-by-node clarity
