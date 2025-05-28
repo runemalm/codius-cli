@@ -10,16 +10,13 @@ def plan_changes(state: dict) -> dict:
     project_metadata = state.get("project_metadata")
     logger.debug("Project metadata loaded: %s", project_metadata)
 
-    for raw_intent in state.get("intent", []):
-        logger.debug("Processing raw intent: %s", raw_intent)
+    for intent in state.get("intent", []):
+        logger.debug("Processing intent: %s", intent)
 
-        # Enforce conventions
-        intent_type = raw_intent.get("intent")
+        intent_type = intent.get("intent")
         if intent_type == "add_aggregate":
-            intent = _enforce_aggregate_conventions(raw_intent)
             plan.extend(_plan_aggregate(intent, project_metadata))
         elif intent_type == "add_repository":
-            intent = _enforce_repository_conventions(raw_intent)
             plan.extend(_plan_repository(intent, project_metadata))
         else:
             logger.warning("Unsupported intent type: %s", intent_type)
@@ -27,35 +24,6 @@ def plan_changes(state: dict) -> dict:
     logger.debug("Generated plan with %d changes", len(plan))
     state["plan"] = plan
     return state
-
-
-def _enforce_aggregate_conventions(intent: dict) -> dict:
-    logger.debug("Enforcing aggregate conventions...")
-
-    details = intent.setdefault("details", {})
-    details.setdefault("properties", [])
-    details.setdefault("commands", [])
-    details.setdefault("events", [])
-
-    return intent
-
-
-def _enforce_repository_conventions(intent: dict) -> dict:
-    logger.debug("Enforcing repository conventions...")
-
-    details = intent.setdefault("details", {})
-    methods = details.get("custom_methods", [])
-
-    for method in methods:
-        method.setdefault("is_async", True)
-
-        name = method.get("name")
-        if name and not name.endswith("Async"):
-            method["name"] = f"{name}Async"
-
-        method.setdefault("parameters", [])
-
-    return intent
 
 
 def _plan_aggregate(intent: dict, metadata: dict) -> list:
