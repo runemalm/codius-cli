@@ -11,6 +11,7 @@ langgraph = "*"
 langchain = "*"
 langchain-openai = "*"
 py-dependency-injection = "*"
+jinja2 = "*"
 
 [dev-packages]
 pytest = "*"

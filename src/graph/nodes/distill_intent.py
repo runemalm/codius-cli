@@ -25,12 +25,33 @@ def distill_intent(state: dict) -> dict:
 
     if isinstance(parsed, list):
         logger.debug("Multiple intents detected (%d)", len(parsed))
-        state["intent"] = parsed
+        intents = parsed
     elif isinstance(parsed, dict):
         logger.debug("Extracted intent: %s", parsed.get("intent"))
-        state["intent"] = [parsed]  # always normalize to list
+        intents = [parsed]  # always normalize to list
     else:
         logger.warning("Unexpected intent format: %s", type(parsed))
-        state["intent"] = []
+        intents = []
+
+    state["intent"] = _post_process_intents(intents)
 
     return state
+
+def _post_process_intents(intents: list) -> list:
+    for intent in intents:
+        if intent.get("intent") == "add_repository":
+            details = intent.get("details", {})
+            methods = details.get("custom_methods", [])
+            for method in methods:
+                # Default to async
+                method["is_async"] = True
+
+                # Enforce async naming convention
+                if "name" in method and not method["name"].endswith("Async"):
+                    method["name"] += "Async"
+
+                # Ensure parameters exists
+                if "parameters" not in method or method["parameters"] is None:
+                    method["parameters"] = []
+
+    return intents

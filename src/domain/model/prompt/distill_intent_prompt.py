@@ -1,4 +1,9 @@
 from dataclasses import dataclass
+from domain.model.intents.aggregate.add_aggregate_intent import AddAggregateIntent
+from domain.model.intents.database_provider import DatabaseProvider
+from domain.model.intents.persistence_provider import PersistenceProvider
+from domain.model.intents.repository.add_repository_intent import AddRepositoryIntent
+from domain.model.intents.intent import IntentType
 
 
 @dataclass(frozen=True)
@@ -6,6 +11,25 @@ class DistillIntentPrompt:
     user_input: str
 
     def as_prompt(self) -> str:
+        example_blocks = "\n\n### add_aggregate\n```json\n" + \
+                         AddAggregateIntent().to_example_json() + \
+                         "\n```\n\n### add_repository\n```json\n" + \
+                         AddRepositoryIntent().to_example_json() + \
+                         "\n```"
+
+        supported_intents = [
+            f"- {intent.value}"
+            for intent in IntentType
+            if intent != IntentType.UNSURE
+        ]
+        supported_intents_text = "\n".join(supported_intents)
+
+        persistence_providers = [f"- {p.value}" for p in PersistenceProvider]
+        database_providers = [f"- {d.value}" for d in DatabaseProvider]
+
+        persistence_text = "\n".join(persistence_providers)
+        database_text = "\n".join(database_providers)
+
         return f"""
 You are a modeling assistant for a Domain-Driven Design (DDD) codebase built with OpenDDD.NET.
 
@@ -13,36 +37,40 @@ The user has written the following instruction:
 
 "{self.user_input}"
 
-Your task is to extract the modeling intent from this instruction and respond with a **structured JSON object**.
+Your task is to extract the modeling **intent** from this instruction and return it as a **valid JSON object**.
 
-Use the following JSON format:
+You may only choose from the following supported intents:
 
-{{
-  "intent": "add_aggregate",              // intent type
-  "target": "Order",                      // the name of the concept (e.g. aggregate, action, repository)
-  "details": {{
-      // Intent-specific fields go here.
-      // For "add_aggregate": include description, properties, events, commands.
-      // For "add_repository": include custom_methods, implementations (e.g. persistence/database providers).
-      // For other intents: include any additional details the user provided.
-  }}
-}}
+{supported_intents_text}
 
-Note: You do **not** need to include a "layer" field — the assistant will infer the layer automatically based on the intent type.
+For `"add_repository"` intents, the supported values are:
 
-Supported values for "intent" include:
-- "add_aggregate"
-- "add_repository"
-- "generate_action"
-- "create_domain_event"
-- "generate_adapter"
-- "update_value_object"
-- "add_event_listener"
-- "unsure"
+**Persistence Providers**:
+{persistence_text}
 
-If the user's request is unclear, respond only with:
+**Database Providers**:
+{database_text}
 
+### Instructions
+
+- Only include properties or methods if the user explicitly describes them.
+- For repository `custom_methods`, return full method objects with:
+    - `"name"` (required)
+    - `"parameters"` (optional list of objects with `"name"` and `"type"`)
+    - `"return_type"` (optional string, if the user hints at the expected result)
+    - `"is_async"` (optional, defaults to `true` if unspecified)
+- If the user simply asks to create a building block without specifying any structure, generate a minimal scaffold (e.g. an empty class or interface).
+- Do not infer or add anything the user hasn’t clearly stated.
+- Avoid comments or docstrings unless necessary to clarify complex logic in rare cases.
+- Return **valid JSON only** — no prose, no comments, no extra text.
+
+### Examples:
+
+{example_blocks}
+
+If the user's intent is unclear or unsupported, respond only with:
+
+```json
 {{ "intent": "unsure" }}
-
-Return **valid JSON only** — no explanation, no comments.
+```
 """
