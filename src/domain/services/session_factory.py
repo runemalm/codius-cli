@@ -1,5 +1,5 @@
 from datetime import datetime
-from domain.model.session import Session
+from domain.model.session.session import Session
 
 
 def create_session(name: str | None = None) -> Session:

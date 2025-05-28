@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
-from domain.model.session import Session
-from domain.model.state import State
-from domain.model.history import History, Message
+from domain.model.session.session import Session
+from domain.model.session.state import State
+from domain.model.session.history import History, Message
 from infrastructure.repository.base_repository import BaseRepository
 
 SESSIONS_DIR = Path(".openddd/sessions")

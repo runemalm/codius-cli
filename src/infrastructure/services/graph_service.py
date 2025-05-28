@@ -1,4 +1,4 @@
-from domain.model.session import Session
+from domain.model.session.session import Session
 from graph.graph import build_graph
 from infrastructure.repository.session_repository import SessionRepository
 

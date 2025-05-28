@@ -4,15 +4,15 @@ from rich.console import Console
 from rich.panel import Panel
 from pathlib import Path
 
-from domain.service.config_service import ConfigService
-from domain.service.session_service import create_and_activate_session, \
+from domain.services.config_service import ConfigService
+from domain.services.session_service import create_and_activate_session, \
     get_active_session, \
     get_or_create_active_session, save_session
-from infrastructure.service.graph_service import run_graph
+from infrastructure.services.graph_service import run_graph
 
 from dependency_injection.container import DependencyContainer
 
-from infrastructure.service.project_metadata_service import ProjectMetadataService
+from infrastructure.services.project_metadata_service import ProjectMetadataService
 
 console = Console()
 

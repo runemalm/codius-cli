@@ -2,8 +2,8 @@ import re
 from pathlib import Path
 from typing import List
 
-from infrastructure.service.code_scanner.model.building_block import BuildingBlock
-from infrastructure.service.code_scanner.model.building_block_type import BuildingBlockType
+from infrastructure.services.code_scanner.model.building_block import BuildingBlock
+from infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
 
 
 def scan_building_blocks(project_root: Path) -> List[BuildingBlock]:

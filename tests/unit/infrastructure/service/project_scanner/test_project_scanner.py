@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from infrastructure.service.project_scanner_service import ProjectScannerService
+from infrastructure.services.project_scanner_service import ProjectScannerService
 
 
 def test_extract_project_metadata_with_nested_layers(fs):

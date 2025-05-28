@@ -1,8 +1,8 @@
 from dependency_injection.container import DependencyContainer
 
-from domain.service.config_service import ConfigService
-from infrastructure.service.di_service import setup_di
-from infrastructure.service.logging_service import LoggingService
+from domain.services.config_service import ConfigService
+from infrastructure.services.di_service import setup_di
+from infrastructure.services.logging_service import LoggingService
 from ui.shell import run_shell
 
 

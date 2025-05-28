@@ -1,6 +1,4 @@
-from typing import Self, TypedDict
-
-from infrastructure.service.code_scanner.model.building_block import BuildingBlock
+from typing import TypedDict
 
 
 class GraphState(TypedDict, total=False):

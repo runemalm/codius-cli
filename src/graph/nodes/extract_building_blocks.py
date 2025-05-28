@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from infrastructure.service.code_scanner.code_scanner import scan_building_blocks
+from infrastructure.services.code_scanner.code_scanner import scan_building_blocks
 
 logger = logging.getLogger(__name__)
 

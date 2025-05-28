@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
-from domain.model.history import History
-from domain.model.state import State
+from domain.model.session.history import History
+from domain.model.session.state import State
 
 
 @dataclass

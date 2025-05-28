@@ -11,11 +11,11 @@ from dependency_injection.container import DependencyContainer
 from domain.model.config.config import Config
 from domain.model.config.llm_provider import LlmProvider
 from domain.model.port.llm_port import LlmPort
-from domain.service.config_service import ConfigService
+from domain.services.config_service import ConfigService
 from infrastructure.adapter.llm.llm_config import LlmConfig
 from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
-from infrastructure.service.llm_service import LlmService
+from infrastructure.services.llm_service import LlmService
 
 
 @pytest.fixture(scope="session")

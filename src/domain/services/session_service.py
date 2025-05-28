@@ -1,5 +1,5 @@
-from domain.model.session import Session
-from domain.service.session_factory import create_session
+from domain.model.session.session import Session
+from domain.services.session_factory import create_session
 from infrastructure.repository.session_repository import SessionRepository
 
 _repo = SessionRepository()

@@ -2,8 +2,8 @@ import logging
 
 from dependency_injection.container import DependencyContainer
 
-from domain.model.prompt.distill_intent_prompt import DistillIntentPrompt
-from infrastructure.service.llm_service import LlmService
+from domain.model.prompts.distill_intent_prompt import DistillIntentPrompt
+from infrastructure.services.llm_service import LlmService
 
 logger = logging.getLogger(__name__)
 

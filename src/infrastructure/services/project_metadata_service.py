@@ -2,7 +2,7 @@ from pathlib import Path
 import shutil
 import logging
 
-from domain.service.session_service import get_active_session
+from domain.services.session_service import get_active_session
 
 logger = logging.getLogger(__name__)
 

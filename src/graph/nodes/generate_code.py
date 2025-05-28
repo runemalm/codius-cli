@@ -1,5 +1,4 @@
-from domain.model.prompt.generate_code_prompt import GenerateCodePrompt
-from domain.service import session_service
+from domain.services import session_service
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pathlib import Path

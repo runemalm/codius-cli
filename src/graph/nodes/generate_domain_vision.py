@@ -2,7 +2,7 @@ import logging
 
 from dependency_injection.container import DependencyContainer
 
-from infrastructure.service.llm_service import LlmService
+from infrastructure.services.llm_service import LlmService
 
 logger = logging.getLogger(__name__)
 

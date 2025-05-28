@@ -15,7 +15,7 @@ class LlmService:
         self.config = config
 
     def call_prompt(self, prompt: str) -> str:
-        logger.debug("Calling LLM service with prompt...")
+        logger.debug("Calling LLM services with prompt...")
         if self.config.debug_llm:
             print_highlighted(prompt, title="📨 Prompt Sent to LLM")
 
@@ -27,7 +27,7 @@ class LlmService:
         return response
 
     def call_chat(self, messages: list[dict]) -> str:
-        logger.debug("Calling LLM service with chat messages...")
+        logger.debug("Calling LLM services with chat messages...")
         if self.config.debug_llm:
             for msg in messages:
                 print_highlighted(msg["content"],

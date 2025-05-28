@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from domain.service import session_service
+from domain.services import session_service
 
 
 def apply_changes(state: dict) -> dict:

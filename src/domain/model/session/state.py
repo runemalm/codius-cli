@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
 
-from infrastructure.service.code_scanner.model.building_block import BuildingBlock
+from infrastructure.services.code_scanner.model.building_block import BuildingBlock
 
 
 @dataclass

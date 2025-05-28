@@ -5,7 +5,7 @@ from rich.console import Console
 from rich.syntax import Syntax
 from rich.panel import Panel
 
-from domain.service import session_service
+from domain.services import session_service
 
 
 def preview(state: dict) -> dict:

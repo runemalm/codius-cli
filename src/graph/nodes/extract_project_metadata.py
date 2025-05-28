@@ -1,6 +1,6 @@
 import logging
 from dependency_injection.container import DependencyContainer
-from infrastructure.service.project_scanner_service import ProjectScannerService
+from infrastructure.services.project_scanner_service import ProjectScannerService
 
 logger = logging.getLogger(__name__)
 

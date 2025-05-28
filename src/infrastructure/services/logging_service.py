@@ -1,7 +1,7 @@
 import logging
 import os
 
-from domain.service.config_service import ConfigService
+from domain.services.config_service import ConfigService
 
 
 class LoggingService:

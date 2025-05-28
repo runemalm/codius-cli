@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
 
-from infrastructure.service.code_scanner.model.building_block_type import \
+from infrastructure.services.code_scanner.model.building_block_type import \
     BuildingBlockType
 
 

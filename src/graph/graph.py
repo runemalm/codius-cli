@@ -21,9 +21,9 @@ def build_graph():
     graph = StateGraph(state_schema=GraphState)
 
     # Add nodes
-    graph.add_node("ExtractProjectMetadata", extract_project_metadata)
     graph.add_node("DistillIntent", distill_intent)
     graph.add_node("HandleUnclearIntent", handle_unclear_intent)
+    graph.add_node("ExtractProjectMetadata", extract_project_metadata)
     graph.add_node("ExtractBuildingBlocks", extract_building_blocks)
     graph.add_node("EnforceConventions", enforce_conventions)
     graph.add_node("IntegrateChanges", integrate_changes)

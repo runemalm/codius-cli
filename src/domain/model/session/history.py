@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import datetime
 
-from domain.model.message import Message
+from domain.model.session.message import Message
 
 
 @dataclass

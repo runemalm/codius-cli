@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from infrastructure.service.code_scanner.code_scanner import scan_building_blocks
-from infrastructure.service.code_scanner.model.building_block import BuildingBlock
-from infrastructure.service.code_scanner.model.building_block_type import BuildingBlockType
+from infrastructure.services.code_scanner.code_scanner import scan_building_blocks
+from infrastructure.services.code_scanner.model.building_block import BuildingBlock
+from infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
 
 
 def test_scan_building_blocks_returns_expected_structure(project_path: Path):
