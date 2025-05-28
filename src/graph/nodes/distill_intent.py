@@ -23,35 +23,15 @@ def distill_intent(state: dict) -> dict:
 
     parsed = llm_service.try_extract_json(response)
 
+    intents = []
     if isinstance(parsed, list):
         logger.debug("Multiple intents detected (%d)", len(parsed))
         intents = parsed
     elif isinstance(parsed, dict):
         logger.debug("Extracted intent: %s", parsed.get("intent"))
-        intents = [parsed]  # always normalize to list
+        intents = [parsed]
     else:
         logger.warning("Unexpected intent format: %s", type(parsed))
-        intents = []
 
-    state["intent"] = _post_process_intents(intents)
-
+    state["intent"] = intents  # No post-processing
     return state
-
-def _post_process_intents(intents: list) -> list:
-    for intent in intents:
-        if intent.get("intent") == "add_repository":
-            details = intent.get("details", {})
-            methods = details.get("custom_methods", [])
-            for method in methods:
-                # Default to async
-                method["is_async"] = True
-
-                # Enforce async naming convention
-                if "name" in method and not method["name"].endswith("Async"):
-                    method["name"] += "Async"
-
-                # Ensure parameters exists
-                if "parameters" not in method or method["parameters"] is None:
-                    method["parameters"] = []
-
-    return intents
