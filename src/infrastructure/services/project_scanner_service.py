@@ -2,12 +2,14 @@ import json
 from pathlib import Path
 import logging
 
+from infrastructure.services.project_metadata_service import ProjectMetadataService
+
 logger = logging.getLogger(__name__)
 
 
 class ProjectScannerService:
-    def __init__(self):
-        self.project_root = Path(".").resolve()
+    def __init__(self, project_metadata_service: ProjectMetadataService):
+        self.project_root = project_metadata_service.get_project_root().resolve()
         self.source_path = self.project_root / "src"
 
     def extract_project_metadata(self) -> dict:
@@ -18,7 +20,8 @@ class ProjectScannerService:
         metadata = {
             "project_name": project_name,
             "root_namespace": root_namespace,
-            "source_path": "src/",
+            "project_root": str(self.project_root),
+            "source_path": str(self.source_path),
             "domain_path": self._detect_layer_path("Domain"),
             "application_path": self._detect_layer_path("Application"),
             "infrastructure_path": self._detect_layer_path("Infrastructure"),
@@ -40,12 +43,12 @@ class ProjectScannerService:
     def _detect_tests_path(self, project_name: str) -> str:
         test_folder = self.source_path / f"{project_name}.Tests"
         if test_folder.exists():
-            return str(test_folder.relative_to(self.project_root))
+            return str(test_folder)
 
         # Fallback: look for *.csproj with "test" in name
         for csproj in self.source_path.rglob("*.csproj"):
             if "test" in csproj.stem.lower():
-                return str(csproj.parent.relative_to(self.project_root))
+                return str(csproj.parent)
 
         return "src/Tests"
 
@@ -54,7 +57,7 @@ class ProjectScannerService:
         candidate = self.source_path / project_name / layer
 
         if candidate.is_dir() and not self._is_under_tests(candidate):
-            return str(candidate.relative_to(self.project_root))
+            return str(candidate)
 
         raise FileNotFoundError(
             f"No valid `{layer}` folder found under src/{project_name}/")

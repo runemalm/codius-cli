@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectMetadataService:
-    def __init__(self):
-        self.workdir = Path(".").resolve()
+    def __init__(self, workdir: Path):
+        self.workdir = workdir.resolve()
         self.metadata_root = self.workdir / ".openddd"
 
     def get_project_root(self) -> Path:

@@ -4,9 +4,17 @@ from graph.nodes.extract_building_blocks import extract_building_blocks
 from infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
 
 
-def test_adds_expected_building_blocks_to_state(project_path: Path):
+def test_adds_expected_building_blocks_to_state(bookstore_project_path: Path):
     # Arrange
-    state = {}
+    state = {
+        "project_metadata": {
+            "project_root": str(bookstore_project_path),
+            "source_path": str(bookstore_project_path / "src"),
+            "domain_path": bookstore_project_path / "src/Bookstore/Domain",
+            "application_path": bookstore_project_path / "src/Bookstore/Application",
+            "infrastructure_path": bookstore_project_path / "src/Bookstore/Infrastructure",
+        }
+    }
 
     # Act
     new_state = extract_building_blocks(state)

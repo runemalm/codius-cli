@@ -1,7 +1,8 @@
 import logging
 from pathlib import Path
 
-from infrastructure.services.code_scanner.code_scanner import scan_building_blocks
+from di import container
+from infrastructure.services.code_scanner.code_scanner import CodeScannerService
 
 logger = logging.getLogger(__name__)
 
@@ -9,10 +10,11 @@ logger = logging.getLogger(__name__)
 def extract_building_blocks(state: dict) -> dict:
     logger.debug("Running extract_domain_model...")
 
-    project_root = Path(".").resolve()
-    logger.debug("Scanning building blocks in project: %s", project_root)
+    logger.debug("Scanning building blocks in project..")
 
-    blocks = scan_building_blocks(project_root)
+    code_scanner_service = container.resolve(CodeScannerService)
+
+    blocks = code_scanner_service.scan_building_blocks(state['project_metadata'])
 
     logger.info("Extracted %d domain building blocks", len(blocks))
 

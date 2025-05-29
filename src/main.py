@@ -1,11 +1,12 @@
-from di import container, register_services
+import di
+from di import container
 from domain.services.config_service import ConfigService
 from infrastructure.services.logging_service import LoggingService
 from ui.shell import run_shell
 
 
 def main():
-    register_services()
+    di.register_services()
 
     config_service = container.resolve(ConfigService)
     config_service.ensure_config_file_exists()

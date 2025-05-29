@@ -7,9 +7,9 @@ from domain.services.session_service import (
     create_and_activate_session,
     save_session,
 )
+from infrastructure.services.code_scanner.code_scanner import CodeScannerService
 from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.project_scanner_service import ProjectScannerService
-from infrastructure.services.code_scanner.code_scanner import scan_building_blocks
 
 console = Console()
 
@@ -26,7 +26,7 @@ SLASH_COMMANDS = {
     "/approval": "Open approval mode selection panel",
     "/bug": "Generate GitHub issue URL with session log",
     "/diff": "Show git diff of working directory",
-    "/bb": "Show building blocks in the current codebase",
+    "/building-blocks": "Show building blocks in the current codebase",
 }
 
 
@@ -53,13 +53,14 @@ def handle_slash_command(command: str):
         console.print(f"[green]✅ Created new session:[/green] {session.id}")
         save_session(session)
 
-    elif command == "/bb":
+    elif command == "/building-blocks":
         project_metadata_service = container.resolve(ProjectMetadataService)
         project_scanner_service = container.resolve(ProjectScannerService)
+        code_scanner_service = container.resolve(CodeScannerService)
 
         # Extract metadata and building blocks
         project_metadata = project_scanner_service.extract_project_metadata()
-        building_blocks = scan_building_blocks(project_metadata_service.get_project_root())
+        building_blocks = code_scanner_service.scan_building_blocks(project_metadata)
 
         # Group building blocks
         grouped = {}

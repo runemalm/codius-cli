@@ -1,83 +1,141 @@
-from pathlib import Path
+import pytest
 
-from infrastructure.services.code_scanner.code_scanner import scan_building_blocks
+from infrastructure.services.code_scanner.code_scanner import CodeScannerService
 from infrastructure.services.code_scanner.model.building_block import BuildingBlock
 from infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
 
 
-def test_scan_building_blocks_returns_expected_structure(project_path: Path):
-    result = scan_building_blocks(project_path)
+@pytest.mark.usefixtures("fs")
+def test_scan_building_blocks_returns_correct_output(fs):
+    # --- Arrange ---
+    fs.create_dir("/project/src/Bookstore/Domain/Model/Book")
+    fs.create_dir("/project/src/Bookstore/Application")
+    fs.create_dir("/project/src/Bookstore/Infrastructure")
 
-    assert isinstance(result, list), "Expected list of building blocks"
-    assert all(isinstance(bb, BuildingBlock) for bb in result), "All elements should be BuildingBlock instances"
+    # AggregateRoot: Book
+    fs.create_file("/project/src/Bookstore/Domain/Model/Book/Book.cs", contents="""
+using OpenDDD.Domain.Model.Base;
 
-    _assert_block_names(
-        result,
-        BuildingBlockType.AGGREGATE_ROOT,
-        expected={"Book", "Customer", "Order"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.ENTITY,
-        expected={"LineItem"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.VALUE_OBJECT,
-        expected={"Money"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.COMMAND,
-        expected={"GetCustomerCommand", "GetCustomersCommand", "GetOrdersCommand", "PlaceOrderCommand", "RegisterCustomerCommand",
-                  "SearchBooksCommand", "SendWelcomeEmailCommand", "UpdateCustomerNameCommand"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.ACTION,
-        expected={"GetCustomerAction", "GetCustomersAction", "GetOrdersAction", "PlaceOrderAction", "RegisterCustomerAction",
-                  "SearchBooksAction", "SendWelcomeEmailAction", "UpdateCustomerNameAction"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.DOMAIN_EVENT,
-        expected={"CustomerRegistered"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.DOMAIN_EVENT_LISTENER,
-        expected={"CustomerRegisteredListener"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.INTEGRATION_EVENT_LISTENER,
-        expected={"PersonUpdatedIntegrationEventListener"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.INFRASTRUCTURE_SERVICE,
-        expected=set()  # Add expected infrastructure services here if any
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.ADAPTER,
-        expected={"SmtpEmailAdapter", "ConsoleEmailAdapter"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.REPOSITORY,
-        expected={"ICustomerRepository", "IOrderRepository"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.PORT,
-        expected={"IEmailPort"}
-    )
-    _assert_block_names(
-        result,
-        BuildingBlockType.DOMAIN_SERVICE,
-        expected={"ICustomerDomainService", "IOrderDomainService"}
-    )
+namespace Bookstore.Domain.Model.Book
+{
+    public class Book : AggregateRootBase<Guid>
+    {
+        public string Title { get; private set; }
+
+        private Book() { }
+
+        private Book(Guid id, string title) : base(id)
+        {
+            Title = title;
+        }
+
+        public static Book Create(string title)
+        {
+            return new Book(Guid.NewGuid(), title);
+        }
+    }
+}
+""")
+
+    # AggregateRoot: Customer
+    fs.create_file("/project/src/Bookstore/Domain/Customer.cs", contents="""
+using OpenDDD.Domain.Model.Base;
+
+namespace Bookstore.Domain
+{
+    public class Customer : AggregateRootBase<CustomerId>
+    {
+        public string Name { get; private set; }
+
+        private Customer() { }
+
+        private Customer(CustomerId id, string name) : base(id)
+        {
+            Name = name;
+        }
+
+        public static Customer Create(string name)
+        {
+            return new Customer(new CustomerId(), name);
+        }
+    }
+}
+""")
+
+    # Other Domain Layer Files
+    fs.create_file("/project/src/Bookstore/Domain/Model/IOrderRepository.cs", contents="""
+namespace Bookstore.Domain;
+public interface IOrderRepository {}
+""")
+
+    fs.create_file("/project/src/Bookstore/Domain/Model/CustomerRegistered.cs", contents="""
+namespace Bookstore.Domain;
+public class CustomerRegistered : IDomainEvent {}
+""")
+
+    fs.create_file("/project/src/Bookstore/Domain/Model/Ports/IEmailPort.cs", contents="""
+namespace Bookstore.Domain.Ports;
+public interface IEmailPort : IPort {}
+""")
+
+    # Application Layer Files
+    fs.create_file("/project/src/Bookstore/Application/RegisterCustomerAction.cs", contents="""
+namespace Bookstore.Application;
+public class RegisterCustomerAction : IAction<RegisterCustomerCommand, Unit> {}
+""")
+
+    fs.create_file("/project/src/Bookstore/Application/RegisterCustomerCommand.cs", contents="""
+namespace Bookstore.Application;
+public class RegisterCustomerCommand : ICommand {}
+""")
+
+    fs.create_file("/project/src/Bookstore/Application/CustomerRegisteredListener.cs", contents="""
+namespace Bookstore.Application;
+public class CustomerRegisteredListener : EventListenerBase {}
+""")
+
+    fs.create_file("/project/src/Bookstore/Application/PersonUpdatedIntegrationEventListener.cs", contents="""
+namespace Bookstore.Application;
+public class PersonUpdatedIntegrationEventListener : EventListenerBase {}
+""")
+
+    # Infrastructure Layer Files
+    fs.create_file("/project/src/Bookstore/Infrastructure/Adapters/Smtp/SmtpEmailAdapter.cs", contents="""
+namespace Bookstore.Infrastructure.Adapters;
+public class SmtpEmailAdapter : IEmailPort {}
+""")
+
+    # Project metadata mock
+    metadata = {
+        "project_name": "Bookstore",
+        "root_namespace": "Bookstore",
+        "project_root": "/project",
+        "source_path": "/project/src",
+        "domain_path": "/project/src/Bookstore/Domain",
+        "application_path": "/project/src/Bookstore/Application",
+        "infrastructure_path": "/project/src/Bookstore/Infrastructure",
+        "interchange_path": "/project/src/Bookstore/Interchange",
+        "tests_path": "/project/src/Bookstore.Tests",
+    }
+
+    scanner = CodeScannerService()
+
+    # --- Act ---
+    result = scanner.scan_building_blocks(metadata)
+
+    # --- Assert ---
+    assert isinstance(result, list)
+    assert all(isinstance(bb, BuildingBlock) for bb in result)
+
+    _assert_block_names(result, BuildingBlockType.AGGREGATE_ROOT, {"Book", "Customer"})
+    _assert_block_names(result, BuildingBlockType.REPOSITORY, {"IOrderRepository"})
+    _assert_block_names(result, BuildingBlockType.DOMAIN_EVENT, {"CustomerRegistered"})
+    _assert_block_names(result, BuildingBlockType.PORT, {"IEmailPort"})
+    _assert_block_names(result, BuildingBlockType.ACTION, {"RegisterCustomerAction"})
+    _assert_block_names(result, BuildingBlockType.COMMAND, {"RegisterCustomerCommand"})
+    _assert_block_names(result, BuildingBlockType.DOMAIN_EVENT_LISTENER, {"CustomerRegisteredListener"})
+    _assert_block_names(result, BuildingBlockType.INTEGRATION_EVENT_LISTENER, {"PersonUpdatedIntegrationEventListener"})
+    _assert_block_names(result, BuildingBlockType.ADAPTER, {"SmtpEmailAdapter"})
 
 
 def _assert_block_names(result: list[BuildingBlock], block_type: BuildingBlockType, expected: set[str]):

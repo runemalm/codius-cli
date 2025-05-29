@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
 
 import pytest
 
+from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.project_scanner_service import ProjectScannerService
 
 
@@ -42,16 +44,17 @@ def test_extract_project_metadata_with_nested_layers(fs):
     # Change cwd to /project to simulate running in project root
     os.chdir('/project')
 
-    scanner = ProjectScannerService()
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
     metadata = scanner.extract_project_metadata()
 
     assert metadata == {
-        'source_path': 'src/',
-        'domain_path': 'src/Orientera/Domain',
-        'application_path': 'src/Orientera/Application',
-        'infrastructure_path': 'src/Orientera/Infrastructure',
-        'interchange_path': 'src/Orientera/Interchange',
-        'tests_path': 'src/Orientera.Tests',
+        'project_root': '/project',
+        'source_path': '/project/src',
+        'domain_path': '/project/src/Orientera/Domain',
+        'application_path': '/project/src/Orientera/Application',
+        'infrastructure_path': '/project/src/Orientera/Infrastructure',
+        'interchange_path': '/project/src/Orientera/Interchange',
+        'tests_path': '/project/src/Orientera.Tests',
         'project_name': 'Orientera',
         'root_namespace': 'Orientera',
         'persistence_provider': 'OpenDdd',
@@ -79,14 +82,14 @@ def test_flat_layer_folders_are_ignored(fs):
     fs.create_file('/project/src/OpenDDD.sln')
 
     os.chdir('/project')
-    scanner = ProjectScannerService()
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
 
     with pytest.raises(FileNotFoundError):
         _ = scanner._detect_layer_path("Domain")
 
     # But Application path should work
     application_path = scanner._detect_layer_path("Application")
-    assert application_path == 'src/OpenDDD/Application'
+    assert application_path == '/project/src/OpenDDD/Application'
 
 
 def test_only_solution_named_project_is_used(fs):
@@ -113,10 +116,10 @@ def test_only_solution_named_project_is_used(fs):
     fs.create_file('/project/src/Orientera.sln')
 
     os.chdir('/project')
-    scanner = ProjectScannerService()
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
 
     domain_path = scanner._detect_layer_path("Domain")
-    assert domain_path == 'src/Orientera/Domain'
+    assert domain_path == '/project/src/Orientera/Domain'
 
 
 def test_extracts_provider_settings_from_correct_config_file(fs):
@@ -182,7 +185,7 @@ def test_extracts_provider_settings_from_correct_config_file(fs):
     fs.create_file('/project/src/Orientera.sln')
 
     os.chdir('/project')
-    scanner = ProjectScannerService()
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
     metadata = scanner.extract_project_metadata()
 
     assert metadata["persistence_provider"] == "EfCore"

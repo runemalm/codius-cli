@@ -19,6 +19,7 @@ def generate_code(state: dict) -> dict:
     )
 
     plan = state.get("plan", [])
+    project_root = state["project_metadata"]["project_root"]
     session_id = session_service.get_active_session_id()
     output_dir = Path(f".openddd/sessions/{session_id}/generated")
 
@@ -27,7 +28,8 @@ def generate_code(state: dict) -> dict:
     for file_plan in plan:
         template_name = file_plan.get("template")
         context = file_plan.get("context", {})
-        relative_path = file_plan["path"]
+        absolute_path = Path(file_plan["path"]).resolve()
+        relative_path = absolute_path.relative_to(project_root)
 
         try:
             # Load and render template

@@ -16,15 +16,16 @@ from domain.services.config_service import ConfigService
 from infrastructure.adapter.llm.llm_config import LlmConfig
 from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
+from infrastructure.services.code_scanner.code_scanner import CodeScannerService
 from infrastructure.services.llm_service import LlmService
 
 
 @pytest.fixture(scope="session")
-def project_path() -> Path:
+def bookstore_project_path() -> Path:
     """
     Path to the test project (Bookstore). Override this fixture if needed.
     """
-    return Path("~/Projects/OpenDDD.NET/samples/Bookstore/src/Bookstore").expanduser()
+    return Path("~/Projects/OpenDDD.NET/samples/Bookstore").expanduser()
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -59,6 +60,7 @@ def container_(request: SubRequest):
                  "config": config
              }
         )
+        container.register_transient(CodeScannerService)
         container.register_transient(LlmService)
         container.register_transient(LlmPort, OpenAiLlmAdapter,
              constructor_args={"config": config.llm.openai}
@@ -72,13 +74,13 @@ def container_(request: SubRequest):
 
 
 @pytest.fixture(autouse=True)
-def with_project_dir(request, project_path: Path):
+def with_project_dir(request, bookstore_project_path: Path):
     if "integration" not in request.keywords:
         yield
         return
 
     original_cwd = Path.cwd()
-    os.chdir(project_path)
+    os.chdir(bookstore_project_path)
     try:
         yield
     finally:
