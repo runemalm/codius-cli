@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from graph.nodes.extract_building_blocks import extract_building_blocks
 from infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
 

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from dependency_injection.container import DependencyContainer
 
+from di import container
 from domain.model.config.config import Config
 from domain.model.config.llm_provider import LlmProvider
 from domain.model.port.llm_port import LlmPort
@@ -36,17 +37,15 @@ def configure_test_logging():
 
 
 @pytest.fixture(autouse=True, scope="function")
-def container(request: SubRequest):
+def container_(request: SubRequest):
     if "integration" in request.keywords:
         # Setup
-        container = DependencyContainer.get_instance()
-
         config = Config(
             llm=LlmConfig(
                 provider=LlmProvider.OPENAI,
                 openai=OpenAiConfig(
                     model="gpt-4o",
-                    api_key="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",
+                    api_key="sk-",
                 )
             ),
             debug=True,
