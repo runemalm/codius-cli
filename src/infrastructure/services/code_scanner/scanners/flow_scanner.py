@@ -92,9 +92,9 @@ class FlowScanner:
         })
         events = self._extract_published_events(domain_logic) if domain_logic else []
 
-        label = "(domain listener) " + listener.name
+        label = "(domain event listener) " + listener.name
         if listener.name.endswith("IntegrationEventListener"):
-            label = "(integration listener) " + listener.name
+            label = "(integration event listener) " + listener.name
 
         flows.append(self.Flow(label, action, domain_logic, events))
         return flows
