@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from domain.model.intents.aggregate.add_aggregate_intent import AddAggregateIntent
+from domain.model.intents.aggregate.delete_aggregate_intent import DeleteAggregateIntent
 from domain.model.intents.database_provider import DatabaseProvider
 from domain.model.intents.persistence_provider import PersistenceProvider
 from domain.model.intents.repository.add_repository_intent import AddRepositoryIntent
-from domain.model.intents.intent import IntentType
+from domain.model.intents.intent_type import IntentType
 
 
 @dataclass(frozen=True)
@@ -15,6 +16,8 @@ class DistillIntentPrompt:
                          AddAggregateIntent().to_example_json() + \
                          "\n```\n\n### add_repository\n```json\n" + \
                          AddRepositoryIntent().to_example_json() + \
+                         "\n```\n\n### delete_aggregate\n```json\n" + \
+                         DeleteAggregateIntent().to_example_json() + \
                          "\n```"
 
         supported_intents = [

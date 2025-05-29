@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from abc import ABC
-from domain.model.intents.intent import IntentType
+from domain.model.intents.intent_type import IntentType
 
 
 @dataclass

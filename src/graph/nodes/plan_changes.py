@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,8 @@ def plan_changes(state: dict) -> dict:
             plan.extend(_plan_aggregate(intent, project_metadata))
         elif intent_type == "add_repository":
             plan.extend(_plan_repository(intent, project_metadata))
+        elif intent_type == "delete_aggregate":
+            plan.extend(_plan_delete_aggregate(intent, project_metadata))
         else:
             logger.warning("Unsupported intent type: %s", intent_type)
 
@@ -144,3 +147,21 @@ def _plan_repository(intent: dict, metadata: dict) -> list:
         })
 
     return plan
+
+def _plan_delete_aggregate(intent: dict, metadata: dict) -> list:
+    """Generate plan items for a delete_aggregate intent."""
+    logger.debug("Planning aggregate deletion...")
+
+    aggregate_name = intent.get("target")
+    domain_path = metadata["domain_path"]
+
+    file_path = f"{domain_path}/Model/{aggregate_name}/{aggregate_name}.cs"
+
+    logger.debug("Deleting aggregate file at %s", file_path)
+
+    return [{
+        "type": "delete_file",
+        "path": file_path,
+        "description": f"Delete aggregate root class {aggregate_name}"
+    }]
+

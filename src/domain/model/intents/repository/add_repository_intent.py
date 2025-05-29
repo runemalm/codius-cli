@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from domain.model.intents.intent_base import IntentBase
-from domain.model.intents.intent import IntentType
+from domain.model.intents.intent_type import IntentType
 from domain.model.intents.repository.add_repository_intent_details import AddRepositoryIntentDetails
 
 

@@ -26,6 +26,9 @@ def generate_code(state: dict) -> dict:
     all_files = []
 
     for file_plan in plan:
+        if file_plan["type"] != "create_file":
+            continue
+
         template_name = file_plan.get("template")
         context = file_plan.get("context", {})
         absolute_path = Path(file_plan["path"]).resolve()
