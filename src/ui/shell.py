@@ -3,8 +3,8 @@ from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 from rich.panel import Panel
 from pathlib import Path
-from dependency_injection.container import DependencyContainer
 
+from di import container
 from domain.services.config_service import ConfigService
 from domain.services.session_service import get_active_session, \
     get_or_create_active_session, save_session
@@ -33,7 +33,6 @@ def render_header():
 
 
 def render_session_info():
-    container = DependencyContainer.get_instance()
     config_service = container.resolve(ConfigService)
 
     session = get_or_create_active_session()
@@ -91,7 +90,6 @@ def run_shell():
                 continue
 
             # Get DI container
-            container = DependencyContainer.get_instance()
             project_metadata_service = container.resolve(ProjectMetadataService)
 
             # Clear memory state

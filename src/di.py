@@ -11,8 +11,9 @@ from infrastructure.services.project_metadata_service import ProjectMetadataServ
 from infrastructure.services.project_scanner_service import ProjectScannerService
 
 
-def setup_di():
-    container = DependencyContainer.get_instance()
+container = DependencyContainer.get_instance()
+
+def register_services():
 
     # When py-dependency-injection supports optional arguments in constructors (Config),
     # we simply register config services and call ensure_file_exist from main instead..
@@ -32,5 +33,3 @@ def setup_di():
             "config": container.resolve(ConfigService).get_config().llm.openai
         }
     )
-
-    return container

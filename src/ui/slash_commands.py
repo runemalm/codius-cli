@@ -1,5 +1,7 @@
 from rich.console import Console
 from rich.panel import Panel
+
+from di import container
 from domain.services.session_service import (
     get_active_session,
     create_and_activate_session,
@@ -8,7 +10,6 @@ from domain.services.session_service import (
 from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.project_scanner_service import ProjectScannerService
 from infrastructure.services.code_scanner.code_scanner import scan_building_blocks
-from dependency_injection.container import DependencyContainer
 
 console = Console()
 
@@ -53,7 +54,6 @@ def handle_slash_command(command: str):
         save_session(session)
 
     elif command == "/bb":
-        container = DependencyContainer.get_instance()
         project_metadata_service = container.resolve(ProjectMetadataService)
         project_scanner_service = container.resolve(ProjectScannerService)
 

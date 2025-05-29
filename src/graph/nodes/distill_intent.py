@@ -1,7 +1,6 @@
 import logging
 
-from dependency_injection.container import DependencyContainer
-
+from di import container
 from domain.model.prompts.distill_intent_prompt import DistillIntentPrompt
 from infrastructure.services.llm_service import LlmService
 
@@ -14,7 +13,6 @@ def distill_intent(state: dict) -> dict:
     prompt = DistillIntentPrompt(user_input=state["user_input"]).as_prompt()
     logger.debug("Constructed distill intent prompt (%d chars)", len(prompt))
 
-    container = DependencyContainer.get_instance()
     llm_service = container.resolve(LlmService)
 
     logger.debug("Calling LLM to distill intent...")

@@ -1,7 +1,6 @@
 import logging
 
-from dependency_injection.container import DependencyContainer
-
+from di import container
 from infrastructure.services.llm_service import LlmService
 
 logger = logging.getLogger(__name__)
@@ -13,7 +12,6 @@ def generate_domain_vision(state: dict) -> dict:
         state["domain_vision"] = "⚠️ No domain model found."
         return state
 
-    container = DependencyContainer.get_instance()
     llm_service = container.resolve(LlmService)
 
     # Build a summary string of building blocks
