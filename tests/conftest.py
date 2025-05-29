@@ -16,7 +16,7 @@ from domain.services.config_service import ConfigService
 from infrastructure.adapter.llm.llm_config import LlmConfig
 from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
-from infrastructure.services.code_scanner.code_scanner import CodeScannerService
+from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.llm_service import LlmService
 
 

@@ -7,7 +7,7 @@ from domain.services.session_service import (
     create_and_activate_session,
     save_session,
 )
-from infrastructure.services.code_scanner.code_scanner import CodeScannerService
+from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.project_scanner_service import ProjectScannerService
 
@@ -27,6 +27,7 @@ SLASH_COMMANDS = {
     "/bug": "Generate GitHub issue URL with session log",
     "/diff": "Show git diff of working directory",
     "/building-blocks": "Show building blocks in the current codebase",
+    "/flows": "Visualize command → action → domain logic → events",
 }
 
 
@@ -54,7 +55,6 @@ def handle_slash_command(command: str):
         save_session(session)
 
     elif command == "/building-blocks":
-        project_metadata_service = container.resolve(ProjectMetadataService)
         project_scanner_service = container.resolve(ProjectScannerService)
         code_scanner_service = container.resolve(CodeScannerService)
 
@@ -87,3 +87,41 @@ def handle_slash_command(command: str):
             ))
 
         console.print("[green]✅ Showing building blocks completed.[/green]")
+
+    elif command == "/flows":
+        project_scanner_service = container.resolve(ProjectScannerService)
+        code_scanner = CodeScannerService()
+
+        # Step 1: Extract metadata and building blocks
+        project_metadata = project_scanner_service.extract_project_metadata()
+        building_blocks = code_scanner.scan_building_blocks(project_metadata)
+
+        # Step 2: Scan flows using FlowScanner
+        flows = code_scanner.scan_flows(building_blocks)
+
+        if not flows:
+            console.print("[dim]No flows found.[/dim]")
+            return
+
+        # Step 3: Render flows horizontally
+        flow_lines = [flow.as_string() for flow in flows]
+        console.print(
+            Panel.fit("\n".join(flow_lines), title="Driving Adapter Flows", border_style="cyan")
+        )
+
+
+def _find_related_block(name: str, blocks, type_name: str):
+    # Try exact match or similar suffix match (e.g., RegisterPersonCommand → RegisterPersonAction)
+    for bb in blocks:
+        if bb.type.name == type_name and name.replace("Command", "") in bb.name:
+            return bb
+    return None
+
+def _find_called_block(action, blocks, valid_types):
+    # Naive heuristic: match any method name to known domain logic class names
+    for bb in blocks:
+        if bb.type.name in valid_types:
+            for method in action.methods:
+                if method.lower().startswith(bb.name.lower()):
+                    return bb
+    return None

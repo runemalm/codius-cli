@@ -7,7 +7,7 @@ from domain.model.port.llm_port import LlmPort
 from domain.services.config_service import ConfigService
 
 from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
-from infrastructure.services.code_scanner.code_scanner import CodeScannerService
+from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.llm_service import LlmService
 from infrastructure.services.logging_service import LoggingService
 from infrastructure.services.project_metadata_service import ProjectMetadataService

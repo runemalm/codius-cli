@@ -66,13 +66,17 @@ def run_shell():
 
     prompt_session = PromptSession(completer=slash_completer)
 
+    console.print()
     while True:
         try:
-            user_input = prompt_session.prompt("\n> ")
+            user_input = prompt_session.prompt("> ")
 
             if user_input.strip().lower() in {"exit", "quit"}:
                 console.print("[dim]Goodbye![/dim] 👋")
                 break
+
+            if not user_input.strip():
+                continue
 
             # Get active session
             session = get_active_session()

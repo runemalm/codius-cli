@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 from di import container
-from infrastructure.services.code_scanner.code_scanner import CodeScannerService
+from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 
 logger = logging.getLogger(__name__)
 
