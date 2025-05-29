@@ -3,33 +3,17 @@ from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 from rich.panel import Panel
 from pathlib import Path
+from dependency_injection.container import DependencyContainer
 
 from domain.services.config_service import ConfigService
-from domain.services.session_service import create_and_activate_session, \
-    get_active_session, \
+from domain.services.session_service import get_active_session, \
     get_or_create_active_session, save_session
 from infrastructure.services.graph_service import run_graph
 
-from dependency_injection.container import DependencyContainer
-
 from infrastructure.services.project_metadata_service import ProjectMetadataService
+from ui.slash_commands import SLASH_COMMANDS, handle_slash_command
 
 console = Console()
-
-# Slash command definitions
-SLASH_COMMANDS = {
-    "/clear": "Clear conversation history and free up context",
-    "/clearhistory": "Clear command history",
-    "/compact": "Compact conversation history with optional summary",
-    "/history": "Open command history",
-    "/sessions": "Browse previous sessions",
-    "/new": "Start a new modeling session",
-    "/help": "Show list of commands",
-    "/model": "Open model selection panel",
-    "/approval": "Open approval mode selection panel",
-    "/bug": "Generate GitHub issue URL with session log",
-    "/diff": "Show git diff of working directory"
-}
 
 slash_completer = WordCompleter(SLASH_COMMANDS.keys(), sentence=True)
 
@@ -41,7 +25,7 @@ def get_project_root() -> str:
 def render_header():
     console.print(
         Panel.fit(
-            "● [bold cyan]OpenDDD.NET CLI Assistant[/bold cyan] [dim](Alpha)[/dim]",
+            "● [bold cyan]bygga[/bold cyan] [dim](Alpha)[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )
@@ -75,30 +59,6 @@ def render_assistant_message(message: str):
     ))
 
 
-def dispatch_command(command):
-    session = get_active_session()
-
-    if command == "/clear":
-        session.clear()
-        console.print("[green]✅ Session state and history cleared.[/green]")
-        save_session(session)
-
-    elif command == "/clearhistory":
-        session.clear_history()
-        console.print("[green]✅ History cleared but modeling context preserved.[/green]")
-        save_session(session)
-
-    elif command.startswith("/compact"):
-        session.compact_history()
-        console.print("[green]✅ History compacted with summary retained in context.[/green]")
-        save_session(session)
-
-    elif command == "/new":
-        session = create_and_activate_session()
-        console.print(f"[green]✅ Created new session:[/green] {session.id}")
-        save_session(session)
-
-
 def run_shell():
     console.clear()
     render_header()
@@ -122,8 +82,9 @@ def run_shell():
             if user_input.startswith("/"):
                 command = user_input.strip().split()[0]
                 if command in SLASH_COMMANDS:
-                    console.print(f"[bold yellow]Running command:[/bold yellow] {command}")
-                    dispatch_command(command)
+                    console.print(
+                        f"[bold yellow]Running command:[/bold yellow] {command}")
+                    handle_slash_command(command)
                     render_session_info()
                 else:
                     console.print(f"[red]Unknown command:[/red] {command}")

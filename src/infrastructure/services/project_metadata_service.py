@@ -12,6 +12,10 @@ class ProjectMetadataService:
         self.workdir = Path(".").resolve()
         self.metadata_root = self.workdir / ".openddd"
 
+    def get_project_root(self) -> Path:
+        """Returns the root path of the current project."""
+        return self.workdir
+
     def get_config_path(self) -> Path:
         """Returns the full path to the global config.yaml."""
         return self.metadata_root / "config.yaml"
