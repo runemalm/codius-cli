@@ -7,6 +7,7 @@ from rich.text import Text
 
 from di import container
 from domain.model.config.approval_mode import ApprovalMode
+from domain.model.plan.plan_step_type import PlanStepType
 from domain.services import session_service
 from domain.services.config_service import ConfigService
 
@@ -59,9 +60,19 @@ def preview(state: dict) -> dict:
             ))
 
     config = container.resolve(ConfigService).get_config()
+
+    has_deletions = any(
+        PlanStepType.is_destructive(item.get("type"))
+        for item in state.get("plan", [])
+    )
+
     if config.approval_mode == ApprovalMode.AUTO:
-        state["approval"] = "apply"
-        return state
+        if has_deletions:
+            console.print(
+                "[yellow]⚠️ Destructive change detected. Approval is required.[/yellow]")
+        else:
+            state["approval"] = "apply"
+            return state
 
     # Manual approval path
     console.print("\nWould you like to apply these changes?")
