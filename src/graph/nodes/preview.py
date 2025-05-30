@@ -5,7 +5,10 @@ from rich.syntax import Syntax
 from rich.panel import Panel
 from rich.text import Text
 
+from di import container
+from domain.model.config.approval_mode import ApprovalMode
 from domain.services import session_service
+from domain.services.config_service import ConfigService
 
 
 def preview(state: dict) -> dict:
@@ -55,8 +58,17 @@ def preview(state: dict) -> dict:
                 border_style="red"
             ))
 
-    console.print("\nWould you like to apply these changes?")
-    console.print("Type [bold green]yes[/bold green] to apply or [bold red]no[/bold red] to abort:")
+    config = container.resolve(ConfigService).get_config()
+    if config.approval_mode == ApprovalMode.AUTO:
+        state["approval"] = "apply"
+        return state
 
-    state["approval"] = session.prompt("> ").strip().lower()
+    # Manual approval path
+    console.print("\nWould you like to apply these changes?")
+    console.print(
+        "Type [bold green]yes[/bold green] to apply or [bold red]no[/bold red] to abort:")
+
+    response = session.prompt("> ").strip().lower()
+    state["approval"] = "apply" if response in {"yes", "y"} else "no"
+
     return state

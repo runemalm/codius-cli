@@ -38,13 +38,15 @@ def render_session_info():
     session = get_or_create_active_session()
     workdir = get_project_root()
     model = config_service.get_config().llm.openai.model
+    approval_mode = config_service.get_config().approval_mode
     log_level = config_service.get_config().log_level
 
     console.print(Panel.fit(
         f"[bold]Session:[/bold] {session.id}\n"
         f"[bold]Workdir:[/bold] {workdir}\n"
         f"[bold]Model:[/bold] {model}\n"
-        f"[bold]Log level:[/bold] {log_level}",
+        f"[bold]Log level:[/bold] {log_level}\n"
+        f"[bold]Approval:[/bold] {approval_mode.value}",
         border_style="green",
     ))
 

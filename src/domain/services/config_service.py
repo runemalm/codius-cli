@@ -1,7 +1,8 @@
 from pathlib import Path
 import yaml
-from typing import Optional
+from typing import Any, Optional
 
+from domain.model.config.approval_mode import ApprovalMode
 from domain.model.config.config import Config
 from domain.model.config.llm_provider import LlmProvider
 
@@ -25,12 +26,14 @@ class ConfigService:
                 "api_key": "sk-... # Replace with your OpenAI API key"
             }
         },
+        "approval_mode": ApprovalMode.SUGGEST.value,
         "debug": False,
         "debug_llm": False,
         "log_level": "warning"
     }
 
     def __init__(self, config: Optional[Config] = None):
+        self._raw_config_dict: Optional[dict] = None
         self._structured_config: Optional[Config] = config
 
     def ensure_config_file_exists(self) -> None:
@@ -45,8 +48,8 @@ class ConfigService:
 
     def load_config_from_file(self) -> None:
         with self.CONFIG_FILE.open("r") as f:
-            raw = yaml.safe_load(f) or {}
-        self._structured_config = self._parse_structured(raw)
+            self._raw_config_dict = yaml.safe_load(f) or {}
+        self._structured_config = self._parse_structured(self._raw_config_dict)
 
     def _parse_structured(self, raw: dict) -> Config:
         llm_section = raw.get("llm", {})
@@ -55,6 +58,8 @@ class ConfigService:
             provider = LlmProvider(provider_str)
         except ValueError:
             raise ValueError(f"Unsupported LLM provider: {provider_str}")
+
+        approval_mode = ApprovalMode(raw.get("approval_mode", "suggest"))
 
         llm_config = LlmConfig(provider=provider)
 
@@ -99,6 +104,7 @@ class ConfigService:
 
         return Config(
             llm=llm_config,
+            approval_mode=approval_mode,
             debug=raw.get("debug", False),
             debug_llm=raw.get("debug_llm", False),
             log_level=log_level,
@@ -108,3 +114,18 @@ class ConfigService:
         if self._structured_config is None:
             raise RuntimeError("Config has not been loaded. Call `load_config_from_file()` first.")
         return self._structured_config
+
+    def set_config_value(self, key: str, value: Any):
+        if self._raw_config_dict is None:
+            raise RuntimeError("Config has not been loaded yet.")
+
+        keys = key.split(".")
+        d = self._raw_config_dict
+        for part in keys[:-1]:
+            d = d.setdefault(part, {})
+        d[keys[-1]] = value
+
+        with open(self.CONFIG_FILE, "w") as f:
+            yaml.dump(self._raw_config_dict, f, sort_keys=False)
+
+        self._structured_config = self._parse_structured(self._raw_config_dict)

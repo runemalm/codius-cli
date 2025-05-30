@@ -1,7 +1,10 @@
+from prompt_toolkit.shortcuts import radiolist_dialog
 from rich.console import Console
 from rich.panel import Panel
 
 from di import container
+from domain.model.config.approval_mode import ApprovalMode
+from domain.services.config_service import ConfigService
 from domain.services.session_service import (
     get_active_session,
     create_and_activate_session,
@@ -17,15 +20,13 @@ SLASH_COMMANDS = {
     "/clear": "Clear conversation history and free up context",
     "/clearhistory": "Clear command history",
     "/compact": "Compact conversation history with optional summary",
-    "/history": "Open command history",
+    "/history": "Open session interaction history",
     "/sessions": "Browse previous sessions",
-    "/new": "Start a new modeling session",
     "/help": "Show list of commands",
     "/model": "Open model selection panel",
     "/approval": "Open approval mode selection panel",
-    "/bug": "Generate GitHub issue URL with session log",
     "/diff": "Show git diff of working directory",
-    "/overview": "Visualize building blocks and driving adapter flows in the current codebase",
+    "/visualize": "Visualize building blocks and driving adapter flows in the current codebase",
 }
 
 
@@ -47,12 +48,31 @@ def handle_slash_command(command: str):
         console.print("[green]✅ History compacted with summary retained in context.[/green]")
         save_session(session)
 
-    elif command == "/new":
-        session = create_and_activate_session()
-        console.print(f"[green]✅ Created new session:[/green] {session.id}")
-        save_session(session)
+    elif command == "/approval":
+        config_service = container.resolve(ConfigService)
+        config = config_service.get_config()
+        current = config.approval_mode
 
-    elif command == "/overview":
+        console.print(f"[bold]Current approval mode:[/bold] {current.value}")
+        console.print("Choose how approvals should be handled:\n")
+        console.print("  [1] suggest  – Ask before applying changes (default)")
+        console.print("  [2] auto     – Automatically apply without asking\n")
+
+        user_input = input("Enter choice [1-2]: ").strip()
+
+        if user_input == "1":
+            selected = "suggest"
+        elif user_input == "2":
+            selected = "auto"
+        else:
+            console.print("[yellow]No changes made.[/yellow]")
+            return
+
+        config_service.set_config_value("approval_mode", selected)
+        console.print(
+            f"[green]✅ Approval mode updated to:[/green] [bold]{selected}[/bold]")
+
+    elif command == "/visualize":
         handle_slash_command("/building-blocks")
         handle_slash_command("/flows")
 
