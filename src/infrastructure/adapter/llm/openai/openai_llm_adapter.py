@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 class OpenAiLlmAdapter(LlmPort):
     def __init__(self, config: OpenAiConfig):
         self.model = config.model
-        self.api_key = config.api_key
+        self.api_key = config.resolve_api_key()
         if not self.api_key or not self.api_key.startswith("sk-"):
-            logger.warning("Missing or invalid OpenAI API key")
-            self.client = None
+            logger.error("Missing or invalid OpenAI API key")
+            raise RuntimeError("Anthropic API key is not set. Set it via config or OPENAI_API_KEY.")
         else:
             self.client = openai.OpenAI(api_key=self.api_key)
 

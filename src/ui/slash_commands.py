@@ -1,17 +1,23 @@
-from prompt_toolkit.shortcuts import radiolist_dialog
+from getpass import getpass
+
 from rich.console import Console
 from rich.panel import Panel
 
 from di import container
-from domain.model.config.approval_mode import ApprovalMode
+from domain.model.config.anthropic.anthropic_llm_model import AnthropicModel
+from domain.model.config.openai.openai_llm_model import OpenAiModel
 from domain.services.config_service import ConfigService
 from domain.services.session_service import (
     get_active_session,
-    create_and_activate_session,
     save_session,
 )
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.project_scanner_service import ProjectScannerService
+
+MODEL_CHOICES = {
+    "openai": list(OpenAiModel),
+    "anthropic": list(AnthropicModel),
+}
 
 console = Console()
 
@@ -33,6 +39,9 @@ SLASH_COMMANDS = {
 def handle_slash_command(command: str):
     session = get_active_session()
 
+    config_service = container.resolve(ConfigService)
+    config = config_service.get_config()
+
     if command == "/clear":
         session.clear()
         console.print("[green]✅ Session state and history cleared.[/green]")
@@ -49,8 +58,6 @@ def handle_slash_command(command: str):
         save_session(session)
 
     elif command == "/approval":
-        config_service = container.resolve(ConfigService)
-        config = config_service.get_config()
         current = config.approval_mode
 
         console.print(f"[bold]Current approval mode:[/bold] {current.value}")
@@ -71,6 +78,54 @@ def handle_slash_command(command: str):
         config_service.set_config_value("approval_mode", selected)
         console.print(
             f"[green]✅ Approval mode updated to:[/green] [bold]{selected}[/bold]")
+
+    elif command == "/model":
+        current_provider = config.llm.provider.value
+        current_model = getattr(config.llm.openai, "model", None) \
+            if current_provider == "openai" \
+            else getattr(config.llm.anthropic, "model", None)
+
+        console.print(f"[bold]Current LLM provider:[/bold] {current_provider}")
+        console.print(f"[bold]Current model:[/bold] {current_model or '[not set]'}\n")
+
+        # Build combined numbered choices
+        all_combinations = []
+        for provider, models in MODEL_CHOICES.items():
+            for model in models:
+                all_combinations.append((provider, model.value))
+
+        # Show options
+        console.print("Available LLM configurations:")
+        for idx, (provider, model) in enumerate(all_combinations, 1):
+            console.print(f"  [{idx}] {provider} → {model}")
+
+        # Pick combination
+        selection = input(f"\nSelect [1-{len(all_combinations)}]: ").strip()
+        if not selection.isdigit() or not (1 <= int(selection) <= len(all_combinations)):
+            console.print("[red]❌ Invalid selection. No changes made.[/red]")
+            return
+
+        provider, model = all_combinations[int(selection) - 1]
+
+        # Prompt for API key if missing
+        llm_section = getattr(config.llm, provider, None)
+        if llm_section is None:
+            raise ValueError(f"LLM config for provider '{provider}' not found.")
+
+        current_key = llm_section.api_key
+
+        if not current_key:
+            key = getpass(
+                f"Enter API key for {provider} (leave blank to skip): ").strip()
+            if key:
+                config_service.set_config_value(f"llm.{provider}.api_key", key)
+
+        # Set provider and model
+        config_service.set_config_value("llm.provider", provider)
+        config_service.set_config_value(f"llm.{provider}.model", model)
+
+        console.print(
+            f"[green]✅ LLM updated to:[/green] [bold]{provider} → {model}[/bold]")
 
     elif command == "/visualize":
         handle_slash_command("/building-blocks")

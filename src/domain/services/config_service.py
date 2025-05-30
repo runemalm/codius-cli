@@ -1,10 +1,13 @@
+from enum import Enum
 from pathlib import Path
 import yaml
 from typing import Any, Optional
 
+from domain.model.config.anthropic.anthropic_llm_model import AnthropicModel
 from domain.model.config.approval_mode import ApprovalMode
 from domain.model.config.config import Config
 from domain.model.config.llm_provider import LlmProvider
+from domain.model.config.openai.openai_llm_model import OpenAiModel
 
 from infrastructure.adapter.llm.anthropic.anthropic_config import AnthropicConfig
 from infrastructure.adapter.llm.google.google_config import GoogleConfig
@@ -59,48 +62,29 @@ class ConfigService:
         except ValueError:
             raise ValueError(f"Unsupported LLM provider: {provider_str}")
 
-        approval_mode = ApprovalMode(raw.get("approval_mode", "suggest"))
-
         llm_config = LlmConfig(provider=provider)
 
-        if provider == "openai":
-            openai = llm_section.get("openai", {})
-            llm_config.openai = OpenAiConfig(
-                model=openai.get("model", "gpt-4o"),
-                api_key=openai.get("api_key", "")
-            )
-        elif provider == "anthropic":
-            anthropic = llm_section.get("anthropic", {})
-            llm_config.anthropic = AnthropicConfig(
-                model=anthropic.get("model", "claude-3-opus"),
-                api_key=anthropic.get("api_key", "")
-            )
-        elif provider == "google":
-            google = llm_section.get("google", {})
-            llm_config.google = GoogleConfig(
-                model=google.get("model", "gemini-pro"),
-                api_key=google.get("api_key", "")
-            )
-        elif provider == "mistral":
-            mistral = llm_section.get("mistral", {})
-            llm_config.mistral = MistralConfig(
-                model=mistral.get("model", "mistral-small"),
-                api_key=mistral.get("api_key", "")
-            )
-        elif provider == "groq":
-            groq = llm_section.get("groq", {})
-            llm_config.groq = GroqConfig(
-                model=groq.get("model", "mixtral-8x7b"),
-                api_key=groq.get("api_key", "")
-            )
-        else:
-            raise ValueError(f"Unsupported LLM provider: {provider}")
+        openai = llm_section.get("openai", {})
+        raw_model = openai.get("model") or "gpt-4o"
+        llm_config.openai = OpenAiConfig(
+            model=OpenAiModel(raw_model),
+            api_key=openai.get("api_key", "")
+        )
+
+        anthropic = llm_section.get("anthropic", {})
+        raw_model = anthropic.get("model") or "claude-3-opus"
+        llm_config.anthropic = AnthropicConfig(
+            model=AnthropicModel(raw_model),
+            api_key=anthropic.get("api_key", "")
+        )
 
         log_level = raw.get("log_level", "warning").lower()
         allowed_levels = {"debug", "info", "warning", "error", "critical"}
         if log_level not in allowed_levels:
             print(f"⚠️ Unknown log_level '{log_level}', falling back to 'warning'")
             log_level = "warning"
+
+        approval_mode = ApprovalMode(raw.get("approval_mode", "suggest"))
 
         return Config(
             llm=llm_config,
@@ -123,7 +107,7 @@ class ConfigService:
         d = self._raw_config_dict
         for part in keys[:-1]:
             d = d.setdefault(part, {})
-        d[keys[-1]] = value
+        d[keys[-1]] = value.value if isinstance(value, Enum) else value
 
         with open(self.CONFIG_FILE, "w") as f:
             yaml.dump(self._raw_config_dict, f, sort_keys=False)
