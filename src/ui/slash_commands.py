@@ -8,7 +8,6 @@ from domain.services.session_service import (
     save_session,
 )
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
-from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.project_scanner_service import ProjectScannerService
 
 console = Console()
@@ -26,8 +25,7 @@ SLASH_COMMANDS = {
     "/approval": "Open approval mode selection panel",
     "/bug": "Generate GitHub issue URL with session log",
     "/diff": "Show git diff of working directory",
-    "/building-blocks": "Show building blocks in the current codebase",
-    "/flows": "Visualize command → action → domain logic → events",
+    "/overview": "Visualize building blocks and driving adapter flows in the current codebase",
 }
 
 
@@ -53,6 +51,10 @@ def handle_slash_command(command: str):
         session = create_and_activate_session()
         console.print(f"[green]✅ Created new session:[/green] {session.id}")
         save_session(session)
+
+    elif command == "/overview":
+        handle_slash_command("/building-blocks")
+        handle_slash_command("/flows")
 
     elif command == "/building-blocks":
         project_scanner_service = container.resolve(ProjectScannerService)
@@ -85,8 +87,6 @@ def handle_slash_command(command: str):
                 title=f"[bold magenta]{bb_type.value}s[/bold magenta]",
                 border_style="magenta"
             ))
-
-        console.print("[green]✅ Showing building blocks completed.[/green]")
 
     elif command == "/flows":
         project_scanner_service = container.resolve(ProjectScannerService)
