@@ -25,7 +25,7 @@ def get_project_root() -> str:
 def render_header():
     console.print(
         Panel.fit(
-            "● [bold cyan]bygga[/bold cyan] [dim](alpha)[/dim]",
+            "● [bold cyan]bygga coding assistant[/bold cyan] [dim](alpha)[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )

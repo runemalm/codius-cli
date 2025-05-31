@@ -1,6 +1,7 @@
 from getpass import getpass
 
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.panel import Panel
 
 from di import container
@@ -13,6 +14,7 @@ from domain.services.session_service import (
 )
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.project_scanner_service import ProjectScannerService
+from utils import format_timestamp
 
 MODEL_CHOICES = {
     "openai": list(OpenAiModel),
@@ -56,6 +58,32 @@ def handle_slash_command(command: str):
         session.compact_history()
         console.print("[green]✅ History compacted with summary retained in context.[/green]")
         save_session(session)
+
+    elif command.startswith("/history"):
+        history = session.history.messages
+
+        if not history:
+            console.print("[bold yellow]⚠️ No conversation history found.[/bold yellow]")
+            return
+
+        console.print(
+            f"[bold underline green]Conversation History for session {session.id}[/bold underline green]\n")
+
+        for message in history:
+            role = message.role.lower()
+            time_str = format_timestamp(message.timestamp)
+            title = f"{role.capitalize()} — {time_str}"
+            style = "magenta" if role == "user" else "cyan"
+            content = Markdown(message.content)
+
+            panel = Panel.fit(
+                content,
+                title=title,
+                title_align="left",
+                border_style=style,
+                padding=(1, 2),
+            )
+            console.print(panel)
 
     elif command == "/approval":
         current = config.approval_mode

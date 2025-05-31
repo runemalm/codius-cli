@@ -12,6 +12,7 @@ langchain = "*"
 langchain-openai = "*"
 py-dependency-injection = "*"
 jinja2 = "*"
+python-dateutil = "*"
 
 [dev-packages]
 pytest = "*"
