@@ -1,5 +1,6 @@
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.key_binding import KeyBindings
 from rich.console import Console
 from rich.panel import Panel
 
@@ -13,8 +14,13 @@ from infrastructure.services.project_metadata_service import ProjectMetadataServ
 from ui.slash_commands import SLASH_COMMANDS, handle_slash_command
 
 console = Console()
-
 slash_completer = WordCompleter(SLASH_COMMANDS.keys(), sentence=True)
+bindings = KeyBindings()
+
+
+@bindings.add("c-j")
+def _(event):
+    event.current_buffer.insert_text("\n")
 
 
 def render_header():
@@ -67,7 +73,7 @@ def run_shell():
     render_session_info()
     console.print(Panel.fit("[dim]Type your modeling request or use slash-commands like /diff[/dim]"))
 
-    prompt_session = PromptSession(completer=slash_completer)
+    prompt_session = PromptSession(completer=slash_completer, key_bindings=bindings)
 
     console.print()
     while True:
