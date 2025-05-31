@@ -15,7 +15,7 @@ from domain.model.config.openai.openai_llm_model import OpenAiModel
 from domain.services.config_service import ConfigService
 from domain.services.session_service import (
     get_active_session,
-    get_active_session_id, list_sessions, save_session,
+    get_active_session_id, list_sessions, save_session, summarize_session,
 )
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.project_scanner_service import ProjectScannerService
@@ -61,9 +61,11 @@ def handle_slash_command(command: str):
         save_session(session)
 
     elif command.startswith("/compact"):
-        session.compact_history()
-        console.print("[green]✅ History compacted with summary retained in context.[/green]")
+        summarize_session(session)
         save_session(session)
+        console.print("[bold green]✅ Session compacted.[/bold green]")
+        if session.state.summary:
+            console.print(f"\n[dim]Summary:[/dim]\n{session.state.summary}")
 
     elif command.startswith("/history"):
         history = session.history.messages

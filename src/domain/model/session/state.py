@@ -16,6 +16,14 @@ class State:
     project_metadata: Optional[dict] = None
     building_blocks: List[BuildingBlock] = field(default_factory=list)
 
+    def clear_for_repl_cycle(self):
+        self.user_input = ""
+        self.intent = None
+        self.plan = None
+        self.generated_files.clear()
+        self.final_output = None
+        self.status = "?"
+
     def update_with_graph_result(self, result: dict):
         self.intent = result.get("intent")
         self.plan = result.get("plan")
@@ -28,6 +36,15 @@ class State:
             self.building_blocks = [
                 BuildingBlock.from_dict(bb) for bb in result["building_blocks"]
             ]
+
+    def summarize(self, summary: str):
+        self.summary = summary
+        self.user_input = ""
+        self.intent = None
+        self.plan = None
+        self.generated_files.clear()
+        self.final_output = None
+        self.status = "compacted"
 
     def to_dict(self) -> dict:
         return {

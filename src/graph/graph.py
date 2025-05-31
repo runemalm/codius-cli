@@ -7,6 +7,7 @@ from graph.nodes.enforce_conventions import enforce_conventions
 from graph.nodes.extract_building_blocks import extract_building_blocks
 from graph.nodes.extract_project_metadata import extract_project_metadata
 from graph.nodes.generate_code import generate_code
+from graph.nodes.handle_intent_error import handle_intent_error
 from graph.nodes.handle_unclear_intent import handle_unclear_intent
 from graph.nodes.integrate_changes import integrate_changes
 from graph.nodes.plan_changes import plan_changes
@@ -23,6 +24,7 @@ def build_graph():
     # Add nodes
     graph.add_node("DistillIntent", distill_intent)
     graph.add_node("HandleUnclearIntent", handle_unclear_intent)
+    graph.add_node("HandleIntentError", handle_intent_error)
     graph.add_node("ExtractProjectMetadata", extract_project_metadata)
     graph.add_node("ExtractBuildingBlocks", extract_building_blocks)
     graph.add_node("EnforceConventions", enforce_conventions)
@@ -36,7 +38,8 @@ def build_graph():
     # Routers
     graph.add_conditional_edges("DistillIntent", route_by_intent, {
         "valid": "ExtractProjectMetadata",
-        "unclear": "HandleUnclearIntent"
+        "unclear": "HandleUnclearIntent",
+        "error": "HandleIntentError"
     })
     graph.add_conditional_edges("Preview", route_by_user_approval, {
         "apply": "ApplyChanges",

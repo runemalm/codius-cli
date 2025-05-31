@@ -19,7 +19,12 @@ class LlmService:
         if self.config.debug_llm:
             print_highlighted(prompt, title="📨 Prompt Sent to LLM")
 
-        response = self.llm.call_prompt(prompt)
+        try:
+            response = self.llm.call_prompt(prompt)
+        except Exception as e:
+            logger.error("Error while calling LLM: %s", e)
+            raise RuntimeError(
+                "❌ Failed to call LLM service. Please try again later.") from e
 
         if self.config.debug_llm:
             print_highlighted(response, title="🧠 LLM Response")

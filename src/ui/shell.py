@@ -105,8 +105,8 @@ def run_shell():
             # Get DI container
             project_metadata_service = container.resolve(ProjectMetadataService)
 
-            # Clear memory state
-            session.clear_state()
+            # Clear memory for next REPL cycle
+            session.clear_state_for_repl_cycle()
 
             # Clear on-disk files
             project_metadata_service.clear_generated_files()

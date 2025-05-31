@@ -13,7 +13,10 @@ def route_by_intent(state: dict) -> str:
                 continue
             intent_type = intent.get("intent", "").strip().lower()
             logger.debug("Intent type found: %s", intent_type)
-            if intent_type and intent_type not in {"none", "greeting", "unsure"}:
+
+            if intent_type == "error":
+                return "error"
+            elif intent_type and intent_type not in {"none", "greeting", "unsure"}:
                 return "valid"
 
     logger.debug("No valid intent found, routing to 'unclear'")

@@ -14,6 +14,10 @@ class Session:
     history: History = field(default_factory=History)
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
+    def update_with_graph_result(self, result: dict):
+        self.append_user_message(result["user_input"])
+        self.state.update_with_graph_result(result)
+
     def append_user_message(self, content: str):
         self.history.append("user", content)
 
@@ -24,6 +28,9 @@ class Session:
         """Resets both state and history."""
         self.state = State()
 
+    def clear_state_for_repl_cycle(self):
+        self.state.clear_for_repl_cycle()
+
     def clear(self):
         """Resets both state and history."""
         self.state = State()
@@ -33,14 +40,8 @@ class Session:
         """Clears only history."""
         self.history.clear()
 
-    def compact_history(self, summary: str | None = None):
-        """Clears history but saves a compact summary into the state."""
-        if summary:
-            self.state.summary = summary
-        elif self.state.intent:
-            self.state.summary = f"Modeling session for intent: {self.state.intent}"
-        else:
-            self.state.summary = "Compact session without specific intent."
+    def apply_compaction(self, summary: str):
+        self.state.summarize(summary)
         self.history.clear()
 
     def should_be_replaced(self) -> bool:

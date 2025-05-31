@@ -9,6 +9,7 @@ from domain.model.intents.intent_type import IntentType
 
 @dataclass(frozen=True)
 class DistillIntentPrompt:
+    summary: str
     user_input: str
 
     def as_prompt(self) -> str:
@@ -33,9 +34,19 @@ class DistillIntentPrompt:
         persistence_text = "\n".join(persistence_providers)
         database_text = "\n".join(database_providers)
 
+        context_section = f"""
+### Context
+
+Previous modeling session summary (if available):
+
+{self.summary.strip()}
+
+""" if self.summary else ""
+
         return f"""
 You are a modeling assistant for a Domain-Driven Design (DDD) codebase built with OpenDDD.NET.
 
+{context_section}
 The user has written the following instruction:
 
 "{self.user_input}"

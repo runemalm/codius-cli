@@ -10,14 +10,20 @@ logger = logging.getLogger(__name__)
 def distill_intent(state: dict) -> dict:
     logger.debug("Running distill_intent with state keys: %s", list(state.keys()))
 
-    prompt = DistillIntentPrompt(user_input=state["user_input"]).as_prompt()
-    logger.debug("Constructed distill intent prompt (%d chars)", len(prompt))
+    try:
+        prompt = DistillIntentPrompt(summary=state["summary"],
+                                     user_input=state["user_input"]).as_prompt()
+        logger.debug("Constructed distill intent prompt (%d chars)", len(prompt))
 
-    llm_service = container.resolve(LlmService)
+        llm_service = container.resolve(LlmService)
 
-    logger.debug("Calling LLM to distill intent...")
-    response = llm_service.call_prompt(prompt)
-    logger.debug("LLM response received.")
+        logger.debug("Calling LLM to distill intent...")
+        response = llm_service.call_prompt(prompt)
+        logger.debug("LLM response received.")
+    except Exception as e:
+        logger.error("Error during intent distillation: %s", e)
+        state["intent"] = {"intent": "error", "error_message": str(e)}
+        return state
 
     parsed = llm_service.try_extract_json(response)
 
