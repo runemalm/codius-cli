@@ -2,7 +2,6 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 from rich.panel import Panel
-from pathlib import Path
 
 from di import container
 from domain.services.config_service import ConfigService
@@ -18,14 +17,10 @@ console = Console()
 slash_completer = WordCompleter(SLASH_COMMANDS.keys(), sentence=True)
 
 
-def get_project_root() -> str:
-    return str(Path(".").resolve())
-
-
 def render_header():
     console.print(
         Panel.fit(
-            "● [bold cyan]bygga coding assistant[/bold cyan] [dim](alpha)[/dim]",
+            "● [bold cyan]DDD Coding Assistant[/bold cyan] [dim](alpha)[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )
@@ -34,9 +29,11 @@ def render_header():
 
 def render_session_info():
     config_service = container.resolve(ConfigService)
+    project_metadata_service = container.resolve(ProjectMetadataService)
 
     session = get_or_create_active_session()
-    workdir = get_project_root()
+
+    workdir = project_metadata_service.get_project_root().resolve()
 
     config = config_service.get_config()
     provider = config.llm.provider.value
