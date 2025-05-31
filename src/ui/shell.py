@@ -26,7 +26,7 @@ def _(event):
 def render_header():
     console.print(
         Panel.fit(
-            "● [bold cyan]DDD Coding Assistant[/bold cyan] [dim](alpha)[/dim]",
+            "● [bold cyan]Domain-Driven Design Coding Assistant[/bold cyan] [dim](alpha)[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )

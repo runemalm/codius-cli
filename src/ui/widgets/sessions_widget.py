@@ -20,7 +20,7 @@ def format_timestamp(timestamp: str) -> str:
 
 
 def show_sessions_widget():
-    sessions = list_sessions()
+    sessions = sorted(list_sessions(), key=lambda s: s.created_at, reverse=True)
     if not sessions:
         console.print("[bold yellow]⚠️ No saved sessions found.[/bold yellow]")
         return
@@ -82,8 +82,8 @@ def show_sessions_widget():
     def _(event):
         selected = sessions[index[0]]
         save_session(selected)
-        console.print(f"\n[bold green]✅ Resumed session:[/bold green] {selected.id}")
         event.app.exit()
+        # console.print(f"[bold green]✅ Resumed session:[/bold green] {selected.id}")
 
     @kb.add("escape")
     @kb.add("q")
