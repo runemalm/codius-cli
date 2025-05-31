@@ -1,8 +1,9 @@
 from getpass import getpass
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.markdown import Markdown
 from rich.panel import Panel
+from rich.table import Table
 
 from di import container
 from domain.model.config.anthropic.anthropic_llm_model import AnthropicModel
@@ -154,6 +155,35 @@ def handle_slash_command(command: str):
 
         console.print(
             f"[green]✅ LLM updated to:[/green] [bold]{provider} → {model}[/bold]")
+
+    elif command == "/help":
+        commands = Table(show_header=False, box=None, padding=(0, 2))
+        commands.add_row("[bold]/clear[/bold]", "clear screen & session context")
+        commands.add_row("[bold]/clearhistory[/bold]", "clear only the session history")
+        commands.add_row("[bold]/compact[/bold]", "condense history into a summary")
+        commands.add_row("[bold]/history[/bold]", "show conversation history")
+        commands.add_row("[bold]/sessions[/bold]", "browse previous sessions")
+        commands.add_row("[bold]/help[/bold]", "show this help overlay")
+        commands.add_row("[bold]/model[/bold]", "switch the LLM model in-session")
+        commands.add_row("[bold]/approval[/bold]", "switch auto-approval mode")
+        commands.add_row("[bold]/diff[/bold]", "view working tree git diff")
+        commands.add_row("[bold]/visualize[/bold]", "show domain model overview (experimental)")
+
+        shortcuts = Table(show_header=False, box=None, padding=(0, 2))
+        shortcuts.add_row("[bold]Enter[/bold]", "send message")
+        shortcuts.add_row("[bold]Ctrl+J[/bold]", "insert newline")
+        shortcuts.add_row("[bold]Ctrl+C[/bold]", "quit assistant")
+
+        console.print(Panel.fit(
+            Group(
+                "[bold underline]Available commands[/bold underline]\n",
+                commands,
+                "\n[bold underline]Keyboard shortcuts[/bold underline]\n",
+                shortcuts
+            ),
+            title="🤖 DDD Coding Assistant Help",
+            border_style="blue"
+        ))
 
     elif command == "/visualize":
         handle_slash_command("/building-blocks")
