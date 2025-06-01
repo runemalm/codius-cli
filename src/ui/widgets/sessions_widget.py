@@ -60,7 +60,7 @@ def show_sessions_widget():
             if is_selected:
                 style = "fg:green bold"
             elif is_active:
-                style = "fg:#888888"  # A dim gray for non-selected active session
+                style = "fg:#888888"
             else:
                 style = ""
 

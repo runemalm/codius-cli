@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from pathlib import Path
 from domain.model.session.session import Session
 from domain.model.session.state import State
@@ -31,7 +32,9 @@ class SessionRepository(BaseRepository[Session]):
         else:
             history = History()
 
-        return Session(id=id, state=state, history=history)
+        created_at = self._id_to_iso8601(id)
+
+        return Session(id=id, state=state, history=history, created_at=created_at)
 
     def get_all(self) -> list[Session]:
         if not SESSIONS_DIR.exists():
@@ -65,3 +68,12 @@ class SessionRepository(BaseRepository[Session]):
     def get_active_session(self) -> Session:
         session_id = ACTIVE_FILE.read_text().strip()
         return self.get(session_id)
+
+    def _id_to_iso8601(self, id: str) -> str:
+        try:
+            ts_part = id.replace("session_", "")
+            dt = datetime.strptime(ts_part, "%Y-%m-%dT%H-%M-%S")
+            return dt.isoformat(timespec="seconds")
+        except ValueError:
+            raise ValueError(f"Invalid id format: {id}")
+
