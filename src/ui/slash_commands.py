@@ -1,9 +1,5 @@
 from getpass import getpass
 
-from prompt_toolkit import Application
-from prompt_toolkit.formatted_text import FormattedText
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.layout import FormattedTextControl, Layout, Window
 from rich.console import Console, Group
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -15,11 +11,11 @@ from domain.model.config.openai.openai_llm_model import OpenAiModel
 from domain.services.config_service import ConfigService
 from domain.services.session_service import (
     get_active_session,
-    get_active_session_id, list_sessions, save_session, summarize_session,
+    save_session, summarize_session,
 )
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.project_scanner_service import ProjectScannerService
-from ui.widgets.sessions_widget import show_sessions_widget
+from ui.sessions_ui import show_sessions_panel
 from utils import format_timestamp
 
 MODEL_CHOICES = {
@@ -94,7 +90,7 @@ def handle_slash_command(command: str):
             console.print(panel)
 
     elif command == "/sessions":
-        show_sessions_widget()
+        show_sessions_panel()
 
     elif command == "/approval":
         current = config.approval_mode
