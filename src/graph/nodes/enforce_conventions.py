@@ -1,4 +1,5 @@
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +32,19 @@ def _enforce_aggregate_conventions(intent: dict) -> dict:
     logger.debug("Enforcing aggregate conventions...")
 
     details = intent.setdefault("details", {})
-    details.setdefault("properties", [])
-    details.setdefault("commands", [])
-    details.setdefault("events", [])
+    properties = details.setdefault("properties", [])
+    commands = details.setdefault("commands", [])
+    events = details.setdefault("events", [])
+
+    # Normalize property names to PascalCase
+    for prop in properties:
+        original_name = prop.get("name", "")
+        pascal_name = _to_pascal_case(original_name)
+        if original_name != pascal_name:
+            logger.debug("Renaming property '%s' -> '%s'", original_name, pascal_name)
+            prop["name"] = pascal_name
+
+    # TODO: Enforce command/event naming if needed
 
     return intent
 
@@ -51,6 +62,28 @@ def _enforce_repository_conventions(intent: dict) -> dict:
         if name and not name.endswith("Async"):
             method["name"] = f"{name}Async"
 
-        method.setdefault("parameters", [])
+        parameters = method.setdefault("parameters", [])
+        for param in parameters:
+            original_name = param.get("name", "")
+            camel_name = _to_camel_case(original_name)
+            if original_name != camel_name:
+                logger.debug("Renaming parameter '%s' -> '%s'", original_name, camel_name)
+                param["name"] = camel_name
 
     return intent
+
+
+def _to_pascal_case(name: str) -> str:
+    """Convert string to PascalCase"""
+    if not name:
+        return name
+    words = re.findall(r'[A-Z]?[a-z]+|[A-Z]+(?![a-z])', name)
+    return ''.join(word.capitalize() for word in words)
+
+
+def _to_camel_case(name: str) -> str:
+    """Convert string to camelCase"""
+    if not name:
+        return name
+    pascal = _to_pascal_case(name)
+    return pascal[0].lower() + pascal[1:] if len(pascal) > 1 else pascal.lower()
