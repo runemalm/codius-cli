@@ -37,7 +37,7 @@ class DistillIntentPrompt:
         context_section = f"""
 ### Context
 
-Previous modeling session summary (if available):
+Previous modeling session summary:
 
 {self.summary.strip()}
 

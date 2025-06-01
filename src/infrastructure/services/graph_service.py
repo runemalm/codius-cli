@@ -21,7 +21,7 @@ def run_graph(session: Session, user_input: str) -> str:
 
     # Run LangGraph
     graph = build_graph()
-    result = graph.invoke(graph_input)
+    result = graph.invoke(graph_input, config={"recursion_limit": 1000})
 
     # Update session state
     session.update_with_graph_result(result)

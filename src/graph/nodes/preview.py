@@ -10,6 +10,7 @@ from domain.model.config.approval_mode import ApprovalMode
 from domain.model.plan.plan_step_type import PlanStepType
 from domain.services import session_service
 from domain.services.config_service import ConfigService
+from ui.approval_ui import show_approval_ui
 
 
 def preview(state: dict) -> dict:
@@ -76,10 +77,21 @@ def preview(state: dict) -> dict:
 
     # Manual approval path
     console.print("\nWould you like to apply these changes?")
-    console.print(
-        "Type [bold green]yes[/bold green] to apply or [bold red]no[/bold red] to abort:")
 
-    response = session.prompt("> ").strip().lower()
-    state["approval"] = "apply" if response in {"yes", "y"} else "no"
+    console.print("\nUse ↑/↓ to select an action, then press Enter:\n")
+    response = show_approval_ui()
+
+    if response in {"yes", "y", "apply"}:
+        state["approval"] = "apply"
+    elif response in {"no", "n", "abort"}:
+        state["approval"] = "abort"
+    elif response in {"change", "revise"}:
+        console.print("Please describe what you'd like to change:")
+        feedback = session.prompt("> ")
+        state["approval"] = "revise"
+        state["revision_feedback"] = feedback
+    else:
+        console.print("[red]Invalid choice. Please type yes, no, or change.[/red]")
+        return preview(state)  # re-run prompt
 
     return state

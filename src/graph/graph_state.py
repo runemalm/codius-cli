@@ -1,15 +1,18 @@
-from typing import TypedDict
+from typing import Any, Dict, List, TypedDict
 
 
 class GraphState(TypedDict, total=False):
     user_input: str
-    intent: dict
-    plan: dict
-    generated_files: list[dict]
-    final_output: str
+    intent: List[Dict[str, Any]]
+    plan: List[Dict[str, Any]]
+    generated_files: List[Dict[str, Any]]
     approval: str
+    revision_feedback: str
+    revision_history: List[Dict[str, Any]]
+    revise_mode: bool
+    final_output: str
     session_id: str
-    history: list[dict]
+    history: List[Dict[str, Any]]
     summary: str
-    project_metadata: dict
-    building_blocks: list[dict]
+    project_metadata: Dict[str, Any]
+    building_blocks: List[Dict[str, Any]]
