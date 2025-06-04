@@ -5,8 +5,10 @@ from dependency_injection.container import DependencyContainer
 from domain.model.config.config import Config
 from domain.model.port.llm_port import LlmPort
 from domain.services.config_service import ConfigService
+from domain.services.session_service import SessionService
 
 from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
+from infrastructure.repository.session_repository import SessionRepository
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.llm_service import LlmService
 from infrastructure.services.logging_service import LoggingService
@@ -27,11 +29,13 @@ def register_services():
     container.register_instance(ConfigService, config_service)
 
     # Register rest of dependencies
+    container.register_transient(SessionRepository)
     container.register_singleton(LoggingService)
     container.register_transient(
         ProjectMetadataService,
         constructor_args={"workdir": Path(".")}
     )
+    container.register_transient(SessionService)
     container.register_transient(ProjectScannerService)
     container.register_transient(CodeScannerService)
     container.register_transient(LlmService)

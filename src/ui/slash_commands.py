@@ -9,10 +9,8 @@ from di import container
 from domain.model.config.anthropic.anthropic_llm_model import AnthropicModel
 from domain.model.config.openai.openai_llm_model import OpenAiModel
 from domain.services.config_service import ConfigService
-from domain.services.session_service import (
-    get_active_session,
-    save_session, summarize_session,
-)
+from domain.services.session_service import SessionService
+from infrastructure.repository.session_repository import SessionRepository
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.project_scanner_service import ProjectScannerService
 from ui.sessions_ui import show_sessions_panel
@@ -41,24 +39,27 @@ SLASH_COMMANDS = {
 
 
 def handle_slash_command(command: str):
-    session = get_active_session()
 
     config_service = container.resolve(ConfigService)
+    session_service = container.resolve(SessionService)
+    session_repository = container.resolve(SessionRepository)
+
     config = config_service.get_config()
+    session = session_service.get_active_session()
 
     if command == "/clear":
         session.clear()
         console.print("[green]✅ Session state and history cleared.[/green]")
-        save_session(session)
+        session_repository.save(session)
 
     elif command == "/clearhistory":
         session.clear_history()
         console.print("[green]✅ History cleared but modeling context preserved.[/green]")
-        save_session(session)
+        session_repository.save(session)
 
     elif command.startswith("/compact"):
-        summarize_session(session)
-        save_session(session)
+        session_service.summarize_session(session)
+        session_repository.save(session)
         console.print("[bold green]✅ Session compacted.[/bold green]")
         if session.state.summary:
             console.print(f"\n[dim]Summary:[/dim]\n{session.state.summary}")

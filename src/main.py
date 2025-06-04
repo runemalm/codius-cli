@@ -1,8 +1,7 @@
 import di
 from di import container
 from domain.services.config_service import ConfigService
-from domain.services.session_service import create_and_activate_session, \
-    get_or_create_active_session
+from domain.services.session_service import SessionService
 from infrastructure.services.logging_service import LoggingService
 from ui.shell import run_shell
 
@@ -17,9 +16,11 @@ def main():
     logging_service = container.resolve(LoggingService)
     logging_service.configure()
 
-    session = get_or_create_active_session()
+    session_service = container.resolve(SessionService)
+
+    session = session_service.get_or_create_active_session()
     if session and session.should_be_replaced():
-        session = create_and_activate_session()
+        session = session_service.create_and_activate_session()
         print(f"🆕 Started new session: {session.id}")
 
     run_shell()

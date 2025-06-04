@@ -1,9 +1,11 @@
-from domain.services import session_service
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pathlib import Path
 
 import logging
+
+from di import container
+from domain.services.session_service import SessionService
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +13,8 @@ TEMPLATE_DIR = Path(__file__).parent.parent.parent / "templates"
 
 
 def generate_code(state: dict) -> dict:
+    session_service = container.resolve(SessionService)
+
     jinja_env = Environment(
         loader=FileSystemLoader(str(TEMPLATE_DIR)),
         autoescape=select_autoescape(disabled_extensions=("cs",)),

@@ -1,10 +1,14 @@
 import shutil
 from pathlib import Path
 
+from di import container
 from domain.services import session_service
+from domain.services.session_service import SessionService
 
 
 def apply_changes(state: dict) -> dict:
+    session_service = container.resolve(SessionService)
+
     session_id = session_service.get_active_session_id()
     generated_dir = Path(f".openddd/sessions/{session_id}/generated")
     generated_files = list(generated_dir.rglob("*.cs"))

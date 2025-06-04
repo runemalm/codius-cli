@@ -6,8 +6,8 @@ from rich.panel import Panel
 
 from di import container
 from domain.services.config_service import ConfigService
-from domain.services.session_service import get_active_session, \
-    get_or_create_active_session, save_session
+from domain.services.session_service import SessionService
+from infrastructure.repository.session_repository import SessionRepository
 from infrastructure.services.graph_service import run_graph
 
 from infrastructure.services.project_metadata_service import ProjectMetadataService
@@ -35,9 +35,10 @@ def render_header():
 
 def render_session_info():
     config_service = container.resolve(ConfigService)
+    session_service = container.resolve(SessionService)
     project_metadata_service = container.resolve(ProjectMetadataService)
 
-    session = get_or_create_active_session()
+    session = session_service.get_or_create_active_session()
 
     workdir = project_metadata_service.get_project_root().resolve()
 
@@ -68,6 +69,9 @@ def render_assistant_message(message: str):
 
 
 def run_shell():
+    session_service = container.resolve(SessionService)
+    session_repository = container.resolve(SessionRepository)
+
     console.clear()
     render_header()
     render_session_info()
@@ -88,7 +92,7 @@ def run_shell():
                 continue
 
             # Get active session
-            session = get_active_session()
+            session = session_service.get_active_session()
 
             # Handle slash-commands
             if user_input.startswith("/"):
@@ -115,7 +119,7 @@ def run_shell():
             assistant_message = run_graph(session, user_input)
 
             # Save session
-            save_session(session)
+            session_repository.save(session)
 
             # Render final message
             render_assistant_message(assistant_message)

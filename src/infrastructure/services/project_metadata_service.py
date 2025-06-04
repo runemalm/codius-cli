@@ -2,15 +2,16 @@ from pathlib import Path
 import shutil
 import logging
 
-from domain.services.session_service import get_active_session
+from domain.services.session_service import SessionService
 
 logger = logging.getLogger(__name__)
 
 
 class ProjectMetadataService:
-    def __init__(self, workdir: Path):
+    def __init__(self, workdir: Path, session_service: SessionService):
         self.workdir = workdir.resolve()
         self.metadata_root = self.workdir / ".openddd"
+        self.session_service = session_service
 
     def get_project_root(self) -> Path:
         """Returns the root path of the current project."""
@@ -23,7 +24,7 @@ class ProjectMetadataService:
     def ensure_session_dir_exists(self, session_id: str = None):
         """Ensures the session directory exists."""
         if session_id is None:
-            session_id = get_active_session().id
+            session_id = self.session_service.get_active_session().id
         session_dir = self._get_session_dir(session_id)
         session_dir.mkdir(parents=True, exist_ok=True)
 
@@ -34,7 +35,7 @@ class ProjectMetadataService:
     def get_state_path(self, session_id: str = None) -> Path:
         """Returns the full path to state.json for the given session."""
         if session_id is None:
-            session_id = get_active_session().id
+            session_id = self.session_service.get_active_session().id
         return self._get_session_dir(session_id) / "state.json"
 
     def _get_session_dir(self, session_id: str) -> Path:
@@ -43,7 +44,7 @@ class ProjectMetadataService:
     def clear_generated_files(self, session_id: str = None):
         """Deletes and recreates the generated/ directory for the given session."""
         if session_id is None:
-            session_id = get_active_session().id
+            session_id = self.session_service.get_active_session().id
 
         generated_dir = self._get_session_dir(session_id) / "generated"
 

@@ -8,12 +8,14 @@ from rich.text import Text
 from di import container
 from domain.model.config.approval_mode import ApprovalMode
 from domain.model.plan.plan_step_type import PlanStepType
-from domain.services import session_service
 from domain.services.config_service import ConfigService
+from domain.services.session_service import SessionService
 from ui.approval_ui import show_approval_ui
 
 
 def preview(state: dict) -> dict:
+    session_service = container.resolve(SessionService)
+
     session_id = session_service.get_active_session_id()
     generated_dir = Path(f".openddd/sessions/{session_id}/generated")
     console = Console()

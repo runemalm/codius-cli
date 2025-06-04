@@ -6,7 +6,9 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from datetime import datetime
 from rich.console import Console
 
-from domain.services.session_service import list_sessions, save_session, get_active_session_id
+from di import container
+from domain.services.session_service import SessionService
+from infrastructure.repository.session_repository import SessionRepository
 
 console = Console()
 
@@ -20,12 +22,15 @@ def format_timestamp(timestamp: str) -> str:
 
 
 def show_sessions_panel():
-    sessions = sorted(list_sessions(), key=lambda s: s.created_at, reverse=True)
+    session_service = container.resolve(SessionService)
+    session_repository = container.resolve(SessionRepository)
+
+    sessions = sorted(session_repository.get_all(), key=lambda s: s.created_at, reverse=True)
     if not sessions:
         console.print("[bold yellow]⚠️ No saved sessions found.[/bold yellow]")
         return
 
-    active_id = get_active_session_id()
+    active_id = session_service.get_active_session_id()
     index = [0]
 
     def get_text():
@@ -81,7 +86,7 @@ def show_sessions_panel():
     @kb.add("enter")
     def _(event):
         selected = sessions[index[0]]
-        save_session(selected)
+        session_repository.save(selected)
         event.app.exit()
         # console.print(f"[bold green]✅ Resumed session:[/bold green] {selected.id}")
 
