@@ -1,4 +1,4 @@
-from graph.nodes.plan_changes import plan_changes
+from graph.nodes.plan_changes.plan_changes import plan_changes
 
 
 def test_add_aggregate():

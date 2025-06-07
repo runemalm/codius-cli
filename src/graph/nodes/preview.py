@@ -7,7 +7,7 @@ from rich.text import Text
 
 from di import container
 from domain.model.config.approval_mode import ApprovalMode
-from domain.model.plan.plan_step_type import PlanStepType
+from domain.model.plan_steps.plan_step_type import PlanStepType
 from domain.services.config_service import ConfigService
 from domain.services.session_service import SessionService
 from ui.approval_ui import show_approval_ui
@@ -23,11 +23,6 @@ def preview(state: dict) -> dict:
 
     files_on_disk = list(generated_dir.rglob("*.cs"))
     deletions = [p for p in state.get("plan", []) if p["type"] == "delete_file"]
-
-    if not files_on_disk and not deletions:
-        console.print("[bold red]⚠️ No files generated.[/bold red]")
-        state["approval"] = "abort"
-        return state
 
     console.print("[bold underline]The assistant proposes the following changes:[/bold underline]\n")
 
@@ -62,6 +57,19 @@ def preview(state: dict) -> dict:
                 border_style="red"
             ))
 
+    # Show warnings
+    warnings = state.get("plan_warnings", [])
+    if warnings:
+        console.print()
+        for warning in warnings:
+            console.print(f"{warning}")
+
+    # Abort only if there are no changes AND no warnings
+    if not files_on_disk and not deletions:
+        # No need to ask user to approve nothing
+        state["approval"] = "abort"
+        return state
+
     config = container.resolve(ConfigService).get_config()
 
     has_deletions = any(
@@ -71,15 +79,13 @@ def preview(state: dict) -> dict:
 
     if config.approval_mode == ApprovalMode.AUTO:
         if has_deletions:
-            console.print(
-                "[yellow]⚠️ Destructive change detected. Approval is required.[/yellow]")
+            console.print("[yellow]⚠️ Destructive change detected. Approval is required.[/yellow]")
         else:
             state["approval"] = "apply"
             return state
 
     # Manual approval path
     console.print("\nWould you like to apply these changes?")
-
     console.print("\nUse ↑/↓ to select an action, then press Enter:\n")
     response = show_approval_ui()
 
@@ -94,6 +100,6 @@ def preview(state: dict) -> dict:
         state["revision_feedback"] = feedback
     else:
         console.print("[red]Invalid choice. Please type yes, no, or change.[/red]")
-        return preview(state)  # re-run prompt
+        return preview(state)
 
     return state

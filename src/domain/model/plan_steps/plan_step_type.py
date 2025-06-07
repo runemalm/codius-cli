@@ -2,8 +2,7 @@ from enum import Enum
 
 
 class PlanStepType(str, Enum):
-    ADD_FILE = "add_file"
-    UPDATE_FILE = "update_file"
+    CREATE_FILE = "create_file"
     DELETE_FILE = "delete_file"
     DELETE_DIRECTORY = "delete_directory"
 

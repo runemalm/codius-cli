@@ -5,6 +5,7 @@ class GraphState(TypedDict, total=False):
     user_input: str
     intent: List[Dict[str, Any]]
     plan: List[Dict[str, Any]]
+    plan_warnings: List[str]
     generated_files: List[Dict[str, Any]]
     approval: str
     revision_feedback: str

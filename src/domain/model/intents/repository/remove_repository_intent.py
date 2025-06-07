@@ -10,8 +10,8 @@ from infrastructure.services.code_scanner.model.building_block_type import \
 
 
 @dataclass
-class AddRepositoryIntent(IntentBase):
-    intent: IntentType = IntentType.ADD_REPOSITORY
+class RemoveRepositoryIntent(IntentBase):
+    intent: IntentType = IntentType.REMOVE_REPOSITORY
     building_block_type: BuildingBlockType = BuildingBlockType.REPOSITORY
     target: str = ""
     persistence_provider: Optional[PersistenceProvider] = None
@@ -20,7 +20,7 @@ class AddRepositoryIntent(IntentBase):
     @classmethod
     def to_example_json(cls) -> str:
         return """{
-  "intent": "add_repository",
+  "intent": "remove_repository",
   "target": "Person",
   "persistence_provider": "OpenDdd",
   "database_provider": "Postgres"

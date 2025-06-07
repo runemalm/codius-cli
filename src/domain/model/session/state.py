@@ -9,6 +9,7 @@ class State:
     user_input: str = ""
     intent: Optional[dict] = None
     plan: Optional[dict] = None
+    plan_warnings: List[str] = field(default_factory=list)
     generated_files: List[dict] = field(default_factory=list)
     final_output: Optional[str] = None
     status: str = "new"
@@ -20,6 +21,7 @@ class State:
         self.user_input = ""
         self.intent = None
         self.plan = None
+        self.plan_warnings.clear()
         self.generated_files.clear()
         self.final_output = None
         self.status = "?"
@@ -27,6 +29,7 @@ class State:
     def update_with_graph_result(self, result: dict):
         self.intent = result.get("intent")
         self.plan = result.get("plan")
+        self.plan_warnings = result.get("plan_warnings", [])
         self.generated_files = result.get("generated_files", [])
         self.final_output = result.get("final_output")
         self.status = result.get("status", "completed")
@@ -42,6 +45,7 @@ class State:
         self.user_input = ""
         self.intent = None
         self.plan = None
+        self.plan_warnings.clear()
         self.generated_files.clear()
         self.final_output = None
         self.status = "compacted"
@@ -51,6 +55,7 @@ class State:
             "user_input": self.user_input,
             "intent": self.intent,
             "plan": self.plan,
+            "plan_warnings": self.plan_warnings,
             "generated_files": self.generated_files,
             "final_output": self.final_output,
             "status": self.status,
@@ -68,6 +73,7 @@ class State:
             user_input=data.get("user_input", ""),
             intent=data.get("intent"),
             plan=data.get("plan"),
+            plan_warnings=data.get("plan_warnings", []),
             generated_files=data.get("generated_files", []),
             final_output=data.get("final_output"),
             status=data.get("status", "new"),

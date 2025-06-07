@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pytest
 
+from domain.services.session_service import SessionService
+from infrastructure.repository.session_repository import SessionRepository
 from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.project_scanner_service import ProjectScannerService
 
@@ -44,7 +46,9 @@ def test_extract_project_metadata_with_nested_layers(fs):
     # Change cwd to /project to simulate running in project root
     os.chdir('/project')
 
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
+    repository = SessionRepository()
+    session_service = SessionService(repository)
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
     metadata = scanner.extract_project_metadata()
 
     assert metadata == {
@@ -82,7 +86,10 @@ def test_flat_layer_folders_are_ignored(fs):
     fs.create_file('/project/src/OpenDDD.sln')
 
     os.chdir('/project')
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
+
+    repository = SessionRepository()
+    session_service = SessionService(repository)
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
 
     with pytest.raises(FileNotFoundError):
         _ = scanner._detect_layer_path("Domain")
@@ -116,7 +123,10 @@ def test_only_solution_named_project_is_used(fs):
     fs.create_file('/project/src/Orientera.sln')
 
     os.chdir('/project')
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
+
+    repository = SessionRepository()
+    session_service = SessionService(repository)
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
 
     domain_path = scanner._detect_layer_path("Domain")
     assert domain_path == '/project/src/Orientera/Domain'
@@ -185,7 +195,9 @@ def test_extracts_provider_settings_from_correct_config_file(fs):
     fs.create_file('/project/src/Orientera.sln')
 
     os.chdir('/project')
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project")))
+    repository = SessionRepository()
+    session_service = SessionService(repository)
+    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
     metadata = scanner.extract_project_metadata()
 
     assert metadata["persistence_provider"] == "EfCore"

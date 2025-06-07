@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from domain.model.intents.property import Property
+
+from domain.model.intents.parameter import Parameter
 
 
 @dataclass
 class Method:
     name: str
-    parameters: List[Property] = None
+    parameters: Optional[List[Parameter]] = None
     return_type: Optional[str] = None
-    is_async: bool = True
+    is_async: Optional[bool] = True

@@ -16,14 +16,14 @@ def enforce_conventions(state: dict) -> dict:
             enforced_intents.append(_enforce_aggregate_conventions(intent))
         elif intent_type == "add_repository":
             enforced_intents.append(_enforce_repository_conventions(intent))
-        elif intent_type == "delete_aggregate":
-            logger.debug("Enforcing delete_aggregate conventions (noop)...")
+        elif intent_type == "remove_aggregate":
+            logger.debug("Enforcing remove_aggregate conventions (noop)...")
             enforced_intents.append(intent)
         else:
             logger.warning("No conventions defined for intent type: %s", intent_type)
             enforced_intents.append(intent)
 
-    state["intent"] = enforced_intents
+    state["conventional_intents"] = enforced_intents
     logger.debug("Enforced conventions on %d intent(s)", len(enforced_intents))
     return state
 
