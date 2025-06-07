@@ -1,8 +1,12 @@
+import os
 from getpass import getpass
+from pathlib import Path
 
 from rich.console import Console, Group
 from rich.markdown import Markdown
 from rich.panel import Panel
+from rich.prompt import Prompt
+from rich.syntax import Syntax
 from rich.table import Table
 
 from di import container
@@ -35,6 +39,7 @@ SLASH_COMMANDS = {
     "/approval": "Open approval mode selection panel",
     "/diff": "Show git diff of working directory",
     "/visualize": "Visualize building blocks and driving adapter flows in the current codebase",
+    "/show": "Browse and view the contents of a building block",
 }
 
 
@@ -248,6 +253,45 @@ def handle_slash_command(command: str):
         console.print(
             Panel.fit("\n".join(flow_lines), title="Driving Adapter Flows", border_style="cyan")
         )
+
+    elif command == "/show":
+        project_scanner_service = container.resolve(ProjectScannerService)
+        code_scanner_service = container.resolve(CodeScannerService)
+
+        metadata = project_scanner_service.extract_project_metadata()
+        building_blocks = code_scanner_service.scan_building_blocks(metadata)
+
+        if not building_blocks:
+            console.print("[yellow]⚠️ No building blocks found.[/yellow]")
+            return
+
+        # Show selection list
+        options = [f"{bb.type.value}: {bb.name}" for bb in building_blocks]
+        options_dict = {f"{bb.type.value}: {bb.name}": bb for bb in building_blocks}
+
+        console.print("\n[bold underline]Select a building block to view:[/bold underline]")
+        for idx, option in enumerate(options, 1):
+            console.print(f"  [{idx}] {option}")
+
+        choice = Prompt.ask(f"\nEnter number [1-{len(options)}]", default="1")
+        if not choice.isdigit() or not (1 <= int(choice) <= len(options)):
+            console.print("[red]❌ Invalid selection.[/red]")
+            return
+
+        selected_bb = options_dict[options[int(choice) - 1]]
+
+        if not selected_bb.file_path or not os.path.exists(selected_bb.file_path):
+            console.print(f"[red]⚠️ File not found:[/red] {selected_bb.file_path}")
+            return
+
+        content = Path(selected_bb.file_path).read_text(encoding="utf-8")
+
+        console.print(Panel(
+            Syntax(content, "csharp", line_numbers=True, theme="monokai"),
+            title=f"[bold]{selected_bb.name}[/bold]",
+            subtitle=str(selected_bb.file_path),
+            border_style="cyan"
+        ))
 
 
 def _find_related_block(name: str, blocks, type_name: str):
