@@ -11,6 +11,7 @@ from rich.table import Table
 
 from di import container
 from domain.model.config.anthropic.anthropic_llm_model import AnthropicModel
+from domain.model.config.config import Config
 from domain.model.config.openai.openai_llm_model import OpenAiModel
 from domain.services.config_service import ConfigService
 from domain.services.session_service import SessionService
@@ -49,7 +50,7 @@ def handle_slash_command(command: str):
     session_service = container.resolve(SessionService)
     session_repository = container.resolve(SessionRepository)
 
-    config = config_service.get_config()
+    config = container.resolve(Config)
     session = session_service.get_active_session()
 
     if command == "/clear":

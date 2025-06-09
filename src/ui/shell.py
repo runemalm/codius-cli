@@ -5,6 +5,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from di import container
+from domain.model.config.config import Config
 from domain.services.config_service import ConfigService
 from domain.services.session_service import SessionService
 from infrastructure.repository.session_repository import SessionRepository
@@ -26,7 +27,7 @@ def _(event):
 def render_header():
     console.print(
         Panel.fit(
-            "● [bold cyan]DDD Coding Assistant[/bold cyan] [dim](alpha)[/dim]",
+            "● [bold cyan]OpenDDD.NET Coding Assistant[/bold cyan] [dim](0.1.0)[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )
@@ -34,7 +35,6 @@ def render_header():
 
 
 def render_session_info():
-    config_service = container.resolve(ConfigService)
     session_service = container.resolve(SessionService)
     project_metadata_service = container.resolve(ProjectMetadataService)
 
@@ -42,11 +42,11 @@ def render_session_info():
 
     workdir = project_metadata_service.get_project_root().resolve()
 
-    config = config_service.get_config()
+    config = container.resolve(Config)
     provider = config.llm.provider.value
     model = getattr(config.llm, provider).model.value
-    approval_mode = config_service.get_config().approval_mode
-    log_level = config_service.get_config().log_level
+    approval_mode = config.approval_mode
+    log_level = config.log_level
 
     console.print(Panel.fit(
         f"[bold]Session:[/bold] {session.id}\n"

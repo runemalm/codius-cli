@@ -1,4 +1,4 @@
-from pathlib import Path
+import argparse
 
 from dependency_injection.container import DependencyContainer
 
@@ -18,29 +18,19 @@ from infrastructure.services.project_scanner_service import ProjectScannerServic
 
 container = DependencyContainer.get_instance()
 
-def register_services():
 
-    # When py-dependency-injection supports optional arguments in constructors (Config),
-    # we simply register config services and call ensure_file_exist from main instead..
-    config_service = ConfigService()
-    config_service.ensure_config_file_exists()
-    config_service.load_config_from_file()
-    container.register_instance(Config, config_service.get_config())
-    container.register_instance(ConfigService, config_service)
+def register_services(config: Config, args: argparse.Namespace):
 
-    # Register rest of dependencies
-    container.register_transient(SessionRepository)
-    container.register_singleton(LoggingService)
+    container.register_instance(Config, config)
     container.register_transient(
         ProjectMetadataService,
-        constructor_args={"workdir": Path(".")}
+        constructor_args={"workdir": args.path}
     )
-    container.register_transient(SessionService)
-    container.register_transient(ProjectScannerService)
-    container.register_transient(CodeScannerService)
-    container.register_transient(LlmService)
-    container.register_transient(LlmPort, OpenAiLlmAdapter,
-        constructor_args={
-            "config": container.resolve(ConfigService).get_config().llm.openai
-        }
-    )
+    container.register_scoped(ConfigService)
+    container.register_scoped(SessionRepository)
+    container.register_singleton(LoggingService)
+    container.register_scoped(SessionService)
+    container.register_scoped(ProjectScannerService)
+    container.register_scoped(CodeScannerService)
+    container.register_scoped(LlmService)
+    container.register_scoped(LlmPort, OpenAiLlmAdapter)

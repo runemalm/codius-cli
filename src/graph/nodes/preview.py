@@ -7,6 +7,7 @@ from rich.text import Text
 
 from di import container
 from domain.model.config.approval_mode import ApprovalMode
+from domain.model.config.config import Config
 from domain.model.plan_steps.plan_step_type import PlanStepType
 from domain.services.config_service import ConfigService
 from domain.services.session_service import SessionService
@@ -14,6 +15,8 @@ from ui.approval_ui import show_approval_ui
 
 
 def preview(state: dict) -> dict:
+    config = container.resolve(Config)
+
     session_service = container.resolve(SessionService)
 
     session_id = session_service.get_active_session_id()
@@ -69,8 +72,6 @@ def preview(state: dict) -> dict:
         # No need to ask user to approve nothing
         state["approval"] = "abort"
         return state
-
-    config = container.resolve(ConfigService).get_config()
 
     has_deletions = any(
         PlanStepType.is_destructive(item.get("type"))

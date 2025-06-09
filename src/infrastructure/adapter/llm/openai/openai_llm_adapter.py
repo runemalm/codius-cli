@@ -3,14 +3,15 @@ import time
 
 import openai
 
+from domain.model.config.config import Config
 from domain.model.port.llm_port import LlmPort
-from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 
 logger = logging.getLogger(__name__)
 
 
 class OpenAiLlmAdapter(LlmPort):
-    def __init__(self, config: OpenAiConfig):
+    def __init__(self, config: Config):
+        config = config.llm.openai
         self.model = config.model
         self.api_key = config.resolve_api_key()
         if not self.api_key or not self.api_key.startswith("sk-"):
