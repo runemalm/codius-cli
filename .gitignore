@@ -7,9 +7,6 @@ __pycache__/
 *.pdb
 *.so
 
-# Pipenv environment files
-Pipfile.lock
-
 # macOS metadata
 .DS_Store
 
