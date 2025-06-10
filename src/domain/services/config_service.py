@@ -36,8 +36,13 @@ class ConfigService:
         with open(self.config_file, "w") as f:
             yaml.dump(raw_config, f, sort_keys=False)
 
-        # Update structured config in memory
-        self.config = ConfigService.parse_structured(raw_config)
+        # Update in-memory config object in-place
+        updated_config = ConfigService.parse_structured(raw_config)
+        self.config.llm = updated_config.llm
+        self.config.approval_mode = updated_config.approval_mode
+        self.config.debug = updated_config.debug
+        self.config.debug_llm = updated_config.debug_llm
+        self.config.log_level = updated_config.log_level
 
     @classmethod
     def parse_structured(cls, raw: dict) -> Config:
