@@ -94,6 +94,7 @@ For `"add_repository"` intents, the supported values are:
 - Return **one JSON object per distinct modeling action**.
 - Do not combine multiple operations into one intent (e.g. don’t add methods and properties in the same intent).
 - Only include methods, properties, or parameters if the user explicitly describes them.
+- If the user describes a method, the implementation should be generated unless the user says something else.
 - Use empty arrays/lists for optional fields if the user didn’t specify them.
 - If the user simply asks to create a building block without details, generate a minimal scaffold.
 - Return valid JSON only. No comments, markdown, or extra explanations.

@@ -29,6 +29,8 @@ def generate_code(state: dict) -> dict:
     project_root = Path(state["project_metadata"]["project_root"])
     all_files = []
 
+    created_files_map = {}
+
     # Group modify steps by target file
     modify_groups = defaultdict(list)
     create_steps = []
@@ -45,42 +47,32 @@ def generate_code(state: dict) -> dict:
 
         if result:
             all_files.append(result)
+            created_files_map[step["path"]] = result["content"]
 
     # Process all modifications per file in sequence
     for path, steps in modify_groups.items():
-        source_path = Path(path).resolve()
-        relative_path = source_path.relative_to(project_root)
-        current_code = (project_root / relative_path).read_text(encoding="utf-8")
+        result = handle_modify_file(
+            path,
+            steps,
+            jinja_env,
+            output_dir,
+            project_root,
+            created_files_map,
+            convention_service
+        )
 
-        for step in steps:
-            modification = step["modification"]
-            context = step["context"]
-            if modification == "add_method":
-                code = render_method_template(context, jinja_env)
-                current_code = inject_method_ast_based(current_code, code,
-                                                       context.get("placement"))
-            elif modification == "add_property":
-                code = render_property_template(context, jinja_env)
-                current_code = inject_property_ast_based(current_code, code)
-            else:
-                raise Exception(f"Unsupported modification type: {modification}")
-
-        # Write once per file
-        file_path = output_dir / relative_path
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        formatted_code = convention_service.format_class_code(current_code)
-        file_path.write_text(formatted_code, encoding="utf-8")
-
-        all_files.append({
-            "path": str(relative_path),
-            "content": formatted_code.strip()
-        })
+        if result:
+            # Remove any previous entry for this file (created earlier)
+            all_files = [f for f in all_files if f["path"] != result["path"]]
+            all_files.append(result)
 
     state["generated_files"] = all_files
     return state
 
 
 def handle_create_file(file_plan: dict, jinja_env: Environment, output_dir: Path, project_root: Path) -> dict | None:
+    convention_service = container.resolve(OpenDddConventionService)
+
     template_name = file_plan.get("template")
     context = file_plan.get("context", {})
     absolute_path = Path(file_plan["path"]).resolve()
@@ -89,16 +81,17 @@ def handle_create_file(file_plan: dict, jinja_env: Environment, output_dir: Path
     try:
         template = jinja_env.get_template(f"{template_name}.cs.j2")
         rendered = template.render(**context)
+        formatted = convention_service.format_class_code(rendered)
 
         file_path = output_dir / relative_path
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_text(rendered.strip(), encoding="utf-8")
+        file_path.write_text(formatted.strip(), encoding="utf-8")
 
         logger.debug("Generated file from template: %s", file_path)
 
         return {
             "path": str(relative_path),
-            "content": rendered.strip()
+            "content": formatted.strip()
         }
 
     except Exception as e:
@@ -106,45 +99,55 @@ def handle_create_file(file_plan: dict, jinja_env: Environment, output_dir: Path
         return None
 
 
-def handle_modify_file(file_plan: dict, jinja_env: Environment, output_dir: Path, project_root: Path) -> dict | None:
-    modification = file_plan.get("modification")
-    context = file_plan.get("context", {})
-    absolute_path = Path(file_plan["path"]).resolve()
+def handle_modify_file(
+    path: str,
+    steps: list[dict],
+    jinja_env: Environment,
+    output_dir: Path,
+    project_root: Path,
+    created_files_map: dict[str, str],
+    convention_service: OpenDddConventionService
+) -> dict | None:
+    absolute_path = Path(path).resolve()
     relative_path = absolute_path.relative_to(project_root)
 
-    try:
-        source_path = project_root / relative_path
-        if not source_path.exists():
-            logger.warning("Target file for modification does not exist: %s", source_path)
+    file_path_str = str(project_root / relative_path)
+
+    # If created earlier in this session, use that version
+    if file_path_str in created_files_map:
+        current_code = created_files_map[file_path_str]
+    else:
+        try:
+            current_code = (project_root / relative_path).read_text(encoding="utf-8")
+        except FileNotFoundError:
+            logger.warning("Target file for modification not found: %s", path)
             return None
 
-        source_code = source_path.read_text(encoding="utf-8")
+    for step in steps:
+        modification = step["modification"]
+        context = step["context"]
 
         if modification == "add_method":
-            rendered_method = render_method_template(context, jinja_env)
-            modified_source = inject_method_ast_based(source_code, rendered_method, context.get("placement"))
+            code = render_method_template(context, jinja_env)
+            current_code = inject_method_ast_based(current_code, code, context.get("placement"))
 
         elif modification == "add_property":
-            rendered_property = render_property_template(context, jinja_env)
-            modified_source = inject_property_ast_based(source_code, rendered_property)
+            code = render_property_template(context, jinja_env)
+            current_code = inject_property_ast_based(current_code, code)
 
         else:
-            raise Exception("Unsupported modification type: %s", modification)
+            raise Exception(f"Unsupported modification type: {modification}")
 
-        file_path = output_dir / relative_path
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_text(modified_source.strip(), encoding="utf-8")
+    # Write modified code
+    file_path = output_dir / relative_path
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    formatted_code = convention_service.format_class_code(current_code)
+    file_path.write_text(formatted_code.strip(), encoding="utf-8")
 
-        logger.debug("Modified file with new method: %s", file_path)
-
-        return {
-            "path": str(relative_path),
-            "content": modified_source.strip()
-        }
-
-    except Exception as e:
-        logger.error("Failed to modify file: %s", e)
-        raise
+    return {
+        "path": str(relative_path),
+        "content": formatted_code.strip()
+    }
 
 
 def render_method_template(context: dict, jinja_env: Environment) -> str:

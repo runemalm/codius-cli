@@ -1,5 +1,11 @@
 import pytest
 import difflib
+
+from graph.nodes.generate_code import generate_code
+
+
+import difflib
+import pytest
 from graph.nodes.generate_code import generate_code
 
 
@@ -13,11 +19,11 @@ def test_generate_create_file(tmp_path):
         "path": str(project_root / "Domain/Model/Invoice/Invoice.cs"),
         "template": "aggregate_root",
         "context": {
-            "AggregateName": "Invoice",
-            "Namespace": "MyApp.Domain.Model.Invoice",
-            "Properties": [],
-            "Events": [],
-            "Commands": []
+            "aggregate_name": "Invoice",
+            "namespace": "MyApp.Domain.Model.Invoice",
+            "properties": [],
+            "events": [],
+            "commands": []
         },
         "description": "Create Invoice aggregate"
     }
@@ -32,7 +38,40 @@ def test_generate_create_file(tmp_path):
     result = generate_code(state)
 
     assert "generated_files" in result
-    assert any("Invoice.cs" in file["path"] for file in result["generated_files"])
+
+    generated = next(f for f in result["generated_files"] if f["path"].endswith("Invoice.cs"))
+    actual_content = generated["content"].strip()
+
+    expected_content = """\
+using OpenDDD.Domain.Model.Base;
+using System;
+
+namespace MyApp.Domain.Model.Invoice
+{
+    public class Invoice : AggregateRootBase<Guid>
+    {
+        private Invoice() { }  // Needed if persistence provider is EF Core..
+
+        public static Invoice Create()
+        {
+            return new Invoice(Guid.NewGuid());
+        }
+    }
+}
+""".strip()
+
+    if actual_content != expected_content:
+        diff = "\n".join(difflib.unified_diff(
+            expected_content.splitlines(),
+            actual_content.splitlines(),
+            fromfile='expected',
+            tofile='actual',
+            lineterm=''
+        ))
+        print("DIFF:\n" + diff)
+        assert False, "Generated content does not match expected output."
+
+    assert actual_content == expected_content
 
 
 @pytest.mark.integration
@@ -192,3 +231,77 @@ namespace MyApp.Domain.Model.Invoice
         assert False, "Generated content does not match expected output."
 
     assert actual_content == expected_content
+
+
+@pytest.mark.integration
+def test_generate_create_and_modify_same_file(tmp_path):
+    project_root = tmp_path / "project"
+    project_root.mkdir(parents=True, exist_ok=True)
+
+    file_path = project_root / "Domain/Model/Invoice/Invoice.cs"
+
+    # Plan to create the file
+    create_file_plan = {
+        "type": "create_file",
+        "path": str(file_path),
+        "template": "aggregate_root",
+        "context": {
+            "aggregate_name": "Invoice",
+            "namespace": "MyApp.Domain.Model.Invoice",
+            "properties": [],
+            "events": [],
+            "commands": []
+        },
+        "description": "Create Invoice aggregate"
+    }
+
+    # Plan to modify the same file immediately
+    modify_file_plan = {
+        "type": "modify_file",
+        "path": str(file_path),
+        "modification": "add_property",
+        "context": {
+            "aggregate_name": "Invoice",
+            "property": {
+                "type": "decimal",
+                "name": "Total",
+                "default": "0m"
+            }
+        },
+        "description": "Add Total property"
+    }
+
+    state = {
+        "session_id": "test-session-id",
+        "plan": [create_file_plan, modify_file_plan],
+        "project_metadata": {
+            "project_root": str(project_root)
+        }
+    }
+
+    # Act
+    result = generate_code(state)
+
+    # Assert
+    assert "generated_files" in result
+    invoice_file = next(f for f in result["generated_files"] if f["path"].endswith("Invoice.cs"))
+
+    expected_content = """using OpenDDD.Domain.Model.Base;
+using System;
+
+namespace MyApp.Domain.Model.Invoice
+{
+    public class Invoice : AggregateRootBase<Guid>
+    {
+        public decimal Total { get; set; } = 0m;
+
+        private Invoice() { }  // Needed if persistence provider is EF Core..
+
+        public static Invoice Create()
+        {
+            return new Invoice(Guid.NewGuid());
+        }
+    }
+}"""
+
+    assert invoice_file["content"].strip() == expected_content.strip()
