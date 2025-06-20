@@ -100,12 +100,6 @@ For `"add_repository"` intents, the supported values are:
 - Avoid comments or docstrings unless necessary to clarify complex logic in rare cases.
 - Extract one intent per operation. If the user describes multiple operations (e.g., adding two aggregates and a method), return a list of multiple intent JSON objects.
 - Always return a **list** of intent objects, even if there's only one.
-- Only generate `"implementation"` if the user describes what the method should do or explicitly asks to implement it.
-- If the method behavior is **not specified**, use:
-  ```json
-  "implementation": {{
-    "type": "none"
-  }}
 
 ### Output Format
 

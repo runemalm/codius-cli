@@ -128,4 +128,4 @@ def test_add_method_without_implementation_hint():
     assert result["intent"][0]["intent"] == "add_aggregate_method"
     assert result["intent"][0]["target"] == "Order"
     assert method["name"] == "Cancel"
-    assert implementation.get("type") in (None, "none")
+    assert implementation.get("type") == "generate"
