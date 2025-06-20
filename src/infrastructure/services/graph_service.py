@@ -12,6 +12,7 @@ def run_graph(session: Session, user_input: str) -> str:
 
     # Prepare LangGraph input
     graph_input = {
+        "session_id": session.id,
         "user_input": session.state.user_input,
         "history": [m.__dict__ for m in session.history.recent()],
         "summary": session.state.summary,

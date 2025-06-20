@@ -1,11 +1,14 @@
 import argparse
 import di
 
+from tree_sitter import Language, Parser
+
 from pathlib import Path
 from di import container
 from domain.services.session_service import SessionService
 from infrastructure.services.logging_service import LoggingService
 from infrastructure.services.project_initializer_service import ProjectInitializerService
+from infrastructure.services.tree_sitter_service import TreeSitterService
 from ui.shell import run_shell
 
 

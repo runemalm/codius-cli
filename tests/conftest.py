@@ -1,23 +1,27 @@
+import argparse
 import logging
 import os
 import sys
+import uuid
 
 import pytest
 from _pytest.fixtures import SubRequest
 from pathlib import Path
 
 from dependency_injection.container import DependencyContainer
+from dotenv import load_dotenv
 
-from di import container
+from di import container, register_services
+from domain.model.config.approval_mode import ApprovalMode
 from domain.model.config.config import Config
 from domain.model.config.llm_provider import LlmProvider
-from domain.model.port.llm_port import LlmPort
-from domain.services.config_service import ConfigService
 from infrastructure.adapter.llm.llm_config import LlmConfig
 from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
-from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
-from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
-from infrastructure.services.llm_service import LlmService
+from infrastructure.services.tree_sitter_service import TreeSitterService
+
+# Load .env from the project root, even if cwd is ./tests
+project_root = Path(__file__).parent.parent.resolve()
+load_dotenv(dotenv_path=project_root / ".env")
 
 
 @pytest.fixture(scope="session")
@@ -40,35 +44,34 @@ def configure_test_logging():
 @pytest.fixture(autouse=True, scope="function")
 def container_(request: SubRequest):
     if "integration" in request.keywords:
-        # Setup
+        test_container_name = f"test_{uuid.uuid4()}"
+        DependencyContainer.configure_default_container_name(test_container_name)
+
+        # Construct Config
         config = Config(
             llm=LlmConfig(
                 provider=LlmProvider.OPENAI,
                 openai=OpenAiConfig(
                     model="gpt-4o",
-                    api_key="sk-",
+                    api_key=None  # Will use OPENAI_API_KEY from .env file..
                 )
             ),
+            approval_mode=ApprovalMode.SUGGEST,
             debug=True,
             debug_llm=True,
+            log_level="debug"
         )
 
-        # Register all dependencies
-        container.register_instance(Config, config)
-        container.register_singleton(ConfigService,
-             constructor_args={
-                 "config": config
-             }
-        )
-        container.register_transient(CodeScannerService)
-        container.register_transient(LlmService)
-        container.register_transient(LlmPort, OpenAiLlmAdapter,
-             constructor_args={"config": config.llm.openai}
-        )
+        # Mock args namespace
+        args = argparse.Namespace(path=bookstore_project_path)
+
+        # Register all dependencies using real register_services method
+        register_services(config=config, args=args)
 
         yield container
 
-        DependencyContainer._instances = {}
+        # Reset for isolation
+        DependencyContainer.clear_instances()
     else:
         yield
 

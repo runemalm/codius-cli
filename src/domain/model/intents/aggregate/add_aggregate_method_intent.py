@@ -22,6 +22,14 @@ class AddAggregateMethodIntent(IntentBase):
     "name": "Deactivate",
     "parameters": [],
     "return_type": "void",
-    "is_async": false
+    "is_async": false,
+    "location": {
+      "position": "after",
+      "reference": "Activate"
+    },
+    "implementation": {
+      "type": "generate",
+      "hint": "Set status to Cancelled and raise domain event"
+    }
   }
 }"""

@@ -22,9 +22,31 @@ class LlmService:
         try:
             response = self.llm.call_prompt(prompt)
         except Exception as e:
-            logger.error("Error while calling LLM: %s", e)
-            raise RuntimeError(
-                "❌ Failed to call LLM service. Please try again later.") from e
+            # Attempt to extract OpenAI-style error message
+            message = str(e)
+            try:
+                # Some adapters may wrap the response string in the error
+                if hasattr(e, "response") and hasattr(e.response, "text"):
+                    error_json = json.loads(e.response.text)
+                else:
+                    error_json = json.loads(message)
+
+                openai_msg = error_json.get("error", {}).get("message")
+                if "Incorrect API key" in openai_msg:
+                    raise RuntimeError(
+                        "❌ OpenAI API authentication failed: Incorrect API key provided. "
+                        "Check your API key in config or environment variables."
+                    ) from e
+
+                # Generic OpenAI API error
+                raise RuntimeError(f"❌ OpenAI API error: {openai_msg}") from e
+
+            except (ValueError, KeyError, AttributeError):
+                # Fall back to generic error if parsing fails
+                logger.error("Error while calling LLM: %s", e)
+                raise RuntimeError(
+                    "❌ Failed to call LLM service. Please try again later."
+                ) from e
 
         if self.config.debug_llm:
             print_highlighted(response, title="🧠 LLM Response")

@@ -2,8 +2,10 @@ from typing import Any, Dict, List, TypedDict
 
 
 class GraphState(TypedDict, total=False):
+    session_id: str
     user_input: str
     intent: List[Dict[str, Any]]
+    sources: Dict[str, str]
     plan: List[Dict[str, Any]]
     plan_warnings: List[str]
     generated_files: List[Dict[str, Any]]

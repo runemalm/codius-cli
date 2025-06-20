@@ -1,7 +1,9 @@
 import logging
+
 from .plan_aggregate import plan_aggregate
 from .plan_repository import plan_repository
 from .plan_remove_aggregate import plan_remove_aggregate
+from .plan_add_aggregate_method import plan_add_aggregate_method
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,8 @@ def plan_changes(state: dict) -> dict:
         try:
             if intent_type == "add_aggregate":
                 steps, step_warnings = plan_aggregate(intent, metadata, existing_paths)
+            elif intent_type == "add_aggregate_method":
+                steps, step_warnings = plan_add_aggregate_method(intent, metadata, existing_paths)
             elif intent_type == "remove_aggregate":
                 steps, step_warnings = plan_remove_aggregate(intent, metadata)
             elif intent_type == "add_repository":

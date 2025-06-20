@@ -9,7 +9,6 @@ from di import container
 from domain.model.config.approval_mode import ApprovalMode
 from domain.model.config.config import Config
 from domain.model.plan_steps.plan_step_type import PlanStepType
-from domain.services.config_service import ConfigService
 from domain.services.session_service import SessionService
 from ui.approval_ui import show_approval_ui
 

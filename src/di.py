@@ -12,11 +12,23 @@ from infrastructure.repository.session_repository import SessionRepository
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from infrastructure.services.llm_service import LlmService
 from infrastructure.services.logging_service import LoggingService
+from infrastructure.services.openddd_convention_service import OpenDddConventionService
 from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.project_scanner_service import ProjectScannerService
+from infrastructure.services.tree_sitter_service import TreeSitterService
 
 
-container = DependencyContainer.get_instance()
+class ContainerProxy:
+    def __getattr__(self, attr):
+        container = DependencyContainer.get_instance()
+        return getattr(container, attr)
+
+    def __setattr__(self, attr, value):
+        container = DependencyContainer.get_instance()
+        setattr(container, attr, value)
+
+
+container = ContainerProxy()
 
 
 def register_services(config: Config, args: argparse.Namespace):
@@ -32,5 +44,7 @@ def register_services(config: Config, args: argparse.Namespace):
     container.register_scoped(SessionService)
     container.register_scoped(ProjectScannerService)
     container.register_scoped(CodeScannerService)
+    container.register_scoped(OpenDddConventionService)
+    container.register_scoped(TreeSitterService)
     container.register_scoped(LlmService)
     container.register_scoped(LlmPort, OpenAiLlmAdapter)
