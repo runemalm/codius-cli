@@ -7,7 +7,6 @@ setup(
     packages=find_packages(where='src'),
     include_package_data=True,
     install_requires=[
-        'exceptiongroup',
         'jinja2',
         'langgraph',
         'langchain',
