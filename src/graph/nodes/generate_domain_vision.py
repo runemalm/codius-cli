@@ -1,12 +1,13 @@
 import logging
 
-from di import container
 from infrastructure.services.llm_service import LlmService
 
 logger = logging.getLogger(__name__)
 
 
 def generate_domain_vision(state: dict) -> dict:
+    from di import container
+
     domain_model = state.get("domain_model", [])
     if not domain_model:
         state["domain_vision"] = "⚠️ No domain model found."

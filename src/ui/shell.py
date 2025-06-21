@@ -6,10 +6,9 @@ from rich.panel import Panel
 
 from di import container
 from domain.model.config.config import Config
-from domain.services.config_service import ConfigService
 from domain.services.session_service import SessionService
 from infrastructure.repository.session_repository import SessionRepository
-from infrastructure.services.graph_service import run_graph
+from infrastructure.services.graph_service import GraphService
 
 from infrastructure.services.project_metadata_service import ProjectMetadataService
 from ui.slash_commands import SLASH_COMMANDS, handle_slash_command
@@ -40,7 +39,7 @@ def render_session_info():
 
     session = session_service.get_or_create_active_session()
 
-    workdir = project_metadata_service.get_project_root().resolve()
+    project_root = project_metadata_service.get_project_root().resolve()
 
     config = container.resolve(Config)
     provider = config.llm.provider.value
@@ -50,7 +49,7 @@ def render_session_info():
 
     console.print(Panel.fit(
         f"[bold]Session:[/bold] {session.id}\n"
-        f"[bold]Workdir:[/bold] {workdir}\n"
+        f"[bold]Project Path:[/bold] {project_root}\n"
         f"[bold]Provider:[/bold] {provider}\n"
         f"[bold]Model:[/bold] {model}\n"
         f"[bold]Log level:[/bold] {log_level}\n"
@@ -71,8 +70,8 @@ def render_assistant_message(message: str):
 def run_shell():
     session_service = container.resolve(SessionService)
     session_repository = container.resolve(SessionRepository)
+    graph_service = container.resolve(GraphService)
 
-    console.clear()
     render_header()
     render_session_info()
     console.print(Panel.fit("[dim]Type your modeling request or use slash-commands like /diff[/dim]"))
@@ -91,9 +90,6 @@ def run_shell():
             if not user_input.strip():
                 continue
 
-            # Get active session
-            session = session_service.get_active_session()
-
             # Handle slash-commands
             if user_input.startswith("/"):
                 command = user_input.strip().split()[0]
@@ -106,23 +102,17 @@ def run_shell():
                     console.print(f"[red]Unknown command:[/red] {command}")
                 continue
 
-            # Get DI container
-            project_metadata_service = container.resolve(ProjectMetadataService)
+            # Get active session
+            session = session_service.get_active_session()
 
-            # Clear memory for next REPL cycle
-            session.clear_state_for_repl_cycle()
-
-            # Clear on-disk files
-            project_metadata_service.clear_generated_files()
-
-            # Run assistant
-            assistant_message = run_graph(session, user_input)
+            # Run REPL cycle
+            session = graph_service.run_repl_cycle(session, user_input)
 
             # Save session
             session_repository.save(session)
 
             # Render final message
-            render_assistant_message(assistant_message)
+            render_assistant_message(session.history[-1])
 
         except KeyboardInterrupt:
             console.print("\n[dim]Exited with Ctrl+C[/dim]")

@@ -2,50 +2,31 @@ from pathlib import Path
 import shutil
 import logging
 
-from domain.services.session_service import SessionService
-
 logger = logging.getLogger(__name__)
 
 
 class ProjectMetadataService:
-    def __init__(self, workdir: Path, session_service: SessionService):
-        self.workdir = workdir.resolve()
-        self.metadata_root = self.workdir / ".openddd"
-        self.session_service = session_service
+    def __init__(self, project_path: Path):
+        self.project_path = project_path.resolve()
+        self.metadata_root = self.project_path / ".openddd"
 
     def get_project_root(self) -> Path:
         """Returns the root path of the current project."""
-        return self.workdir
+        return self.project_path
 
     def get_config_path(self) -> Path:
         """Returns the full path to the global config.yaml."""
         return self.metadata_root / "config.yaml"
 
-    def ensure_session_dir_exists(self, session_id: str = None):
-        """Ensures the session directory exists."""
-        if session_id is None:
-            session_id = self.session_service.get_active_session().id
-        session_dir = self._get_session_dir(session_id)
-        session_dir.mkdir(parents=True, exist_ok=True)
-
     def get_sessions_path(self) -> Path:
         """Returns the path to the sessions directory (.openddd/sessions)."""
         return self.metadata_root / "sessions"
 
-    def get_state_path(self, session_id: str = None) -> Path:
-        """Returns the full path to state.json for the given session."""
-        if session_id is None:
-            session_id = self.session_service.get_active_session().id
-        return self._get_session_dir(session_id) / "state.json"
-
     def _get_session_dir(self, session_id: str) -> Path:
         return self.get_sessions_path() / session_id
 
-    def clear_generated_files(self, session_id: str = None):
+    def clear_generated_files(self, session_id: str):
         """Deletes and recreates the generated/ directory for the given session."""
-        if session_id is None:
-            session_id = self.session_service.get_active_session().id
-
         generated_dir = self._get_session_dir(session_id) / "generated"
 
         if generated_dir.exists():

@@ -1,19 +1,21 @@
 import json
+
 from datetime import datetime
 from pathlib import Path
+
 from domain.model.session.session import Session
 from domain.model.session.state import State
 from domain.model.session.history import History, Message
 from infrastructure.repository.base_repository import BaseRepository
-
-SESSIONS_DIR = Path(".openddd/sessions")
-ACTIVE_FILE = SESSIONS_DIR / "active"
+from infrastructure.services.project_metadata_service import ProjectMetadataService
 
 
 class SessionRepository(BaseRepository[Session]):
+    def __init__(self, metadata_service: ProjectMetadataService):
+        self.metadata_service = metadata_service
 
     def get(self, id: str) -> Session:
-        session_path = SESSIONS_DIR / id
+        session_path = self._get_session_path(id)
         state_path = session_path / "state.json"
         history_path = session_path / "history.json"
 
@@ -37,37 +39,51 @@ class SessionRepository(BaseRepository[Session]):
         return Session(id=id, state=state, history=history, created_at=created_at)
 
     def get_all(self) -> list[Session]:
-        if not SESSIONS_DIR.exists():
+        sessions_path = self.metadata_service.get_sessions_path()
+        if not sessions_path.exists():
             return []
+
         return [
             self.get(p.name)
-            for p in SESSIONS_DIR.iterdir()
+            for p in sessions_path.iterdir()
             if p.is_dir() and p.name != "active"
         ]
 
     def save(self, session: Session) -> None:
-        session_path = SESSIONS_DIR / session.id
+        session_path = self._get_session_path(session.id)
         session_path.mkdir(parents=True, exist_ok=True)
         (session_path / "generated").mkdir(exist_ok=True)
 
-        # Save state and history
-        (session_path / "state.json").write_text(json.dumps(session.state.to_dict(), indent=2))
+        # Save state
+        state_path = session_path / "state.json"
+        state_path.write_text(json.dumps(session.state.to_dict(), indent=2))
+
+        # Save history
+        history_path = session_path / "history.json"
         messages = [m.__dict__ for m in session.history.messages]
-        (session_path / "history.json").write_text(json.dumps(messages, indent=2))
+        history_path.write_text(json.dumps(messages, indent=2))
 
         # Update active session pointer
-        ACTIVE_FILE.write_text(session.id)
+        active_file = self._get_active_file_path()
+        active_file.write_text(session.id)
 
     def delete(self, id: str) -> None:
-        path = SESSIONS_DIR / id
+        path = self._get_session_path(id)
         if path.exists():
             for file in path.glob("*"):
                 file.unlink()
             path.rmdir()
 
     def get_active_session(self) -> Session:
-        session_id = ACTIVE_FILE.read_text().strip()
+        active_file = self._get_active_file_path()
+        session_id = active_file.read_text().strip()
         return self.get(session_id)
+
+    def _get_session_path(self, session_id: str) -> Path:
+        return self.metadata_service.get_sessions_path() / session_id
+
+    def _get_active_file_path(self) -> Path:
+        return self.metadata_service.get_sessions_path() / "active"
 
     def _id_to_iso8601(self, id: str) -> str:
         try:

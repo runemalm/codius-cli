@@ -5,7 +5,6 @@ from rich.syntax import Syntax
 from rich.panel import Panel
 from rich.text import Text
 
-from di import container
 from domain.model.config.approval_mode import ApprovalMode
 from domain.model.config.config import Config
 from domain.model.plan_steps.plan_step_type import PlanStepType
@@ -14,6 +13,8 @@ from ui.approval_ui import show_approval_ui
 
 
 def preview(state: dict) -> dict:
+    from di import container
+
     config = container.resolve(Config)
 
     session_service = container.resolve(SessionService)

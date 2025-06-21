@@ -1,7 +1,5 @@
 import logging
-from pathlib import Path
 
-from di import container
 from infrastructure.services.llm_service import LlmService
 from domain.model.prompts.plan_all_with_llm_prompt import PlanAllWithLlmPrompt
 
@@ -9,6 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 def plan_all_with_llm(state: dict) -> dict:
+    from di import container
+
     logger.debug("Running plan_all_with_llm with state keys: %s", list(state.keys()))
 
     try:

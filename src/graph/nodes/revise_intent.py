@@ -1,12 +1,14 @@
 import logging
+
 from domain.model.prompts.revise_intent_prompt import ReviseIntentPrompt
 from infrastructure.services.llm_service import LlmService
-from di import container
 
 logger = logging.getLogger(__name__)
 
 
 def revise_intent(state: dict) -> dict:
+    from di import container
+
     logger.debug("Running revise_intent...")
 
     # Build revision history entry from current state

@@ -1,12 +1,12 @@
 import shutil
-from pathlib import Path
 
-from di import container
-from domain.services import session_service
+from pathlib import Path
 from domain.services.session_service import SessionService
 
 
 def apply_changes(state: dict) -> dict:
+    from di import container
+
     session_service = container.resolve(SessionService)
 
     session_id = session_service.get_active_session_id()

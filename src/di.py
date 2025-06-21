@@ -10,6 +10,7 @@ from domain.services.session_service import SessionService
 from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
 from infrastructure.repository.session_repository import SessionRepository
 from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
+from infrastructure.services.graph_service import GraphService
 from infrastructure.services.llm_service import LlmService
 from infrastructure.services.logging_service import LoggingService
 from infrastructure.services.openddd_convention_service import OpenDddConventionService
@@ -36,12 +37,13 @@ def register_services(config: Config, args: argparse.Namespace):
     container.register_instance(Config, config)
     container.register_transient(
         ProjectMetadataService,
-        constructor_args={"workdir": args.path}
+        constructor_args={"project_path": args.path}
     )
     container.register_scoped(ConfigService)
     container.register_scoped(SessionRepository)
     container.register_singleton(LoggingService)
     container.register_scoped(SessionService)
+    container.register_scoped(GraphService)
     container.register_scoped(ProjectScannerService)
     container.register_scoped(CodeScannerService)
     container.register_scoped(OpenDddConventionService)

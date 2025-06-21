@@ -1,6 +1,6 @@
 import logging
-from pathlib import Path
 
+from pathlib import Path
 from domain.model.plan_steps.delete_file_step import DeleteFileStep
 
 logger = logging.getLogger(__name__)

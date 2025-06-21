@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from collections import defaultdict
-from di import container
+
 from infrastructure.services.openddd_convention_service import OpenDddConventionService
 from infrastructure.services.tree_sitter_service import TreeSitterService
 
@@ -13,6 +13,8 @@ TEMPLATE_DIR = Path(__file__).parent.parent.parent / "templates"
 
 
 def generate_code(state: dict) -> dict:
+    from di import container
+
     session_id = state.get('session_id')
     output_dir = Path(f".openddd/sessions/{session_id}/generated")
 
@@ -70,7 +72,15 @@ def generate_code(state: dict) -> dict:
     return state
 
 
-def handle_create_file(file_plan: dict, jinja_env: Environment, output_dir: Path, project_root: Path) -> dict | None:
+def handle_create_file(
+    file_plan: dict,
+    jinja_env: Environment,
+    output_dir: Path,
+    project_root: Path
+) -> dict | None:
+
+    from di import container
+
     convention_service = container.resolve(OpenDddConventionService)
 
     template_name = file_plan.get("template")

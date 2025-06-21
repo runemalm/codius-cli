@@ -1,6 +1,5 @@
 import logging
 
-from di import container
 from domain.model.prompts.distill_intent_prompt import DistillIntentPrompt
 from infrastructure.services.llm_service import LlmService
 
@@ -8,6 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 def distill_intent(state: dict) -> dict:
+    from di import container
+
     logger.debug("Running distill_intent with state keys: %s", list(state.keys()))
 
     try:
