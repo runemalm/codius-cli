@@ -93,7 +93,6 @@ Whether you’re evolving your domain model or adding new building blocks, Codiu
 - Python 3.9 to 3.13
 - A project built with [OpenDDD.NET](https://www.openddd.net)
 - OpenAI or Anthropic API key (set in `config.yaml` or use `/model` in the CLI)
-- **Experience with Domain-Driven Design** — Codius assumes you're comfortable working with aggregates, value objects, repositories, and other core DDD patterns
 
 ---
 
