@@ -1,33 +1,21 @@
-from pathlib import Path
+import tree_sitter_c_sharp as tscs
+
 from tree_sitter import Language, Parser, Tree
 
 
 class TreeSitterService:
     def __init__(self):
-        root = Path(__file__).resolve().parents[3]
-        self.lib_path = root / "resources" / "parsers" / "build" / "my-languages.so"
-        self.language_sources = [
-            str(root / "resources" / "parsers" / "vendor" / "tree-sitter-c-sharp")
-        ]
-        self._language_cache = {}
-
-    def ensure_languages_built(self):
-        if not self.lib_path.exists():
-            self.lib_path.parent.mkdir(parents=True, exist_ok=True)
-            Language.build_library(str(self.lib_path), self.language_sources)
+        # Preload supported languages using their PyPI packages
+        self._language_cache = {
+            "c_sharp": Language(tscs.language()),
+        }
 
     def parse_code(self, source_code: str, language_name: str = "c_sharp") -> Tree:
-        lang = self._get_language(language_name)
-        parser = Parser()
-        parser.set_language(lang)
+        language = self._get_language(language_name)
+        parser = Parser(language)
         return parser.parse(source_code.encode("utf-8"))
 
     def _get_language(self, language_name: str) -> Language:
-        self.ensure_languages_built()
-
-        if language_name in self._language_cache:
-            return self._language_cache[language_name]
-
-        lang = Language(str(self.lib_path), language_name)
-        self._language_cache[language_name] = lang
-        return lang
+        if language_name not in self._language_cache:
+            raise ValueError(f"Unsupported language: {language_name}")
+        return self._language_cache[language_name]
