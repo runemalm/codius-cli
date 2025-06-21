@@ -67,9 +67,10 @@ On first run, Codius will create `.codius/config.yaml` and initialize a modeling
 
 ## Compatibility
 
-Codius is built to work with existing projects that use [OpenDDD.NET](https://www.openddd.net).
+Codius is designed for projects built with [OpenDDD.NET](https://www.openddd.net) — an opinionated framework for Domain-Driven Design in .NET.
 
-It analyzes your current codebase, understands the domain model, and applies changes directly — no need to start from scratch. Whether you’re adding new aggregates or evolving existing ones, Codius helps you move faster without breaking structure.
+It works directly on your existing codebase, generating and modifying code according to OpenDDD.NET’s conventions.  
+Whether you’re evolving your domain model or adding new building blocks, Codius helps you stay consistent and productive within the framework’s structure.
 
 ---
 
