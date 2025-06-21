@@ -18,7 +18,7 @@ setup(
         'pyyaml',
         'prompt-toolkit',
         'rich',
-        'tree-sitter0.23.2',
+        'tree-sitter==0.23.2',
         'tree-sitter-c-sharp',
     ],
     entry_points={
