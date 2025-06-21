@@ -1,13 +1,19 @@
-# Codius
+<h1 align="center">Codius CLI</h1>
+<p align="center">
+    Coding assistant for domain-driven design projects in ASP.NET Core.
+</p>
 
-A coding assistant for domain-driven design projects in ASP.NET Core.
+<p align="center">
+  <code>
+    pip install codius
+  </code>
+</p>
+
+![Codius demo screenshot PNG"](resources/images/screenshot.png)
 
 ---
 
-
-## ✨ Why Codius?
-
-`Codius` is a tool under active development with one clear goal:
+`Codius` is under active development with one clear goal:
 
 > Free domain-driven designers from boilerplate and let them focus on modeling.
 
@@ -34,7 +40,7 @@ On first run, Codius will create `.openddd/config.yaml` and initialize a modelin
 
 ## 🗣 Example
 
-![Codius CLI screenshot](resources/images/screenshot.png)
+![Codius CLI screenshot](https://github.com/runemalm/openddd-cli/raw/master/resources/images/screenshot.png)
 
 Sample prompt:
 
