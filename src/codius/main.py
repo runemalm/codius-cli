@@ -8,7 +8,7 @@ from codius.ui.shell import run_shell
 from codius.domain.services.session_service import SessionService
 from codius.infrastructure.services.logging_service import LoggingService
 from codius.infrastructure.services.project_initializer_service import ProjectInitializerService
-from codius.utils import get_version_from_setup
+from codius.__version__ import __version__
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version=f"%(prog)s {get_version_from_setup()}",
+        version=f"%(prog)s {__version__}",
         help="Show the version number and exit",
     )
 

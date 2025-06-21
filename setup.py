@@ -1,8 +1,15 @@
 from setuptools import setup, find_packages
 
+def get_version():
+    with open(os.path.join("src", "codius", "__version__.py"), encoding="utf-8") as f:
+        match = re.search(r'^__version__ = ["\']([^"\']+)["\']', f.read())
+        if match:
+            return match.group(1)
+        raise RuntimeError("Version not found")
+
 setup(
     name='codius',
-    version='0.1.0-alpha.3',
+    version=get_version(),
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
     include_package_data=True,

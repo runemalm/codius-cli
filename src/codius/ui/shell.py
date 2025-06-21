@@ -12,7 +12,7 @@ from codius.infrastructure.services.graph_service import GraphService
 
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
 from codius.ui.slash_commands import SLASH_COMMANDS, handle_slash_command
-from codius.utils import get_version_from_setup
+from codius.__version__ import __version__
 
 console = Console()
 slash_completer = WordCompleter(SLASH_COMMANDS.keys(), sentence=True)
@@ -25,7 +25,7 @@ def _(event):
 
 
 def render_header():
-    version = get_version_from_setup()
+    version = __version__
     console.print(
         Panel.fit(
             f"● [bold cyan]Codius Coding Assistant[/bold cyan] [dim]({version})[/dim]",

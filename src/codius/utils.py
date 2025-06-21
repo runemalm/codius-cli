@@ -27,12 +27,3 @@ def print_highlighted(text: str, title: str = "Output"):
     print('-' * 40)
     print(text)
     print("=" * 40 + "\033[0m\n")
-
-
-def get_version_from_setup():
-    with open("setup.py", encoding="utf-8") as f:
-        content = f.read()
-    match = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", content)
-    if match:
-        return match.group(1)
-    raise RuntimeError("Version not found in setup.py")
