@@ -19,6 +19,7 @@ setup(
         'rich',
         'tree-sitter==0.20.1',
         'tree-sitter-languages',
+        'exceptiongroup',
     ],
     entry_points={
         'console_scripts': [
