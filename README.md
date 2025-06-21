@@ -9,7 +9,7 @@
 
 ---
 
-## ❓ Why Codius?
+## Why Codius?
 
 `Codius` is under active development with one clear goal:
 
@@ -24,7 +24,7 @@ If you’re passionate about DDD, code quality, and improving developer flow, tr
 
 ---
 
-## 🚀 Quickstart
+## Quickstart
 
 ```bash
 $ pip install codius    # Temporary package name
@@ -36,7 +36,7 @@ On first run, Codius will create `.openddd/config.yaml` and initialize a modelin
 
 ---
 
-## 🧩 Slash Commands
+## Slash Commands
 
 | Command         | Description |
 |----------------|-------------|
@@ -50,7 +50,7 @@ On first run, Codius will create `.openddd/config.yaml` and initialize a modelin
 
 ---
 
-## 🔧 Requirements
+## Requirements
 
 - Python 3.11+
 - A project built with [OpenDDD.NET](https://github.com/runemalm/OpenDDD.NET)
@@ -58,7 +58,7 @@ On first run, Codius will create `.openddd/config.yaml` and initialize a modelin
 
 ---
 
-## 🤝 Contribute
+## Contribute
 
 Codius is **under active development**.
 
@@ -72,6 +72,6 @@ If you're into:
 
 ---
 
-## 📄 License
+## License
 
 Licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
