@@ -34,7 +34,7 @@ On first run, Codius will create `.openddd/config.yaml` and initialize a modelin
 
 ## 🗣 Example
 
-> _TODO: Insert a screenshot at `/images/screenshot.png` showing the CLI interface._
+![Codius CLI screenshot](images/screenshot.png)
 
 Sample prompt:
 
