@@ -13,13 +13,13 @@ langchain-openai = "*"
 jinja2 = "*"
 python-dateutil = "*"
 py-dependency-injection = "*"
+tree-sitter = "==0.20.1"
+tree-sitter-languages = "*"
 
 [dev-packages]
 pytest = "*"
 pyfakefs = "*"
 python-dotenv = "*"
-tree-sitter = "==0.20.1"
-tree-sitter-languages = "*"
 
 [requires]
 python_version = "3.11"
