@@ -21,6 +21,7 @@ setup(
         'rich',
         'tree-sitter==0.21.0',
         'tree-sitter-languages',
+        'typing-extensions==4.13.2',
     ],
     entry_points={
         'console_scripts': [
