@@ -18,7 +18,7 @@ setup(
         'pyyaml',
         'prompt-toolkit',
         'rich',
-        'tree-sitter==0.21.1',
+        'tree-sitter',
         'tree-sitter-languages',
         'typing-extensions==4.13.2',
     ],
