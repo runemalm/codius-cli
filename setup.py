@@ -7,6 +7,8 @@ setup(
     packages=find_packages(where='src'),
     include_package_data=True,
     install_requires=[
+        'exceptiongroup',
+        'greenlet==2.0.2',
         'jinja2',
         'langgraph',
         'langchain',
@@ -19,7 +21,6 @@ setup(
         'rich',
         'tree-sitter==0.20.1',
         'tree-sitter-languages',
-        'exceptiongroup',
     ],
     entry_points={
         'console_scripts': [

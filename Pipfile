@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+exceptiongroup = "*"
+greenlet = "==2.0.2"
 jinja2 = "*"
 langgraph = "*"
 langchain = "*"
@@ -16,7 +18,6 @@ prompt-toolkit = "*"
 rich = "*"
 tree-sitter = "==0.20.1"
 tree-sitter-languages = "*"
-exceptiongroup = "*"
 
 [dev-packages]
 pytest = "*"
