@@ -26,7 +26,7 @@ def _(event):
 def render_header():
     console.print(
         Panel.fit(
-            "● [bold cyan]OpenDDD.NET Coding Assistant[/bold cyan] [dim](0.1.0)[/dim]",
+            "● [bold cyan]Codius Coding Assistant[/bold cyan] [dim](0.1.0)[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )

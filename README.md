@@ -1,6 +1,6 @@
 # Codius
 
-A coding assistant for domain-driven design projects.
+A coding assistant for domain-driven design projects in ASP.NET Core.
 
 ---
 
