@@ -22,7 +22,7 @@ class OpenAiLlmAdapter(LlmPort):
 
     def call_prompt(self, prompt: str) -> str:
         if not self.client:
-            raise Exception("Missing or invalid OpenAI API key in .openddd/config.yaml")
+            raise Exception("Missing or invalid OpenAI API key in .codius/config.yaml")
 
         prompt_len = len(prompt)
         token_estimate = prompt_len // 4  # Roughly: 1 token ≈ 4 chars
@@ -49,7 +49,7 @@ class OpenAiLlmAdapter(LlmPort):
 
     def call_chat(self, messages: list[dict]) -> str:
         if not self.client:
-            raise Exception("Missing or invalid OpenAI API key in .openddd/config.yaml")
+            raise Exception("Missing or invalid OpenAI API key in .codius/config.yaml")
 
         total_input_chars = sum(len(m["content"]) for m in messages)
         token_estimate = total_input_chars // 4

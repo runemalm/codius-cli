@@ -17,7 +17,6 @@ from domain.model.config.config import Config
 from domain.model.config.llm_provider import LlmProvider
 from infrastructure.adapter.llm.llm_config import LlmConfig
 from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
-from infrastructure.services.tree_sitter_service import TreeSitterService
 
 # Load .env from the project root, even if cwd is ./tests
 project_root = Path(__file__).parent.parent.resolve()

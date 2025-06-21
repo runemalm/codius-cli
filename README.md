@@ -35,7 +35,7 @@ $ cd /your/project/root # Go to your project's root
 $ codius                # Starts Codius CLI
 ```
 
-On first run, Codius will create `.openddd/config.yaml` and initialize a modeling session.
+On first run, Codius will create `.codius/config.yaml` and initialize a modeling session.
 
 ---
 

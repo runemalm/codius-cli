@@ -11,12 +11,12 @@ logger = logging.getLogger(__name__)
 class ProjectInitializerService:
     def __init__(self, project_path: Path):
         self.project_path = project_path.resolve()
-        self.metadata_dir = self.project_path / ".openddd"
+        self.metadata_dir = self.project_path / ".codius"
         self.config_file = self.metadata_dir / "config.yaml"
 
     def ensure_config_file_exists(self) -> None:
         if not self.config_file.exists():
-            print("🛠 Project configuration not found. Creating .openddd/config.yaml...")
+            print("🛠 Project configuration not found. Creating .codius/config.yaml...")
             self.metadata_dir.mkdir(parents=True, exist_ok=True)
             with self.config_file.open("w") as f:
                 yaml.dump(DEFAULT_CONFIG, f)

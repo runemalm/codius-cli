@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='openddd',
+    name='codius-cli',
     version='0.1.0',
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
@@ -12,15 +12,15 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'openddd=main:main',
+            'codius=main:main',
         ],
     },
     author='David Runemalm',
     author_email='david.runemalm@gmail.com',
-    description='A coding assistant CLI for projects built with OpenDDD.NET (and ASP.NET Core).',
+    description='A coding assistant for domain-driven design projects in ASP.NET Core.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/runemalm/openddd-cli',
+    url='https://github.com/runemalm/codius-cli',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',

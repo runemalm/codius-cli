@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class ProjectMetadataService:
     def __init__(self, project_path: Path):
         self.project_path = project_path.resolve()
-        self.metadata_root = self.project_path / ".openddd"
+        self.metadata_root = self.project_path / ".codius"
 
     def get_project_root(self) -> Path:
         """Returns the root path of the current project."""
@@ -19,7 +19,7 @@ class ProjectMetadataService:
         return self.metadata_root / "config.yaml"
 
     def get_sessions_path(self) -> Path:
-        """Returns the path to the sessions directory (.openddd/sessions)."""
+        """Returns the path to the sessions directory (.codius/sessions)."""
         return self.metadata_root / "sessions"
 
     def get_session_path(self, session_id: str) -> Path:

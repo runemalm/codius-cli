@@ -11,7 +11,7 @@ from infrastructure.services.project_initializer_service import ProjectInitializ
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="openddd")
+    parser = argparse.ArgumentParser(prog="codius")
     parser.add_argument(
         "path",
         nargs="?",

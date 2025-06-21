@@ -46,3 +46,4 @@ build/
 
 scratch
 .env
+env.make

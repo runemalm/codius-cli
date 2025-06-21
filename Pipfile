@@ -15,11 +15,11 @@ python-dateutil = "*"
 py-dependency-injection = "*"
 tree-sitter = "==0.20.1"
 tree-sitter-languages = "*"
+python-dotenv = "*"
 
 [dev-packages]
 pytest = "*"
 pyfakefs = "*"
-python-dotenv = "*"
 
 [requires]
 python_version = "3.11"
