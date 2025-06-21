@@ -7,6 +7,7 @@ setup(
     packages=find_packages(where='src'),
     include_package_data=True,
     install_requires=[
+        'exceptiongroup',
         'jinja2',
         'langgraph',
         'langchain',
@@ -17,7 +18,7 @@ setup(
         'pyyaml',
         'prompt-toolkit',
         'rich',
-        'tree-sitter0.23.2',
+        'tree-sitter',
         'tree-sitter-c-sharp',
     ],
     entry_points={
