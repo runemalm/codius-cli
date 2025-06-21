@@ -19,7 +19,7 @@ setup(
         'pyyaml',
         'prompt-toolkit',
         'rich',
-        'tree-sitter==0.20.1',
+        'tree-sitter==0.21.0',
         'tree-sitter-languages',
     ],
     entry_points={
