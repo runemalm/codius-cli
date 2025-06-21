@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 exceptiongroup = "*"
-greenlet = {version = "*", markers = "python_version < '3.12'"}
 jinja2 = "*"
 langgraph = "*"
 langchain = "*"
@@ -16,7 +15,7 @@ python-dotenv = "*"
 pyyaml = "*"
 prompt-toolkit = "*"
 rich = "*"
-tree-sitter = "==0.21.0"
+tree-sitter = "==0.21.1"
 tree-sitter-languages = "*"
 typing-extensions = "==4.13.2"
 
@@ -27,4 +26,4 @@ pipfile-requirements = "*"
 flake8 = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
