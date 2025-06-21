@@ -33,8 +33,6 @@ def _enforce_aggregate_conventions(intent: dict) -> dict:
 
     details = intent.setdefault("details", {})
     properties = details.setdefault("properties", [])
-    commands = details.setdefault("commands", [])
-    events = details.setdefault("events", [])
 
     # Normalize property names to PascalCase
     for prop in properties:

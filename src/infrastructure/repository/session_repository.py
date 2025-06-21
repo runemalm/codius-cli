@@ -92,4 +92,3 @@ class SessionRepository(BaseRepository[Session]):
             return dt.isoformat(timespec="seconds")
         except ValueError:
             raise ValueError(f"Invalid id format: {id}")
-

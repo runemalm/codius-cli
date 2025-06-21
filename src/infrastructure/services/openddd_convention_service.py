@@ -174,12 +174,8 @@ class OpenDddConventionService:
         return "\n".join(lines) + "\n"
 
     def _reindent_block(self, code: str, class_indent: int) -> str:
-        base_indent = min(
-            (len(line) - len(line.lstrip()) for line in code.splitlines() if
-             line.strip()), default=0)
         lines = code.splitlines()
 
-        class_indent_str = " " * class_indent
         member_indent_str = " " * (class_indent + 4)
         block_indent_str = " " * (class_indent + 8)
 

@@ -302,6 +302,7 @@ def _find_related_block(name: str, blocks, type_name: str):
             return bb
     return None
 
+
 def _find_called_block(action, blocks, valid_types):
     # Naive heuristic: match any method name to known domain logic class names
     for bb in blocks:

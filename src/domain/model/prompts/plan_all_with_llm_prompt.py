@@ -77,7 +77,7 @@ Each plan step should be a JSON object describing:
 - Where to place it (`path`)
 - Either:
   - A template name and context for creation
-  - A modification type and context for modification 
+  - A modification type and context for modification
 - All C# class and property names must use PascalCase.
 
 Only return a **list of plan steps as valid JSON** — no markdown, no prose, no explanation.

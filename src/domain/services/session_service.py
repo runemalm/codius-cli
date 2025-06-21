@@ -45,22 +45,22 @@ class SessionService:
         prompt = f"""
         You are summarizing a development session in ASP.NET Core Domain-Driven Design (DDD) project built with OpenDDD.NET.
         The goal is to preserve meaningful context to continue development later, without needing the full history.
-    
+
         Here is the conversation that took place:
         {conversation}
-    
+
         Here is the current project metadata:
         {json.dumps(project_metadata, indent=2)}
-    
+
         Here are the building blocks (aggregates, services, listeners, etc.):
         {json.dumps(building_blocks, indent=2)}
-    
+
         Now, summarize this session:
         - What was the user trying to achieve?
         - What actions were taken?
         - What changes were made to the domain model?
         - What should the assistant remember to continue development?
-    
+
         Summary:"""
 
         summary = llm_service.call_prompt(prompt).strip()

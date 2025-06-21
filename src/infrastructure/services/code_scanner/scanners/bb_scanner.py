@@ -51,7 +51,7 @@ class BuildingBlockScanner:
                     blocks.append(self._create_block(BuildingBlockType.REPOSITORY, class_name, file_path, content))
                 elif "IDomainService" in content:
                     blocks.append(self._create_block(BuildingBlockType.DOMAIN_SERVICE, class_name, file_path, content))
-                elif "Ports" in str(file_path) and re.search(rf'\binterface\s+I\w+\s*:\s*.*\bIPort\b', content):
+                elif "Ports" in str(file_path) and re.search(r'\binterface\s+I\w+\s*:\s*.*\bIPort\b', content):
                     blocks.append(self._create_block(BuildingBlockType.PORT, class_name, file_path, content))
 
             elif layer == "application":
