@@ -4,14 +4,19 @@ A coding assistant for domain-driven design projects in ASP.NET Core.
 
 ---
 
+
 ## ✨ Why Codius?
 
-`Codius` is inspired by coding assistants like OpenAI’s Codex and Anthropic’s Claude.  
-If you're familiar with those tools, the interface will feel instantly familiar.
+Codius is a tool under active development with one clear goal:
 
-If you're a domain-driven design practitioner — or curious contributor — try it out by following the instructions below.
+> Free domain-driven designers from boilerplate and let them focus on modeling.
 
-Want to contribute? Reach out — or just create a feature branch and submit a PR. I’ll review and get back to you ASAP.
+Instead of writing out every aggregate, method, and repository by hand, you describe what you want to build — and Codius helps generate the code that matches your intent, aligned with the [OpenDDD.NET](https://www.openddd.net) framework.
+
+It doesn’t try to replace your thinking — it amplifies it.  
+You stay in control of the model. Codius handles the scaffolding and code generation.
+
+If you’re passionate about DDD, code quality, and improving developer flow, try Codius — or help shape it by contributing to its development.
 
 ---
 
