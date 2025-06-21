@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Optional
 
 from domain.model.config.config import Config
 
@@ -9,7 +10,7 @@ class LoggingService:
         self.log_level = config.log_level
         self.debug = config.debug
 
-    def configure(self, level_override: str | None = None):
+    def configure(self, level_override: Optional[str] = None):
         # Priority: explicit arg > config file > DEBUG env
         level_str = (
             level_override

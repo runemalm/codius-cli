@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 from domain.model.session.session import Session
 from domain.services.session_factory import create_session
@@ -10,7 +11,7 @@ class SessionService:
     def __init__(self, repository: SessionRepository):
         self._repository = repository
 
-    def create_and_activate_session(self, name: str | None = None):
+    def create_and_activate_session(self, name: Optional[str] = None):
         session = create_session(name)
         self._repository.save(session)
         return session

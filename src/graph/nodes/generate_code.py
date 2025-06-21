@@ -1,6 +1,8 @@
 import logging
 
 from pathlib import Path
+from typing import Optional
+
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from collections import defaultdict
 
@@ -82,7 +84,7 @@ def handle_create_file(
     jinja_env: Environment,
     output_dir: Path,
     project_root: Path
-) -> dict | None:
+) -> Optional[dict]:
 
     from di import container
 
@@ -122,7 +124,7 @@ def handle_modify_file(
     project_root: Path,
     created_files_map: dict[str, str],
     convention_service: OpenDddConventionService
-) -> dict | None:
+) -> Optional[dict]:
     absolute_path = Path(path).resolve()
     relative_path = absolute_path.relative_to(project_root)
 
@@ -184,7 +186,7 @@ def render_method_template(context: dict, jinja_env: Environment) -> str:
     return template.render(**context)
 
 
-def inject_method_ast_based(source_code: str, method_code: str, placement: dict | None) -> str:
+def inject_method_ast_based(source_code: str, method_code: str, placement: Optional[dict]) -> str:
     from di import container
 
     tree_sitter_service = container.resolve(TreeSitterService)
