@@ -6,7 +6,7 @@
 <p align="center"><code>pip install codius</code></p>
 
 <p align="center">
-  <img src="resources/images/screenshot_2.png" alt="Codius CLI screenshot" width="650"/>
+  <img src="resources/images/screenshot_3.png" alt="Codius CLI screenshot" width="650"/>
 </p>
 
 
