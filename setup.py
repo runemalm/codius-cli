@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='codius',
-    version='0.1.0-alpha.2',
+    version='0.1.0-alpha.3',
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
     include_package_data=True,
