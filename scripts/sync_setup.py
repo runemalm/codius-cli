@@ -5,13 +5,25 @@ import toml
 import re
 from pathlib import Path
 
+
+def normalize_version(name, version):
+    if version == "*":
+        return name
+    elif re.match(r"^[0-9]+(\.[0-9]+)*$", version):
+        return f"{name}=={version}"  # Exact version
+    else:
+        return f"{name}{version}"  # Handles >=, ~=, etc.
+
+
 def parse_pipfile(pipfile_path):
     data = toml.load(pipfile_path)
     packages = data.get("packages", {})
-    return [f"{name}{version if version != '*' else ''}" for name, version in packages.items()]
+    return [normalize_version(name, version) for name, version in packages.items()]
+
 
 def format_install_requires(requirements, indent='    '):
     return ',\n'.join(f"{indent*2}'{req}'" for req in requirements)
+
 
 def update_setup_py(requirements, setup_path):
     indent = '    '
@@ -28,12 +40,14 @@ def update_setup_py(requirements, setup_path):
     setup_path.write_text(updated)
     print("✅ install_requires block in setup.py updated.")
 
+
 def dry_run(requirements):
     print("🔍 install_requires (dry run):\n")
     print("install_requires = [")
     for r in requirements:
         print(f"    '{r}',")
     print("]")
+
 
 def main():
     if len(sys.argv) < 4 or sys.argv[1] not in ("--dry-run", "--sync"):
@@ -52,6 +66,7 @@ def main():
         dry_run(requirements)
     elif mode == "--sync":
         update_setup_py(requirements, setup_path)
+
 
 if __name__ == "__main__":
     main()
