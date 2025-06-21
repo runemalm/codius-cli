@@ -1,4 +1,4 @@
-from graph.nodes.extract_relevant_sources import extract_relevant_sources
+from codius.graph.nodes.extract_relevant_sources import extract_relevant_sources
 
 
 def test_extract_relevant_sources_reads_expected_files(tmp_path):

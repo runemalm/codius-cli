@@ -1,12 +1,6 @@
-import pytest
-import difflib
-
-from graph.nodes.generate_code import generate_code
-
-
 import difflib
 import pytest
-from graph.nodes.generate_code import generate_code
+from codius.graph.nodes.generate_code import generate_code
 
 
 @pytest.mark.integration

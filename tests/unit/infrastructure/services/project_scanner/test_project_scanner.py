@@ -3,10 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from domain.services.session_service import SessionService
-from infrastructure.repository.session_repository import SessionRepository
-from infrastructure.services.project_metadata_service import ProjectMetadataService
-from infrastructure.services.project_scanner_service import ProjectScannerService
+from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
+from codius.infrastructure.services.project_scanner_service import ProjectScannerService
 
 
 def test_extract_project_metadata_with_nested_layers(fs):

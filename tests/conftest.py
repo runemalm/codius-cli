@@ -11,12 +11,12 @@ from pathlib import Path
 from dependency_injection.container import DependencyContainer
 from dotenv import load_dotenv
 
-from di import container, register_services
-from domain.model.config.approval_mode import ApprovalMode
-from domain.model.config.config import Config
-from domain.model.config.llm_provider import LlmProvider
-from infrastructure.adapter.llm.llm_config import LlmConfig
-from infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
+from codius.di import container, register_services
+from codius.domain.model.config.approval_mode import ApprovalMode
+from codius.domain.model.config.config import Config
+from codius.domain.model.config.llm_provider import LlmProvider
+from codius.infrastructure.adapter.llm.llm_config import LlmConfig
+from codius.infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 
 # Load .env from the project root, even if cwd is ./tests
 project_root = Path(__file__).parent.parent.resolve()

@@ -1,8 +1,8 @@
 import pytest
 
-from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
-from infrastructure.services.code_scanner.model.building_block import BuildingBlock
-from infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
+from codius.infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
+from codius.infrastructure.services.code_scanner import BuildingBlock
+from codius.infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
 
 
 @pytest.mark.usefixtures("fs")

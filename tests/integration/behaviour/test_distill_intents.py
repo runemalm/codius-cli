@@ -1,8 +1,8 @@
 import pytest
 
-from di import container
-from domain.model.config.config import Config
-from graph.nodes.distill_intent import distill_intent
+from codius.di import container
+from codius.domain.model.config.config import Config
+from codius.graph.nodes import distill_intent
 
 
 @pytest.mark.integration

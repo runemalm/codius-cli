@@ -1,7 +1,7 @@
 import pytest
 
-from infrastructure.services.openddd_convention_service import OpenDddConventionService
-from infrastructure.services.tree_sitter_service import TreeSitterService
+from codius.infrastructure.services.openddd_convention_service import OpenDddConventionService
+from codius.infrastructure.services.tree_sitter_service import TreeSitterService
 
 
 @pytest.fixture
