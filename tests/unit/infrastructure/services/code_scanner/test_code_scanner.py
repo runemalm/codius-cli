@@ -1,7 +1,8 @@
 import pytest
 
 from codius.infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
-from codius.infrastructure.services.code_scanner import BuildingBlock
+from codius.infrastructure.services.code_scanner.model.building_block import \
+    BuildingBlock
 from codius.infrastructure.services.code_scanner.model.building_block_type import BuildingBlockType
 
 

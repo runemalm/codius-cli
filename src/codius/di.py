@@ -2,21 +2,21 @@ import argparse
 
 from dependency_injection.container import DependencyContainer
 
-from domain.model.config.config import Config
-from domain.model.port.llm_port import LlmPort
-from domain.services.config_service import ConfigService
-from domain.services.session_service import SessionService
+from codius.domain.model.config.config import Config
+from codius.domain.model.port.llm_port import LlmPort
+from codius.domain.services.config_service import ConfigService
+from codius.domain.services.session_service import SessionService
 
-from infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
-from infrastructure.repository.session_repository import SessionRepository
-from infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
-from infrastructure.services.graph_service import GraphService
-from infrastructure.services.llm_service import LlmService
-from infrastructure.services.logging_service import LoggingService
-from infrastructure.services.openddd_convention_service import OpenDddConventionService
-from infrastructure.services.project_metadata_service import ProjectMetadataService
-from infrastructure.services.project_scanner_service import ProjectScannerService
-from infrastructure.services.tree_sitter_service import TreeSitterService
+from codius.infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
+from codius.infrastructure.repository.session_repository import SessionRepository
+from codius.infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
+from codius.infrastructure.services.graph_service import GraphService
+from codius.infrastructure.services.llm_service import LlmService
+from codius.infrastructure.services.logging_service import LoggingService
+from codius.infrastructure.services.openddd_convention_service import OpenDddConventionService
+from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
+from codius.infrastructure.services.project_scanner_service import ProjectScannerService
+from codius.infrastructure.services.tree_sitter_service import TreeSitterService
 
 
 class ContainerProxy:

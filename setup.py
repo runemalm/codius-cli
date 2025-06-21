@@ -23,7 +23,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'codius=main:main',
+            'codius=codius.main:main',
         ],
     },
     author='David Runemalm',

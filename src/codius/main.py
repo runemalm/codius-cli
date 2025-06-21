@@ -2,13 +2,13 @@ import argparse
 
 from pathlib import Path
 
-from di import register_services, container
-from ui.shell import run_shell
+from codius.di import register_services, container
+from codius.ui.shell import run_shell
 
-from domain.services.session_service import SessionService
-from infrastructure.services.logging_service import LoggingService
-from infrastructure.services.project_initializer_service import ProjectInitializerService
-from utils import get_version_from_setup
+from codius.domain.services.session_service import SessionService
+from codius.infrastructure.services.logging_service import LoggingService
+from codius.infrastructure.services.project_initializer_service import ProjectInitializerService
+from codius.utils import get_version_from_setup
 
 
 def main():
