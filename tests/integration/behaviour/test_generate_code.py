@@ -29,6 +29,7 @@ def test_generate_create_file(tmp_path):
     }
 
     state = {
+        "session_id": "test-session-id",
         "plan": [file_plan],
         "project_metadata": {
             "project_root": str(project_root)
@@ -112,6 +113,7 @@ namespace MyApp.Domain.Model.Invoice
     }
 
     state = {
+        "session_id": "test-session-id",
         "plan": [file_plan],
         "project_metadata": {
             "project_root": str(tmp_path)
@@ -191,6 +193,7 @@ namespace MyApp.Domain.Model.Invoice
     }
 
     state = {
+        "session_id": "test-session-id",
         "plan": [file_plan],
         "project_metadata": {
             "project_root": str(tmp_path)

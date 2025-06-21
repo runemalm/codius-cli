@@ -42,7 +42,7 @@ def configure_test_logging():
 
 
 @pytest.fixture(autouse=True, scope="function")
-def container_(request: SubRequest):
+def container_(request: SubRequest, bookstore_project_path: Path):
     if "integration" in request.keywords:
         test_container_name = f"test_{uuid.uuid4()}"
         DependencyContainer.configure_default_container_name(test_container_name)
