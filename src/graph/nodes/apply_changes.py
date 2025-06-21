@@ -1,16 +1,17 @@
 import shutil
 
 from pathlib import Path
-from domain.services.session_service import SessionService
+
+from infrastructure.services.project_metadata_service import ProjectMetadataService
 
 
 def apply_changes(state: dict) -> dict:
     from di import container
 
-    session_service = container.resolve(SessionService)
+    metadata_service = container.resolve(ProjectMetadataService)
 
-    session_id = session_service.get_active_session_id()
-    generated_dir = Path(f".openddd/sessions/{session_id}/generated")
+    session_id = state.get('session_id')
+    generated_dir = metadata_service.get_generated_path(session_id)
     generated_files = list(generated_dir.rglob("*.cs"))
 
     # Copy generated files

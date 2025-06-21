@@ -5,6 +5,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from collections import defaultdict
 
 from infrastructure.services.openddd_convention_service import OpenDddConventionService
+from infrastructure.services.project_metadata_service import ProjectMetadataService
 from infrastructure.services.tree_sitter_service import TreeSitterService
 
 logger = logging.getLogger(__name__)
@@ -15,8 +16,12 @@ TEMPLATE_DIR = Path(__file__).parent.parent.parent / "templates"
 def generate_code(state: dict) -> dict:
     from di import container
 
+    metadata_service = container.resolve(ProjectMetadataService)
+
     session_id = state.get('session_id')
-    output_dir = Path(f".openddd/sessions/{session_id}/generated")
+    generated_dir = metadata_service.get_generated_path(session_id)
+
+    output_dir = generated_dir
 
     convention_service = container.resolve(OpenDddConventionService)
 

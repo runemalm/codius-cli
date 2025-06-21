@@ -22,12 +22,16 @@ class ProjectMetadataService:
         """Returns the path to the sessions directory (.openddd/sessions)."""
         return self.metadata_root / "sessions"
 
-    def _get_session_dir(self, session_id: str) -> Path:
+    def get_session_path(self, session_id: str) -> Path:
         return self.get_sessions_path() / session_id
+
+    def get_generated_path(self, session_id: str) -> Path:
+        """Returns the path to the generated/ directory for the given session."""
+        return self.get_session_path(session_id) / "generated"
 
     def clear_generated_files(self, session_id: str):
         """Deletes and recreates the generated/ directory for the given session."""
-        generated_dir = self._get_session_dir(session_id) / "generated"
+        generated_dir = self.get_generated_path(session_id)
 
         if generated_dir.exists():
             try:

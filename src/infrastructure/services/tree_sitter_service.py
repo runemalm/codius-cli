@@ -5,9 +5,9 @@ from tree_sitter import Language, Parser, Tree
 class TreeSitterService:
     def __init__(self):
         root = Path(__file__).resolve().parents[3]
-        self.lib_path = root / "tree_sitter" / "build" / "my-languages.so"
+        self.lib_path = root / "parsers" / "build" / "my-languages.so"
         self.language_sources = [
-            str(root / "tree_sitter" / "vendor" / "tree-sitter-c-sharp")
+            str(root / "parsers" / "vendor" / "tree-sitter-c-sharp")
         ]
         self._language_cache = {}
 

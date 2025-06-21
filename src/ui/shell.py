@@ -112,7 +112,7 @@ def run_shell():
             session_repository.save(session)
 
             # Render final message
-            render_assistant_message(session.history[-1])
+            render_assistant_message(session.history.latest().content)
 
         except KeyboardInterrupt:
             console.print("\n[dim]Exited with Ctrl+C[/dim]")

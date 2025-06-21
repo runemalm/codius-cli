@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 import datetime
+from typing import Optional
 
 from domain.model.session.message import Message
 
@@ -12,6 +13,9 @@ class History:
         self.messages.append(
             Message(role=role, content=content, timestamp=datetime.datetime.utcnow().isoformat())
         )
+
+    def latest(self) -> Optional[Message]:
+        return self.messages[-1] if self.messages else None
 
     def recent(self, n=4) -> list[Message]:
         return self.messages[-n:]

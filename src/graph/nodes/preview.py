@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from prompt_toolkit import PromptSession
 from rich.console import Console
 from rich.syntax import Syntax
@@ -8,7 +9,8 @@ from rich.text import Text
 from domain.model.config.approval_mode import ApprovalMode
 from domain.model.config.config import Config
 from domain.model.plan_steps.plan_step_type import PlanStepType
-from domain.services.session_service import SessionService
+from infrastructure.services.project_metadata_service import ProjectMetadataService
+
 from ui.approval_ui import show_approval_ui
 
 
@@ -16,11 +18,11 @@ def preview(state: dict) -> dict:
     from di import container
 
     config = container.resolve(Config)
+    metadata_service = container.resolve(ProjectMetadataService)
 
-    session_service = container.resolve(SessionService)
+    session_id = state.get('session_id')
+    generated_dir = metadata_service.get_generated_path(session_id)
 
-    session_id = session_service.get_active_session_id()
-    generated_dir = Path(f".openddd/sessions/{session_id}/generated")
     console = Console()
     session = PromptSession()
 
