@@ -22,16 +22,34 @@
 
 ## Why Codius?
 
-`Codius` is under active development with one clear goal:
-
 > Free domain-driven designers from boilerplate and let them focus on modeling.
 
-Instead of writing out every aggregate, method, and repository by hand, you describe what you want to build — and Codius helps generate the code that matches your intent, aligned with the [OpenDDD.NET](https://www.openddd.net) framework.
 
-It doesn’t try to replace your thinking — it amplifies it.  
-You stay in control of the model. Codius handles the scaffolding and code generation.
+Codius is your coding assistant for domain-driven design — built to take care of the repetitive tasks that just have to get done.
+
+Instead of manually writing boilerplate for aggregates, methods, repositories, and other building blocks, you describe the changes you want to make. Codius takes care of translating those changes into code, aligned with the [OpenDDD.NET](https://www.openddd.net) framework.
+
+This frees you up to focus on what really matters: modeling your domain and evolving your design.  
+Refinements become faster, iteration cycles shorter, and the feedback loop tighter.
+
+With Codius, your ideas move from thought to implementation without getting lost in scaffolding.
 
 If you’re passionate about DDD, code quality, and improving developer flow, try Codius — or help shape it by contributing to its development.
+
+---
+
+## Example
+
+Say you want a `Book` aggregate with `Title`, `Author`, and `Price`, and a method to apply discounts.
+
+Just tell Codius:
+
+```
+> Create a Book aggregate with Title, Author, and Price.  
+Add a method to apply a discount to the Price.
+```
+
+Codius handles the boilerplate — aggregate, method, repository — so you can focus on the model.
 
 ---
 
