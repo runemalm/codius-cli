@@ -74,6 +74,22 @@ sphinx-autobuild: ## activate autobuild of docs
 	cd $(DOCS) && \
 	pipenv run sphinx-autobuild . _build/html --watch $(SRC)
 
+.PHONY: test-install-all-py
+test-install-all-py:
+	@for PY in 3.9 3.10 3.11 3.12; do \
+		echo "\n>>> Testing with Python $$PY"; \
+		PYTHON_BIN=$$(pyenv prefix $$PY)/bin/python; \
+		VENV_DIR=.venv-$$PY; \
+		$$PYTHON_BIN -m venv $$VENV_DIR && \
+		$$VENV_DIR/bin/pip install --upgrade pip && \
+		$$VENV_DIR/bin/pip install --index-url https://test.pypi.org/simple/ \
+		                             --extra-index-url https://pypi.org/simple \
+		                             codius && \
+		mkdir -p /tmp/test-codius && \
+		$$VENV_DIR/bin/codius /tmp/test-codius || echo "❌ Failed to run codius with Python $$PY"; \
+		rm -rf $$VENV_DIR /tmp/test-codius; \
+	done
+
 ################################################################################
 # PRE-COMMIT HOOKS
 ################################################################################

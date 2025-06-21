@@ -1,5 +1,4 @@
 import argparse
-import re
 
 from pathlib import Path
 
@@ -9,8 +8,7 @@ from ui.shell import run_shell
 from domain.services.session_service import SessionService
 from infrastructure.services.logging_service import LoggingService
 from infrastructure.services.project_initializer_service import ProjectInitializerService
-
-CODIUS_VERSION = "0.1.0-alpha.1"
+from utils import get_version_from_setup
 
 
 def main():
@@ -54,15 +52,6 @@ def main():
 
     # Run the assistant
     run_shell()
-
-
-def get_version_from_setup():
-    with open("setup.py", encoding="utf-8") as f:
-        content = f.read()
-    match = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", content)
-    if match:
-        return match.group(1)
-    raise RuntimeError("Version not found in setup.py")
 
 
 if __name__ == "__main__":

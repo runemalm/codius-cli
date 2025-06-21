@@ -12,6 +12,7 @@ from infrastructure.services.graph_service import GraphService
 
 from infrastructure.services.project_metadata_service import ProjectMetadataService
 from ui.slash_commands import SLASH_COMMANDS, handle_slash_command
+from utils import get_version_from_setup
 
 console = Console()
 slash_completer = WordCompleter(SLASH_COMMANDS.keys(), sentence=True)
@@ -24,9 +25,10 @@ def _(event):
 
 
 def render_header():
+    version = get_version_from_setup()
     console.print(
         Panel.fit(
-            "● [bold cyan]Codius Coding Assistant[/bold cyan] [dim](0.1.0 Alpha 1)[/dim]",
+            f"● [bold cyan]Codius Coding Assistant[/bold cyan] [dim]({version})[/dim]",
             padding=(0, 2),
             border_style="cyan",
         )
