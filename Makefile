@@ -146,3 +146,7 @@ pipenv-pip-freeze: ## Run pip freeze in the virtual environment
 .PHONY: pipenv-setup-sync
 pipenv-setup-sync: ## Sync dependencies between Pipfile and setup.py
 	pipenv run pipenv-setup sync
+
+.PHONY: pipenv-install-cli-editable
+pipenv-install-cli-editable: ## Install the package in editable mode (for CLI use)
+	pipenv run pip install -e .
