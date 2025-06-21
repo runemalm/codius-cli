@@ -86,7 +86,7 @@ test-install-all-py:
 		                             --extra-index-url https://pypi.org/simple \
 		                             codius && \
 		mkdir -p /tmp/test-codius && \
-		$$VENV_DIR/bin/codius /tmp/test-codius || echo "❌ Failed to run codius with Python $$PY"; \
+		$$VENV_DIR/bin/codius /tmp/test-codius --version || echo "❌ Failed to run codius with Python $$PY"; \
 		rm -rf $$VENV_DIR /tmp/test-codius; \
 	done
 
