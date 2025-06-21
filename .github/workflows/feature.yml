@@ -1,0 +1,40 @@
+name: Feature workflow
+
+on:
+  push:
+    branches:
+      - 'feature/*'
+
+jobs:
+  pre-commit:
+    name: Run pre-commit
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+
+  unittests:
+    name: Run tests
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        python-version: [3.8.18, 3.9.18, "3.10.13", 3.11.5, 3.12.0, 3.13.4]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run unittests
+        uses: ./.github/actions/unittests
+        with:
+          python-version: ${{ matrix.python-version }}
