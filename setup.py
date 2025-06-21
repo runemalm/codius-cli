@@ -7,8 +7,18 @@ setup(
     packages=find_packages(where='src'),
     include_package_data=True,
     install_requires=[
+        'jinja2',
+        'langgraph',
+        'langchain',
+        'langchain-openai',
+        'py-dependency-injection>=1.0.0b3',
+        'python-dateutil',
+        'python-dotenv',
+        'pyyaml',
+        'prompt-toolkit',
         'rich',
-        'importlib_metadata; python_version<"3.8"',
+        'tree-sitter==0.20.1',
+        'tree-sitter-languages',
     ],
     entry_points={
         'console_scripts': [
@@ -27,7 +37,12 @@ setup(
         'Topic :: Software Development :: Code Generators',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
     ],
-    python_requires='>=3.11',
+    python_requires='>=3.8',
 )

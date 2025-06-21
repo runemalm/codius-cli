@@ -4,23 +4,23 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pyyaml = "*"
-rich = "*"
-prompt-toolkit = "*"
+jinja2 = "*"
 langgraph = "*"
 langchain = "*"
 langchain-openai = "*"
-jinja2 = "*"
+py-dependency-injection = ">=1.0.0b3"
 python-dateutil = "*"
-py-dependency-injection = "*"
+python-dotenv = "*"
+pyyaml = "*"
+prompt-toolkit = "*"
+rich = "*"
 tree-sitter = "==0.20.1"
 tree-sitter-languages = "*"
-python-dotenv = "*"
 
 [dev-packages]
 pytest = "*"
 pyfakefs = "*"
+pipfile-requirements = "*"
 
 [requires]
-python_version = "3.11"
-python_full_version = "3.11.6"
+python_version = "3.8"

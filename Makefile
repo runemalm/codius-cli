@@ -143,9 +143,13 @@ pipenv-lock-and-install: ## Lock the pipfile and install (after updating Pipfile
 pipenv-pip-freeze: ## Run pip freeze in the virtual environment
 	pipenv run pip freeze
 
-.PHONY: pipenv-setup-sync
-pipenv-setup-sync: ## Sync dependencies between Pipfile and setup.py
-	pipenv run pipenv-setup sync
+.PHONY: pipenv-sync-setup
+pipenv-sync-setup: ## Update install_requires in setup.py from Pipfile
+	pipenv run python scripts/sync_setup.py --sync Pipfile setup.py
+
+.PHONY: pipenv-sync-setup-dry-run
+pipenv-sync-setup-dry-run: ## Dry run: preview install_requires from Pipfile
+	pipenv run python scripts/sync_setup.py --dry-run Pipfile setup.py
 
 .PHONY: pipenv-install-cli-editable
 pipenv-install-cli-editable: ## Install the package in editable mode (for CLI use)
