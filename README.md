@@ -9,6 +9,8 @@
 
 ---
 
+## ❓ Why Codius?
+
 `Codius` is under active development with one clear goal:
 
 > Free domain-driven designers from boilerplate and let them focus on modeling.
@@ -22,35 +24,15 @@ If you’re passionate about DDD, code quality, and improving developer flow, tr
 
 ---
 
-## 🚀 Get Started
+## 🚀 Quickstart
 
 ```bash
-$ pip install codius  # Temporary package name
-$ cd /my/project/root # Go to your project's root
-$ codius              # Starts Codius CLI
+$ pip install codius    # Temporary package name
+$ cd /your/project/root # Go to your project's root
+$ codius                # Starts Codius CLI
 ```
 
 On first run, Codius will create `.openddd/config.yaml` and initialize a modeling session.
-
----
-
-## 🗣 Example
-
-![Codius CLI screenshot](https://github.com/runemalm/openddd-cli/raw/master/resources/images/screenshot.png)
-
-Sample prompt:
-
-```bash
-> Create an aggregate called Order with a method to calculate total price.
-```
-
-Codius will:
-
-- Understand your intent
-- Plan code changes
-- Generate the code
-- Ask for approval
-- Apply the changes
 
 ---
 
@@ -65,20 +47,6 @@ Codius will:
 | `/approval`     | Switch approval mode (suggest/auto) |
 | `/sessions`     | List previous sessions |
 | `/history`      | Show session history |
-
----
-
-## 🧱 What is OpenDDD.NET?
-
-Codius is built for projects using [**OpenDDD.NET**](https://www.openddd.net) — an open-source framework for building distributed, event-driven systems using **Domain-Driven Design (DDD)** in ASP.NET Core.
-
-OpenDDD.NET helps you:
-
-- Organize your code into bounded contexts and building blocks
-- Work with aggregates, repositories, and events
-- Build reliable, scalable applications using DDD best practices
-
-To learn more, visit [www.openddd.net](https://www.openddd.net).
 
 ---
 
