@@ -3,13 +3,9 @@
     Coding assistant for domain-driven design projects in ASP.NET Core.
 </p>
 
-<p align="center">
-  <code>
-    pip install codius
-  </code>
-</p>
+<p align="center"><code>pip install codius</code></p>
 
-![Codius demo screenshot PNG"](resources/images/screenshot.png)
+![Codius demo screenshot PNG"](resources/images/screenshot_2.png)
 
 ---
 
