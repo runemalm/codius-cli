@@ -1,166 +1,102 @@
-[![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Author: David Runemalm](https://img.shields.io/badge/Author-David%20Runemalm-blue)](https://www.davidrunemalm.com)
-[![Master workflow](https://github.com/runemalm/openddd-cli/actions/workflows/master.yml/badge.svg?branch=master)](https://github.com/runemalm/openddd-cli/actions/workflows/master.yml)
-[![PyPI version](https://badge.fury.io/py/openddd-cli.svg)](https://pypi.org/project/openddd-cli/)
-![Downloads](https://pepy.tech/badge/openddd-cli)
-![No dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)
+# Codius
 
-# OpenDDD.NET Coding Assistant
-
-> ✨ AI-powered CLI for evolving OpenDDD.NET projects — like Codex or Claude, but made for DDD in ASP.NET Core.
-
-The **OpenDDD.NET Coding Assistant** is a developer-first CLI tool that understands **Domain-Driven Design** and the conventions of the [OpenDDD.NET](https://github.com/runemalm/OpenDDD.NET) framework. It helps you generate and evolve aggregates, value objects, services, listeners, and more — all from natural language instructions.
-
-Built with a LangGraph agent under the hood, it reasons about your modeling request, plans changes, shows previews, and applies those changes to your source code.
+A coding assistant for domain-driven design projects.
 
 ---
 
-## 🚀 Quickstart
+## ✨ Why Codius?
 
-### 1. Install
+`Codius` is inspired by coding assistants like OpenAI’s Codex and Anthropic’s Claude.  
+If you're familiar with those tools, the interface will feel instantly familiar.
+
+If you're a domain-driven design practitioner — or curious contributor — try it out by following the instructions below.
+
+Want to contribute? Reach out — or just create a feature branch and submit a PR. I’ll review and get back to you ASAP.
+
+---
+
+## 🚀 Get Started
 
 ```bash
-pip install openddd-cli
+$ pip install codius  # Temporary package name
+$ cd /my/project/root # Go to your project's root
+$ codius              # Starts Codius CLI
 ```
 
-> Requires Python 3.11+. Ensure you have an OpenDDD.NET-based solution available.
+On first run, Codius will create `.openddd/config.yaml` and initialize a modeling session.
 
 ---
 
-### 2. Initialize Project
+## 🗣 Example
+
+> _TODO: Insert a screenshot at `/images/screenshot.png` showing the CLI interface._
+
+Sample prompt:
 
 ```bash
-openddd
+> Create an aggregate called Order with a method to calculate total price.
 ```
 
-On first run, it will create `.openddd/config.yaml` with settings like this:
+Codius will:
 
-```yaml
-llm:
-  provider: openai
-  openai:
-    model: gpt-4o
-    api_key: sk-... # Set your OpenAI key or use OPENAI_API_KEY env var
-approval_mode: suggest
-log_level: info
-```
+- Understand your intent
+- Plan code changes
+- Generate the code
+- Ask for approval
+- Apply the changes
 
 ---
 
-### 3. Start Modeling
-
-```bash
-> Create a Color aggregate with a method to change tone. Also add a tone property.
-```
-
-The assistant will:
-- Extract **intents**
-- Understand your domain
-- Generate code previews
-- Apply changes (optionally with confirmation)
-
----
-
-## 💬 Slash Commands
-
-Use these to control the assistant and manage your sessions:
+## 🧩 Slash Commands
 
 | Command         | Description |
 |----------------|-------------|
-| `/clear`        | Reset session state & history |
-| `/clearhistory` | Clear conversation history only |
-| `/compact`      | Summarize and compact the session |
-| `/history`      | Show interaction history |
-| `/sessions`     | Browse previous modeling sessions |
-| `/approval`     | Switch between `suggest` and `auto` mode |
-| `/model`        | Change LLM provider and model |
-| `/diff`         | Show current working directory git diff |
-| `/visualize`    | Show building blocks and driving adapter flows |
-| `/show`         | Browse and read code for a specific building block |
-| `/help`         | Display command reference and keyboard shortcuts |
-
-> Bonus: `Ctrl+J` inserts newline. `Ctrl+C` exits.
+| `/clear`        | Reset session state and history |
+| `/clearhistory` | Reset session history |
+| `/compact`      | Summarize and condense history |
+| `/model`        | Change LLM provider/model |
+| `/approval`     | Switch approval mode (suggest/auto) |
+| `/sessions`     | List previous sessions |
+| `/history`      | Show session history |
 
 ---
 
-## 🔧 How It Works
+## 🧱 What is OpenDDD.NET?
 
-1. **Distills intent** from your input using a prompt-engineered LLM
-2. **Analyzes project structure** (solution, layers, settings)
-3. **Plans changes** using OpenDDD.NET conventions
-4. **Generates code** using Jinja2 templates and AST-based transformations
-5. **Previews & applies** with git-aware diffs
+Codius is built for projects using [**OpenDDD.NET**](https://www.openddd.net) — an open-source framework for building distributed, event-driven systems using **Domain-Driven Design (DDD)** in ASP.NET Core.
 
-All actions are stored per session (`.openddd/sessions`) for future resumability.
+OpenDDD.NET helps you:
 
----
+- Organize your code into bounded contexts and building blocks
+- Work with aggregates, repositories, and events
+- Build reliable, scalable applications using DDD best practices
 
-## 🧱 Supported Modeling Intents
-
-The CLI understands and generates code for:
-
-- Aggregate Roots (create, modify, remove)
-- Value Objects (add/remove, add properties)
-- Repositories (create, add/remove methods)
-- Event Listeners
-- Custom code inside aggregates (methods, properties, commands)
+To learn more, visit [www.openddd.net](https://www.openddd.net).
 
 ---
 
-## 📁 Project Structure
+## 🔧 Requirements
 
-```
-.
-├── src/
-│   ├── domain/                # Modeling logic, intent types
-│   ├── graph/                 # LangGraph orchestration
-│   ├── infrastructure/        # LLM, scanning, metadata, sessions
-│   ├── templates/             # Jinja2 templates
-│   ├── ui/                    # Prompt Toolkit + Rich UI
-│   └── main.py                # Entry point
-├── tests/                     # Unit + integration tests
-└── .openddd/                  # Project-local config and session data
-```
+- Python 3.11+
+- A project built with [OpenDDD.NET](https://github.com/runemalm/OpenDDD.NET)
+- OpenAI or Anthropic API key (set in `config.yaml` or use `/model` in the CLI)
 
 ---
 
-## 🧪 Testing
+## 🤝 Contribute
 
-```bash
-pytest
-```
+Codius is **under active development**.
 
-Includes full **integration tests** that verify code generation by comparing AST diffs against expected outputs. Uses sample projects like `Bookstore`.
+If you're into:
+- Domain-Driven Design
+- Developer tooling
+- LLM-based assistants
+- Improving the modeling experience
 
----
-
-## 🗝 Environment
-
-You can use a `.env` file to set secrets:
-
-```
-OPENAI_API_KEY=sk-...
-```
-
----
-
-## 🛣 Roadmap
-
-- [ ] Claude, Gemini, Mistral model support
-- [ ] Plugin-based intent registry
-- [ ] Git staging integration
-- [ ] VSCode extension
+...then jump in! Try it out, explore the codebase, and open an issue or PR.
 
 ---
 
 ## 📄 License
 
-Licensed under the **GNU GPLv3**  
-See: https://www.gnu.org/licenses/gpl-3.0.html
-
----
-
-## 🙋‍♂️ About
-
-Created by [David Runemalm](https://www.davidrunemalm.com).  
-This project is part of the [OpenDDD.NET](https://github.com/runemalm/OpenDDD.NET) ecosystem.
+Licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
