@@ -8,7 +8,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'exceptiongroup',
-        'greenlet==2.0.2',
+        'greenlet{'version': '*', 'markers': "python_version < '3.12'"}',
         'jinja2',
         'langgraph',
         'langchain',
