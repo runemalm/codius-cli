@@ -97,6 +97,45 @@ Whether you’re evolving your domain model or adding new building blocks, Codiu
 
 ---
 
+## Configuration
+
+When you run Codius for the first time, it creates a `.codius/config.yaml` file in your project root.
+
+This file controls how Codius behaves — including which LLM provider it uses, how verbose it is, and whether changes are auto-approved or suggested.
+
+### Example
+
+```yaml
+debug: true
+debug_llm: false
+log_level: warning
+approval_mode: suggest
+
+llm:
+  provider: openai
+  openai:
+    model: gpt-4o
+    api_key: sk-...         # Or leave blank to use the OPENAI_API_KEY environment variable
+  anthropic:
+    model: claude-3-opus
+```
+
+### Config Options
+
+| Key              | Type     | Description |
+|------------------|----------|-------------|
+| `debug`          | `bool`   | Enables general debug output in the CLI |
+| `debug_llm`      | `bool`   | Logs LLM request and response payloads |
+| `log_level`      | `str`    | Controls log verbosity: `info`, `warning`, or `error` |
+| `approval_mode`  | `str`    | Determines if changes are auto-applied:<br>• `suggest` — manual approval<br>• `auto` — apply immediately |
+| `llm.provider`   | `str`    | Specifies which LLM provider to use:<br>• `openai`, `anthropic`, `google`, `mistral`, or `groq` |
+| `llm.<provider>.model` | `str` | The name of the LLM model to use (e.g. `gpt-4o`, `claude-3-opus`) |
+| `llm.<provider>.api_key` | `str` or `null` | The API key to use for that provider. Can be omitted to use env var (e.g. `OPENAI_API_KEY`) |
+
+> 💡 If `api_key` is not specified in the YAML file, Codius falls back to environment variables like `OPENAI_API_KEY`.
+
+---
+
 ## Contribute
 
 Codius is **under active development**.
