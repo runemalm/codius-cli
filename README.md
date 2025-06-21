@@ -12,11 +12,11 @@
 
 ---
 
-> ⚠️ **Notice: Active Development**
+> ⚠️ **Alpha Release**
 >
-> Codius is in an early stage and still evolving rapidly.  
-> Features may change, and some parts are experimental or incomplete.  
-> Feedback, bug reports, and contributions are very welcome!
+> Codius is currently in alpha.  
+> Features may be incomplete, unstable, or subject to change.  
+> Use with care in production environments — and help shape it by providing feedback or contributing!
 
 ---
 
