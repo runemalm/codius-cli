@@ -65,6 +65,14 @@ On first run, Codius will create `.codius/config.yaml` and initialize a modeling
 
 ---
 
+## Compatibility
+
+Codius is built to work with existing projects that use [OpenDDD.NET](https://www.openddd.net).
+
+It analyzes your current codebase, understands the domain model, and applies changes directly — no need to start from scratch. Whether you’re adding new aggregates or evolving existing ones, Codius helps you move faster without breaking structure.
+
+---
+
 ## Slash Commands
 
 | Command         | Description |
