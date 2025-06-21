@@ -12,6 +12,14 @@
 
 ---
 
+> ⚠️ **Notice: Active Development**
+>
+> Codius is in an early stage and still evolving rapidly.  
+> Features may change, and some parts are experimental or incomplete.  
+> Feedback, bug reports, and contributions are very welcome!
+
+---
+
 ## Why Codius?
 
 `Codius` is under active development with one clear goal:
