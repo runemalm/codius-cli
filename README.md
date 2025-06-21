@@ -34,7 +34,7 @@ On first run, Codius will create `.openddd/config.yaml` and initialize a modelin
 
 ## 🗣 Example
 
-![Codius CLI screenshot](images/screenshot.png)
+![Codius CLI screenshot](resources/images/screenshot.png)
 
 Sample prompt:
 
