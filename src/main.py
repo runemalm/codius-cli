@@ -1,4 +1,5 @@
 import argparse
+import re
 
 from pathlib import Path
 
@@ -9,9 +10,19 @@ from domain.services.session_service import SessionService
 from infrastructure.services.logging_service import LoggingService
 from infrastructure.services.project_initializer_service import ProjectInitializerService
 
+CODIUS_VERSION = "0.1.0-alpha.1"
+
 
 def main():
     parser = argparse.ArgumentParser(prog="codius")
+
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {get_version_from_setup()}",
+        help="Show the version number and exit",
+    )
+
     parser.add_argument(
         "path",
         nargs="?",
@@ -19,6 +30,7 @@ def main():
         default=Path.cwd(),
         help="(Optional) Path to the target OpenDDD.NET project directory"
     )
+
     args = parser.parse_args()
 
     # Load config
@@ -42,6 +54,15 @@ def main():
 
     # Run the assistant
     run_shell()
+
+
+def get_version_from_setup():
+    with open("setup.py", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", content)
+    if match:
+        return match.group(1)
+    raise RuntimeError("Version not found in setup.py")
 
 
 if __name__ == "__main__":
