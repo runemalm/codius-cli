@@ -180,6 +180,7 @@ def render_method_template(context: dict, jinja_env: Environment) -> str:
 
 
 def inject_method_ast_based(source_code: str, method_code: str, placement: dict | None) -> str:
+    from di import container
 
     tree_sitter_service = container.resolve(TreeSitterService)
     tree = tree_sitter_service.parse_code(source_code)
@@ -247,6 +248,7 @@ def render_property_template(context: dict, jinja_env: Environment) -> str:
 
 
 def inject_property_ast_based(source_code: str, property_code: str) -> str:
+    from di import container
 
     tree_sitter_service = container.resolve(TreeSitterService)
     tree = tree_sitter_service.parse_code(source_code)

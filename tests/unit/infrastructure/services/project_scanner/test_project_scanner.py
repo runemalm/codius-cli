@@ -46,9 +46,9 @@ def test_extract_project_metadata_with_nested_layers(fs):
     # Change cwd to /project to simulate running in project root
     os.chdir('/project')
 
-    repository = SessionRepository()
-    session_service = SessionService(repository)
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
+    metadata_service = ProjectMetadataService(project_path=Path("/project"))
+    scanner = ProjectScannerService(metadata_service)
+
     metadata = scanner.extract_project_metadata()
 
     assert metadata == {
@@ -87,9 +87,8 @@ def test_flat_layer_folders_are_ignored(fs):
 
     os.chdir('/project')
 
-    repository = SessionRepository()
-    session_service = SessionService(repository)
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
+    metadata_service = ProjectMetadataService(project_path=Path("/project"))
+    scanner = ProjectScannerService(metadata_service)
 
     with pytest.raises(FileNotFoundError):
         _ = scanner._detect_layer_path("Domain")
@@ -124,9 +123,8 @@ def test_only_solution_named_project_is_used(fs):
 
     os.chdir('/project')
 
-    repository = SessionRepository()
-    session_service = SessionService(repository)
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
+    metadata_service = ProjectMetadataService(project_path=Path("/project"))
+    scanner = ProjectScannerService(metadata_service)
 
     domain_path = scanner._detect_layer_path("Domain")
     assert domain_path == '/project/src/Orientera/Domain'
@@ -195,9 +193,8 @@ def test_extracts_provider_settings_from_correct_config_file(fs):
     fs.create_file('/project/src/Orientera.sln')
 
     os.chdir('/project')
-    repository = SessionRepository()
-    session_service = SessionService(repository)
-    scanner = ProjectScannerService(ProjectMetadataService(workdir=Path("/project"), session_service=session_service))
+    metadata_service = ProjectMetadataService(project_path=Path("/project"))
+    scanner = ProjectScannerService(metadata_service)
     metadata = scanner.extract_project_metadata()
 
     assert metadata["persistence_provider"] == "EfCore"
