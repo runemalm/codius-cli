@@ -10,7 +10,7 @@ repos:
     rev: 22.3.0  # Use the latest version
     hooks:
       - id: black
-        args: ["--line-length=200"]  # Adjust line length as needed
+        args: ["--line-length=88"]  # Adjust line length as needed
         language_version: python3.7
   - repo: https://github.com/pycqa/flake8
     rev: 4.0.1  # Use the latest version
