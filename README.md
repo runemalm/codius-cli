@@ -56,7 +56,7 @@ On first run, Codius will create `.openddd/config.yaml` and initialize a modelin
 ## Requirements
 
 - Python 3.11+
-- A project built with [OpenDDD.NET](https://github.com/runemalm/OpenDDD.NET)
+- A project built with [OpenDDD.NET](https://www.openddd.net)
 - OpenAI or Anthropic API key (set in `config.yaml` or use `/model` in the CLI)
 - **Experience with Domain-Driven Design** — Codius assumes you're comfortable working with aggregates, value objects, repositories, and other core DDD patterns
 
