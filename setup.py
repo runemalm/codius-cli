@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='codius',
-    version='0.1.0',
+    version='0.1.0-alpha.1',
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
     include_package_data=True,
@@ -22,8 +22,12 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/runemalm/codius-cli',
     classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Code Generators',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.11',
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.11',
 )
