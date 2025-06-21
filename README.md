@@ -127,7 +127,7 @@ llm:
 | `debug_llm`      | `bool`   | Logs LLM request and response payloads |
 | `log_level`      | `str`    | Controls log verbosity: `info`, `warning`, or `error` |
 | `approval_mode`  | `str`    | Determines if changes are auto-applied:<br>• `suggest` — manual approval<br>• `auto` — apply immediately |
-| `llm.provider`   | `str`    | Specifies which LLM provider to use:<br>• `openai`, `anthropic`, `google`, `mistral`, or `groq` |
+| `llm.provider`   | `str`    | Specifies which LLM provider to use:<br>• `openai`, `anthropic` |
 | `llm.<provider>.model` | `str` | The name of the LLM model to use (e.g. `gpt-4o`, `claude-3-opus`) |
 | `llm.<provider>.api_key` | `str` or `null` | The API key to use for that provider. Can be omitted to use env var (e.g. `OPENAI_API_KEY`) |
 
