@@ -7,7 +7,7 @@ A coding assistant for domain-driven design projects in ASP.NET Core.
 
 ## ✨ Why Codius?
 
-Codius is a tool under active development with one clear goal:
+`Codius` is a tool under active development with one clear goal:
 
 > Free domain-driven designers from boilerplate and let them focus on modeling.
 
