@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 from codius.di import register_services, container
-from codius.ui.shell import run_shell
+from codius.ui.assistant import run_assistant
 
 from codius.domain.services.session_service import SessionService
 from codius.infrastructure.services.logging_service import LoggingService
@@ -51,7 +51,7 @@ def main():
         print(f"🆕 Started new session: {session.id}")
 
     # Run the assistant
-    run_shell()
+    run_assistant()
 
 
 if __name__ == "__main__":

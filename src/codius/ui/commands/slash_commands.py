@@ -18,7 +18,7 @@ from codius.domain.services.session_service import SessionService
 from codius.infrastructure.repository.session_repository import SessionRepository
 from codius.infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from codius.infrastructure.services.project_scanner_service import ProjectScannerService
-from codius.ui.sessions_ui import show_sessions_panel
+from codius.ui.components.sessions import show_sessions_panel
 from codius.utils import format_timestamp
 
 MODEL_CHOICES = {

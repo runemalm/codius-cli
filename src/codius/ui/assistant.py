@@ -11,7 +11,7 @@ from codius.infrastructure.repository.session_repository import SessionRepositor
 from codius.infrastructure.services.graph_service import GraphService
 
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
-from codius.ui.slash_commands import SLASH_COMMANDS, handle_slash_command
+from codius.ui.commands.slash_commands import SLASH_COMMANDS, handle_slash_command
 from codius.__version__ import __version__
 
 console = Console()
@@ -69,7 +69,7 @@ def render_assistant_message(message: str):
     ))
 
 
-def run_shell():
+def run_assistant():
     session_service = container.resolve(SessionService)
     session_repository = container.resolve(SessionRepository)
     graph_service = container.resolve(GraphService)

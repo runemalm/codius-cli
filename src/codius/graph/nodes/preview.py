@@ -11,7 +11,7 @@ from codius.domain.model.config.config import Config
 from codius.domain.model.steps.plan_step_type import PlanStepType
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
 
-from codius.ui.approval_ui import show_approval_ui
+from codius.ui.components.approval import show_approval_ui
 
 
 def preview(state: dict) -> dict:
