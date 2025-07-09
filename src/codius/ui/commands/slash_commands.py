@@ -18,7 +18,7 @@ from codius.domain.services.session_service import SessionService
 from codius.infrastructure.repository.session_repository import SessionRepository
 from codius.infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from codius.infrastructure.services.project_scanner_service import ProjectScannerService
-from codius.ui.components.sessions import show_sessions_panel
+from codius.ui.apps.sessions_app import show_sessions_app
 from codius.utils import format_timestamp
 
 MODEL_CHOICES = {
@@ -97,7 +97,7 @@ def handle_slash_command(command: str):
             console.print(panel)
 
     elif command == "/sessions":
-        show_sessions_panel()
+        show_sessions_app()
 
     elif command == "/approval":
         current = config.approval_mode

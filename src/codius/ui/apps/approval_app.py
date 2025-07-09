@@ -6,7 +6,7 @@ from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
 
 
-def show_approval_ui() -> str:
+def show_approval_app() -> str:
     choices = [
         ("apply", "✅ Yes, apply the changes"),
         ("abort", "❌ No, abort and discard the changes"),
