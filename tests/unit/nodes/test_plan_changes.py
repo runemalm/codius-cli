@@ -1,4 +1,4 @@
-from codius.graph.nodes.plan_changes.plan_changes import plan_changes
+from codius.graph.nodes.plan.plan_changes import plan_changes
 
 
 def test_add_aggregate():

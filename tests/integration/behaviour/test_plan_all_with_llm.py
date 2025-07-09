@@ -1,5 +1,5 @@
 import pytest
-from codius.graph.nodes.plan_changes.plan_all_with_llm import plan_all_with_llm
+from codius.graph.nodes.plan.plan_all_with_llm import plan_all_with_llm
 
 
 @pytest.mark.integration

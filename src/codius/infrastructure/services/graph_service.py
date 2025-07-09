@@ -9,8 +9,8 @@ from codius.graph.nodes.extract_relevant_sources import extract_relevant_sources
 from codius.graph.nodes.generate_code import generate_code
 from codius.graph.nodes.handle_intent_error import handle_intent_error
 from codius.graph.nodes.handle_unclear_intent import handle_unclear_intent
-from codius.graph.nodes.plan_changes.plan_all_with_llm import plan_all_with_llm
-from codius.graph.nodes.plan_changes.plan_changes import plan_changes
+from codius.graph.nodes.plan.plan_all_with_llm import plan_all_with_llm
+from codius.graph.nodes.plan.plan_changes import plan_changes
 from codius.graph.nodes.revise_intent import revise_intent
 from codius.graph.routers.approval_router import route_by_user_approval
 from codius.graph.nodes.distill_intent import distill_intent

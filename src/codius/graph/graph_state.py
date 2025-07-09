@@ -14,7 +14,6 @@ class GraphState(TypedDict, total=False):
     revision_history: List[Dict[str, Any]]
     revise_mode: bool
     final_output: str
-    session_id: str
     history: List[Dict[str, Any]]
     summary: str
     project_metadata: Dict[str, Any]

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def plan_changes(state: dict) -> dict:
-    logger.debug("Running plan_changes...")
+    logger.debug("Running plan...")
 
     plan = []
     warnings = []
