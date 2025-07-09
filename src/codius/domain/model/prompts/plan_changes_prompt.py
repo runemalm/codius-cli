@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict
-from codius.domain.model.steps.create_file_step import CreateFileStep
-from codius.domain.model.steps.modify_file_step import ModifyFileStep
+from codius.domain.model.plan.steps.create_file_step import CreateFileStep
+from codius.domain.model.plan.steps.modify_file_step import ModifyFileStep
 
 
 @dataclass(frozen=True)

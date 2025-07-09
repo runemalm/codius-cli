@@ -3,8 +3,8 @@ import json
 from dataclasses import dataclass
 from typing import Dict, Any
 
-from codius.domain.model.steps.plan_step_base import PlanStepBase
-from codius.domain.model.steps.plan_step_type import PlanStepType
+from codius.domain.model.plan.steps.plan_step_base import PlanStepBase
+from codius.domain.model.plan.steps.plan_step_type import PlanStepType
 
 
 @dataclass

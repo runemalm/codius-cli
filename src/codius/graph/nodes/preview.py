@@ -8,7 +8,7 @@ from rich.text import Text
 
 from codius.domain.model.config.approval_mode import ApprovalMode
 from codius.domain.model.config.config import Config
-from codius.domain.model.steps.plan_step_type import PlanStepType
+from codius.domain.model.plan.steps.plan_step_type import PlanStepType
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
 
 from codius.ui.apps.approval_app import show_approval_app
