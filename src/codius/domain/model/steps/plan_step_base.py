@@ -1,7 +1,7 @@
 from abc import ABC
 from dataclasses import asdict, dataclass
 
-from codius.domain.model.plan_steps.plan_step_type import PlanStepType
+from codius.domain.model.steps.plan_step_type import PlanStepType
 
 
 @dataclass

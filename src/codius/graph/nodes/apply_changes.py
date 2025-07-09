@@ -12,12 +12,13 @@ def apply_changes(state: dict) -> dict:
 
     session_id = state.get('session_id')
     generated_dir = metadata_service.get_generated_path(session_id)
+    project_root = metadata_service.get_project_root()
     generated_files = list(generated_dir.rglob("*.cs"))
 
     # Copy generated files
     for src_path in generated_files:
         rel_path = src_path.relative_to(generated_dir)
-        dest_path = Path(rel_path)
+        dest_path = project_root / rel_path
         dest_path.parent.mkdir(parents=True, exist_ok=True)
         dest_path.write_text(src_path.read_text())
 

@@ -9,6 +9,8 @@ from codius.domain.services.session_service import SessionService
 
 from codius.infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
 from codius.infrastructure.repository.session_repository import SessionRepository
+from codius.infrastructure.services.code_generator.code_generator_service import \
+    CodeGeneratorService
 from codius.infrastructure.services.code_scanner.code_scanner_service import CodeScannerService
 from codius.infrastructure.services.graph_service import GraphService
 from codius.infrastructure.services.llm_service import LlmService
@@ -46,6 +48,7 @@ def register_services(config: Config, args: argparse.Namespace):
     container.register_scoped(GraphService)
     container.register_scoped(ProjectScannerService)
     container.register_scoped(CodeScannerService)
+    container.register_scoped(CodeGeneratorService)
     container.register_scoped(OpenDddConventionService)
     container.register_scoped(TreeSitterService)
     container.register_scoped(LlmService)

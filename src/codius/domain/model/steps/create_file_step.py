@@ -3,8 +3,8 @@ import json
 from dataclasses import dataclass
 from typing import Dict
 
-from codius.domain.model.plan_steps.delete_file_step import PlanStepType
-from codius.domain.model.plan_steps.plan_step_base import PlanStepBase
+from codius.domain.model.steps.delete_file_step import PlanStepType
+from codius.domain.model.steps.plan_step_base import PlanStepBase
 
 
 @dataclass
@@ -30,7 +30,7 @@ class CreateFileStep(PlanStepBase):
         example = cls(
             path="Domain/Model/Order/Order.cs",
             description="Create Order aggregate",
-            template="aggregate_root",
+            template="domain/model/aggregate/aggregate_root",
             context={
                 "aggregate_name": "Order",
                 "namespace": "MyApp.Domain.Model.Order",

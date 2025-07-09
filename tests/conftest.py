@@ -18,7 +18,6 @@ from codius.domain.model.config.llm_provider import LlmProvider
 from codius.infrastructure.adapter.llm.llm_config import LlmConfig
 from codius.infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 
-# Load .env from the project root, even if cwd is ./tests
 project_root = Path(__file__).parent.parent.resolve()
 load_dotenv(dotenv_path=project_root / ".env")
 
