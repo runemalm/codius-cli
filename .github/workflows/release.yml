@@ -61,11 +61,17 @@ jobs:
     needs: publish
 
     steps:
-      - name: Create GitHub Release
+      - name: Create Draft GitHub Release with placeholder notes
+        if: ${{ !contains(github.ref_name, 'alpha') }}
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref_name }}  # e.g., v1.2.3
+          tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          generate_release_notes: true
           draft: true
+          body: |
+            This release was created automatically.
+
+            🔧 Release notes have not yet been added.
+            Please update this placeholder with meaningful changes and publish the release manually.
