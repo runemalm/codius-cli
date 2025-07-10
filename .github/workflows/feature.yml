@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - 'feature/*'
+  workflow_dispatch:
 
 jobs:
-
   unittests:
     name: Run tests
     runs-on: ubuntu-22.04
