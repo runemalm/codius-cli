@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from codius.domain.model.plan_steps.plan_step_base import PlanStepBase
-from codius.domain.model.plan_steps.plan_step_type import PlanStepType
+from codius.domain.model.plan.steps.plan_step_base import PlanStepBase
+from codius.domain.model.plan.steps.plan_step_type import PlanStepType
 
 
 @dataclass

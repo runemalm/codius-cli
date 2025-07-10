@@ -13,15 +13,7 @@ from codius.infrastructure.repository.session_repository import SessionRepositor
 console = Console()
 
 
-def format_timestamp(timestamp: str) -> str:
-    try:
-        dt = datetime.fromisoformat(timestamp)
-        return dt.strftime("%-m/%-d/%y, %-I:%M %p")
-    except Exception:
-        return "–"
-
-
-def show_sessions_panel():
+def show_sessions_app():
     session_service = container.resolve(SessionService)
     session_repository = container.resolve(SessionRepository)
 
@@ -109,3 +101,11 @@ def show_sessions_panel():
     )
 
     app.run()
+
+
+def format_timestamp(timestamp: str) -> str:
+    try:
+        dt = datetime.fromisoformat(timestamp)
+        return dt.strftime("%-m/%-d/%y, %-I:%M %p")
+    except Exception:
+        return "–"

@@ -8,10 +8,8 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
 
-    - name: Install pyenv from source
+    - name: Install pyenv from source and configure environment
       run: |
         git clone https://github.com/pyenv/pyenv.git ~/.pyenv
         echo "PYENV_ROOT=$HOME/.pyenv" >> $GITHUB_ENV
@@ -20,9 +18,7 @@ runs:
 
     - name: Install Python ${{ inputs.python-version }} via pyenv
       run: |
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init --path)"
+        source .github/scripts/activate-pyenv.sh
         pyenv install -s ${{ inputs.python-version }}
         pyenv global ${{ inputs.python-version }}
         echo "${{ inputs.python-version }}" > .python-version
@@ -30,9 +26,7 @@ runs:
 
     - name: Verify installed Python version
       run: |
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init --path)"
+        source .github/scripts/activate-pyenv.sh
         ACTUAL=$(python -V)
         EXPECTED=${{ inputs.python-version }}
         echo "Python version installed: $ACTUAL"
@@ -44,26 +38,20 @@ runs:
 
     - name: Install pipenv
       run: |
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init --path)"
+        source .github/scripts/activate-pyenv.sh
         python -m pip install --upgrade pip
         pip install pipenv
       shell: bash
 
     - name: Setup virtual environment
       run: |
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init --path)"
+        source .github/scripts/activate-pyenv.sh
         pipenv --python ${{ inputs.python-version }} install --dev --deploy
       shell: bash
 
     - name: Verify virtual environment uses python version ${{ inputs.python-version }}
       run: |
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init --path)"
+        source .github/scripts/activate-pyenv.sh
         if pipenv run python -V | grep -q "${{ inputs.python-version }}"; then
           echo "Python ${{ inputs.python-version }} is being used."
         else
@@ -74,8 +62,21 @@ runs:
 
     - name: Run unittests
       run: |
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init --path)"
-        PYTHONPATH=./src:./tests pipenv run pytest ./tests/unit
+        source .github/scripts/activate-pyenv.sh
+        PYTHONPATH=./src:./tests pipenv run pytest ./tests/unit --junitxml=report.xml --color=yes -v --tb=short
       shell: bash
+
+    - name: Upload JUnit report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: junit-report-${{ inputs.python-version }}
+        path: report.xml
+
+    - name: Publish test report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Unit Tests Report (${{ inputs.python-version }})
+        path: report.xml
+        reporter: java-junit

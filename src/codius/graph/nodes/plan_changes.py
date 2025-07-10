@@ -1,18 +1,18 @@
 import logging
 
 from codius.infrastructure.services.llm_service import LlmService
-from codius.domain.model.prompts.plan_all_with_llm_prompt import PlanAllWithLlmPrompt
+from codius.domain.model.prompts.plan_changes_prompt import PlanChangesPrompt
 
 logger = logging.getLogger(__name__)
 
 
-def plan_all_with_llm(state: dict) -> dict:
+def plan_changes(state: dict) -> dict:
     from codius.di import container
 
     logger.debug("Running plan_all_with_llm with state keys: %s", list(state.keys()))
 
     try:
-        prompt = PlanAllWithLlmPrompt(
+        prompt = PlanChangesPrompt(
             intents=state["intent"],
             sources=state["sources"],
             project_metadata=state["project_metadata"]

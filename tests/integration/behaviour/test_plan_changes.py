@@ -1,9 +1,9 @@
 import pytest
-from codius.graph.nodes.plan_changes.plan_all_with_llm import plan_all_with_llm
+from codius.graph.nodes.plan_changes import plan_changes
 
 
 @pytest.mark.integration
-def test_plan_add_invoice_method_real_llm(tmp_path):
+def test_plan_changes_add_aggregate_method_intent(tmp_path):
     # Arrange: write minimal source file for the aggregate
     source_file = tmp_path / "Domain" / "Model" / "Invoice" / "Invoice.cs"
     source_file.parent.mkdir(parents=True, exist_ok=True)
@@ -48,7 +48,7 @@ def test_plan_add_invoice_method_real_llm(tmp_path):
     }
 
     # Act
-    result = plan_all_with_llm(state)
+    result = plan_changes(state)
 
     # Assert
     assert "plan" in result

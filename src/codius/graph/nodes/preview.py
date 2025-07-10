@@ -8,10 +8,10 @@ from rich.text import Text
 
 from codius.domain.model.config.approval_mode import ApprovalMode
 from codius.domain.model.config.config import Config
-from codius.domain.model.plan_steps.plan_step_type import PlanStepType
+from codius.domain.model.plan.steps.plan_step_type import PlanStepType
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
 
-from codius.ui.approval_ui import show_approval_ui
+from codius.ui.apps.approval_app import show_approval_app
 
 
 def preview(state: dict) -> dict:
@@ -90,7 +90,7 @@ def preview(state: dict) -> dict:
     # Manual approval path
     console.print("\nWould you like to apply these changes?")
     console.print("\nUse ↑/↓ to select an action, then press Enter:\n")
-    response = show_approval_ui()
+    response = show_approval_app()
 
     if response in {"yes", "y", "apply"}:
         state["approval"] = "apply"

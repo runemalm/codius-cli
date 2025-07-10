@@ -11,7 +11,7 @@ def test_generate_create_file(tmp_path):
     file_plan = {
         "type": "create_file",
         "path": str(project_root / "Domain/Model/Invoice/Invoice.cs"),
-        "template": "aggregate_root",
+        "template": "domain/model/aggregate/aggregate_root",
         "context": {
             "aggregate_name": "Invoice",
             "namespace": "MyApp.Domain.Model.Invoice",
@@ -241,7 +241,7 @@ def test_generate_create_and_modify_same_file(tmp_path):
     create_file_plan = {
         "type": "create_file",
         "path": str(file_path),
-        "template": "aggregate_root",
+        "template": "domain/model/aggregate/aggregate_root",
         "context": {
             "aggregate_name": "Invoice",
             "namespace": "MyApp.Domain.Model.Invoice",

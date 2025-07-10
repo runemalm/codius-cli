@@ -4,9 +4,14 @@ on:
   push:
     branches:
       - 'feature/*'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  checks: write
 
 jobs:
-
   unittests:
     name: Run tests
     runs-on: ubuntu-22.04

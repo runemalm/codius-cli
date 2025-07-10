@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import Dict
-from codius.domain.model.plan_steps.create_file_step import CreateFileStep
-from codius.domain.model.plan_steps.modify_file_step import ModifyFileStep
+from codius.domain.model.plan.steps.create_file_step import CreateFileStep
+from codius.domain.model.plan.steps.modify_file_step import ModifyFileStep
 
 
 @dataclass(frozen=True)
-class PlanAllWithLlmPrompt:
+class PlanChangesPrompt:
     intents: list
     sources: Dict[str, str]
     project_metadata: dict
@@ -15,7 +15,7 @@ class PlanAllWithLlmPrompt:
             CreateFileStep(
                 path="Domain/Model/Order/Order.cs",
                 description="Create Order aggregate",
-                template="aggregate_root",
+                template="domain/model/aggregate/aggregate_root",
                 context={
                     "aggregate_name": "Order",
                     "namespace": "MyApp.Domain.Model.Order",

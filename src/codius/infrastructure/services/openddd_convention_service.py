@@ -47,7 +47,7 @@ class OpenDddConventionService:
         # Compute base indent level for formatting
         class_indent_spaces = self._get_class_indent(class_node, source)
 
-        # Apply individual formatting steps
+        # Apply individual formatting plan
         source = self._enforce_member_spacing(source, members)
 
         # Re-parse after modifying spacing to get fresh offsets
