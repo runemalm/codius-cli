@@ -9,6 +9,21 @@
   <img src="resources/images/screenshot_3.png" alt="Codius CLI screenshot" width="650"/>
 </p>
 
+<p align="center">
+  <a href="https://pypi.org/project/codius/">
+    <img src="https://img.shields.io/pypi/v/codius" alt="PyPI version">
+  </a>
+  <a href="https://github.com/runemalm/codius-cli/actions/workflows/master.yml">
+    <img src="https://github.com/runemalm/codius-cli/actions/workflows/master.yml/badge.svg" alt="Build status">
+  </a>
+  <img src="https://img.shields.io/pypi/l/codius" alt="License">
+  <a href="https://pepy.tech/project/codius">
+    <img src="https://static.pepy.tech/badge/codius" alt="Downloads">
+  </a>
+  <a href="https://pypi.org/project/codius/">
+    <img src="https://img.shields.io/pypi/pyversions/codius" alt="Python versions">
+  </a>
+</p>
 
 ---
 

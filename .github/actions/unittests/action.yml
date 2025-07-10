@@ -77,6 +77,6 @@ runs:
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: Unit Tests (${{ inputs.python-version }})
+        name: Unit Tests Report (${{ inputs.python-version }})
         path: report.xml
         reporter: java-junit
