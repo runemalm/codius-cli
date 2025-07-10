@@ -70,15 +70,17 @@ class CodeGeneratorService:
 
         for step in steps:
             context = step["context"]
-            match step["modification"]:
-                case "add_method":
-                    code = self._render_method_template(context)
-                    current_code = self._inject_method_ast_based(current_code, code, context.get("placement"))
-                case "add_property":
-                    code = self._render_property_template(context)
-                    current_code = self._inject_property_ast_based(current_code, code)
-                case _:
-                    raise Exception(f"Unsupported modification type: {step['modification']}")
+            modification = step["modification"]
+
+            if modification == "add_method":
+                code = self._render_method_template(context)
+                current_code = self._inject_method_ast_based(current_code, code,
+                                                             context.get("placement"))
+            elif modification == "add_property":
+                code = self._render_property_template(context)
+                current_code = self._inject_property_ast_based(current_code, code)
+            else:
+                raise Exception(f"Unsupported modification type: {modification}")
 
         file_path = output_dir / relative_path
         file_path.parent.mkdir(parents=True, exist_ok=True)
