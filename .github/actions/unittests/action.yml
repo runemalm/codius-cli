@@ -14,7 +14,7 @@ runs:
         git clone https://github.com/pyenv/pyenv.git ~/.pyenv
         echo "PYENV_ROOT=$HOME/.pyenv" >> $GITHUB_ENV
         echo "$HOME/.pyenv/bin" >> $GITHUB_PATH
-        echo 'eval "$(pyenv init --path)"' >> "$HOME/.bash_profile"
+        echo 'eval "$(pyenv init --path)"' >> $GITHUB_ENV
       shell: bash
 
     - name: Install Python ${{ inputs.python-version }} via pyenv
