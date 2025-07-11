@@ -42,7 +42,8 @@ release-preview: ## preview next release version and changelog using release-ple
 		--dry-run \
 		--token=$(GITHUB_TOKEN) \
 		--repo-url=runemalm/codius-cli \
-		--target-branch=master
+		--target-branch=develop \
+		--config-file=release-please-config.json
 
 .PHONY: build
 build: ## build the python package
