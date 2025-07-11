@@ -32,9 +32,61 @@ help:
 test: ## run test suite
 	PYTHONPATH=$(SRC):$(TESTS) pipenv run pytest $(TESTS)
 
+##########################################################################
+# DOCS
+##########################################################################
+
+.PHONY: sphinx-quickstart
+sphinx-quickstart: ## run the sphinx quickstart
+	pipenv run docker run -it --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx sphinx-quickstart
+
+.PHONY: sphinx-html
+sphinx-html: ## build the sphinx html
+	pipenv run make -C docs html
+
+.PHONY: sphinx-rebuild
+sphinx-rebuild: ## re-build the sphinx docs
+	cd $(DOCS) && \
+	pipenv run make clean && pipenv run make html
+
+.PHONY: sphinx-autobuild
+sphinx-autobuild: ## activate autobuild of docs
+	cd $(DOCS) && \
+	pipenv run sphinx-autobuild . _build/html --watch $(SRC)
+
 ################################################################################
-# RELEASE
+# WORKFLOWS
 ################################################################################
+
+.PHONY: test-all-versions
+test-all-versions: ## Run tests across all supported Python versions with pyenv + pipenv
+	@for PY in 3.9 3.10 3.11 3.12; do \
+		echo "\n>>> Running tests with Python $$PY"; \
+		PYTHON_BIN=$$(pyenv prefix $$PY)/bin/python; \
+		VENV_DIR=.venv-$$PY; \
+		$$PYTHON_BIN -m venv $$VENV_DIR && \
+		$$VENV_DIR/bin/pip install --upgrade pip && \
+		$$VENV_DIR/bin/pip install pipenv && \
+		cd $(PWD) && \
+		$$VENV_DIR/bin/pipenv install --dev --deploy && \
+		PYTHONPATH=./src:./tests $$VENV_DIR/bin/pipenv run pytest ./tests/unit || exit 1; \
+		rm -rf $$VENV_DIR; \
+	done
+
+.PHONY: test-version
+test-version: ## Run tests with a specific Python version via pyenv + pipenv. Usage: make test-version PY=3.10
+	@if [ -z "$(PY)" ]; then \
+		echo "❌ PY is required. Usage: make test-version PY=3.10"; exit 1; \
+	fi
+	PYTHON_BIN=$$(pyenv prefix $(PY))/bin/python; \
+	VENV_DIR=.venv-$(PY); \
+	$$PYTHON_BIN -m venv $$VENV_DIR && \
+	$$VENV_DIR/bin/pip install --upgrade pip && \
+	$$VENV_DIR/bin/pip install pipenv && \
+	cd $(PWD) && \
+	$$VENV_DIR/bin/pipenv install --dev --deploy && \
+	PYTHONPATH=./src:./tests $$VENV_DIR/bin/pipenv run pytest ./tests/unit || exit 1; \
+	rm -rf $$VENV_DIR
 
 .PHONY: release-preview
 release-preview: ## preview next release version and changelog using release-please
@@ -43,7 +95,11 @@ release-preview: ## preview next release version and changelog using release-ple
 		--token=$(GITHUB_TOKEN) \
 		--repo-url=runemalm/codius-cli \
 		--target-branch=develop \
-		--config-file=release-please-config.json
+		--config-file=.release-please-config.json
+
+################################################################################
+# RELEASE (LOCALLY)
+################################################################################
 
 .PHONY: build
 build: ## build the python package
@@ -64,24 +120,6 @@ upload-test: ## upload package to testpypi repository
 .PHONY: upload
 upload: ## upload package to pypi repository
 	TWINE_USERNAME=$(PYPI_USERNAME) TWINE_PASSWORD=$(PYPI_PASSWORD) pipenv run twine upload --skip-existing dist/*
-
-.PHONY: sphinx-quickstart
-sphinx-quickstart: ## run the sphinx quickstart
-	pipenv run docker run -it --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx sphinx-quickstart
-
-.PHONY: sphinx-html
-sphinx-html: ## build the sphinx html
-	pipenv run make -C docs html
-
-.PHONY: sphinx-rebuild
-sphinx-rebuild: ## re-build the sphinx docs
-	cd $(DOCS) && \
-	pipenv run make clean && pipenv run make html
-
-.PHONY: sphinx-autobuild
-sphinx-autobuild: ## activate autobuild of docs
-	cd $(DOCS) && \
-	pipenv run sphinx-autobuild . _build/html --watch $(SRC)
 
 .PHONY: test-install-all-py
 test-install-all-py:
