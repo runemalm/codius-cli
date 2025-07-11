@@ -27,4 +27,3 @@ twine = "*"
 bump2version = "*"
 
 [requires]
-python_version = "3.9"
