@@ -36,6 +36,14 @@ test: ## run test suite
 # RELEASE
 ################################################################################
 
+.PHONY: release-preview
+release-preview: ## preview next release version and changelog using release-please
+	npx release-please release-pr \
+		--dry-run \
+		--token=$(GITHUB_TOKEN) \
+		--repo-url=runemalm/codius-cli \
+		--target-branch=master
+
 .PHONY: build
 build: ## build the python package
 	pipenv run python setup.py sdist bdist_wheel
@@ -55,25 +63,6 @@ upload-test: ## upload package to testpypi repository
 .PHONY: upload
 upload: ## upload package to pypi repository
 	TWINE_USERNAME=$(PYPI_USERNAME) TWINE_PASSWORD=$(PYPI_PASSWORD) pipenv run twine upload --skip-existing dist/*
-
-.PHONY: bump-patch
-bump-patch: ## bump patch version
-	pipenv run bump2version patch
-
-.PHONY: bump-minor
-bump-minor: ## bump minor version
-	pipenv run bump2version minor
-
-.PHONY: bump-major
-bump-major: ## bump major version
-	pipenv run bump2version major
-
-.PHONY: bump-version
-bump-version: ## bump to an explicit version (requires VERSION)
-	@if [ -z "$(VERSION)" ]; then \
-	  echo "❌ VERSION is required. Usage: make bump-version VERSION=0.1.0-beta.1"; exit 1; \
-	fi
-	pipenv run bump2version --new-version $(VERSION) patch
 
 .PHONY: sphinx-quickstart
 sphinx-quickstart: ## run the sphinx quickstart
