@@ -1,9 +1,13 @@
-name: Develop workflow
+name: Branch workflow
 
 on:
   push:
     branches:
-      - 'develop'
+      - 'feature/*'
+      - 'fix/*'
+      - 'chore/*'
+      - 'refactor/*'
+      - 'ci/*'
   workflow_dispatch:
 
 permissions:
