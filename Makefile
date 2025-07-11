@@ -36,6 +36,36 @@ test: ## run test suite
 # RELEASE
 ################################################################################
 
+.PHONY: test-all-versions
+test-all-versions: ## Run tests across all supported Python versions with pyenv + pipenv
+	@for PY in 3.9 3.10 3.11 3.12; do \
+		echo "\n>>> Running tests with Python $$PY"; \
+		PYTHON_BIN=$$(pyenv prefix $$PY)/bin/python; \
+		VENV_DIR=.venv-$$PY; \
+		$$PYTHON_BIN -m venv $$VENV_DIR && \
+		$$VENV_DIR/bin/pip install --upgrade pip && \
+		$$VENV_DIR/bin/pip install pipenv && \
+		cd $(PWD) && \
+		$$VENV_DIR/bin/pipenv install --dev --deploy && \
+		PYTHONPATH=./src:./tests $$VENV_DIR/bin/pipenv run pytest ./tests/unit || exit 1; \
+		rm -rf $$VENV_DIR; \
+	done
+
+.PHONY: test-version
+test-version: ## Run tests with a specific Python version via pyenv + pipenv. Usage: make test-version PY=3.10
+	@if [ -z "$(PY)" ]; then \
+		echo "❌ PY is required. Usage: make test-version PY=3.10"; exit 1; \
+	fi
+	PYTHON_BIN=$$(pyenv prefix $(PY))/bin/python; \
+	VENV_DIR=.venv-$(PY); \
+	$$PYTHON_BIN -m venv $$VENV_DIR && \
+	$$VENV_DIR/bin/pip install --upgrade pip && \
+	$$VENV_DIR/bin/pip install pipenv && \
+	cd $(PWD) && \
+	$$VENV_DIR/bin/pipenv install --dev --deploy && \
+	PYTHONPATH=./src:./tests $$VENV_DIR/bin/pipenv run pytest ./tests/unit || exit 1; \
+	rm -rf $$VENV_DIR
+
 .PHONY: release-preview
 release-preview: ## preview next release version and changelog using release-please
 	npx release-please release-pr \
