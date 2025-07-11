@@ -32,8 +32,30 @@ help:
 test: ## run test suite
 	PYTHONPATH=$(SRC):$(TESTS) pipenv run pytest $(TESTS)
 
+##########################################################################
+# DOCS
+##########################################################################
+
+.PHONY: sphinx-quickstart
+sphinx-quickstart: ## run the sphinx quickstart
+	pipenv run docker run -it --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx sphinx-quickstart
+
+.PHONY: sphinx-html
+sphinx-html: ## build the sphinx html
+	pipenv run make -C docs html
+
+.PHONY: sphinx-rebuild
+sphinx-rebuild: ## re-build the sphinx docs
+	cd $(DOCS) && \
+	pipenv run make clean && pipenv run make html
+
+.PHONY: sphinx-autobuild
+sphinx-autobuild: ## activate autobuild of docs
+	cd $(DOCS) && \
+	pipenv run sphinx-autobuild . _build/html --watch $(SRC)
+
 ################################################################################
-# RELEASE
+# WORKFLOWS
 ################################################################################
 
 .PHONY: test-all-versions
@@ -75,6 +97,10 @@ release-preview: ## preview next release version and changelog using release-ple
 		--target-branch=develop \
 		--config-file=.release-please-config.json
 
+################################################################################
+# RELEASE (LOCALLY)
+################################################################################
+
 .PHONY: build
 build: ## build the python package
 	pipenv run python setup.py sdist bdist_wheel
@@ -94,24 +120,6 @@ upload-test: ## upload package to testpypi repository
 .PHONY: upload
 upload: ## upload package to pypi repository
 	TWINE_USERNAME=$(PYPI_USERNAME) TWINE_PASSWORD=$(PYPI_PASSWORD) pipenv run twine upload --skip-existing dist/*
-
-.PHONY: sphinx-quickstart
-sphinx-quickstart: ## run the sphinx quickstart
-	pipenv run docker run -it --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx sphinx-quickstart
-
-.PHONY: sphinx-html
-sphinx-html: ## build the sphinx html
-	pipenv run make -C docs html
-
-.PHONY: sphinx-rebuild
-sphinx-rebuild: ## re-build the sphinx docs
-	cd $(DOCS) && \
-	pipenv run make clean && pipenv run make html
-
-.PHONY: sphinx-autobuild
-sphinx-autobuild: ## activate autobuild of docs
-	cd $(DOCS) && \
-	pipenv run sphinx-autobuild . _build/html --watch $(SRC)
 
 .PHONY: test-install-all-py
 test-install-all-py:
