@@ -1,12 +1,10 @@
 {
-    "release-type": "python",
-    "include-component-in-tag": false,
-    "manifest": true,
-    "prerelease": true,
     "packages":
     {
         ".":
         {
+            "release-type": "python",
+            "package-name": "codius",
             "version-file":
             {
                 "path": "src/codius/__version__.py",
