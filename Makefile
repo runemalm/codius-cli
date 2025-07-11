@@ -89,13 +89,12 @@ test-version: ## Run tests with a specific Python version via pyenv + pipenv. Us
 	rm -rf $$VENV_DIR
 
 .PHONY: release-preview
-release-preview: ## preview next release version and changelog using release-please
+release-preview: ## Preview next release version and change log using release-please
 	npx release-please release-pr \
 		--dry-run \
 		--token=$(GITHUB_TOKEN) \
 		--repo-url=runemalm/codius-cli \
-		--target-branch=develop \
-		--config-file=.release-please-config.json
+		--target-branch=develop
 
 ################################################################################
 # RELEASE (LOCALLY)
