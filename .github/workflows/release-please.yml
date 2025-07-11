@@ -7,8 +7,9 @@ on:
 
 permissions:
   contents: write
-  checks: write
   pull-requests: write
+  issues: write
+  checks: write
 
 jobs:
   unittests:
