@@ -46,3 +46,10 @@ jobs:
         with:
           name: junit-report-${{ matrix.python-version }}
           path: reports/report.xml
+
+      - name: Publish test report
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Tests (${{ matrix.python-version }})
+          path: reports/report.xml
+          reporter: java-junit
