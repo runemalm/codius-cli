@@ -1,0 +1,22 @@
+name: Branch workflow
+
+on:
+  push:
+    branches:
+      - 'develop'
+      - 'feature/*'
+      - 'fix/*'
+      - 'chore/*'
+      - 'refactor/*'
+      - 'ci/*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  unittests:
+    uses: ./.github/workflows/run-unittests.yml
+    with:
+      python-versions: '["3.9", "3.10", "3.11", "3.12"]'
