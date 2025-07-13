@@ -233,3 +233,4 @@ pipenv-sync-setup-dry-run: ## Dry run: preview install_requires from Pipfile
 .PHONY: pipenv-install-cli-editable
 pipenv-install-cli-editable: ## Install the package in editable mode (for CLI use)
 	pipenv run pip install -e .
+
