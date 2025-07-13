@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/runemalm/codius-cli/compare/v0.1.2...v0.1.3) (2025-07-13)
+
+
+### Bug Fixes
+
+* dummy commit for release-please ([87e3758](https://github.com/runemalm/codius-cli/commit/87e37589bfa7d2496071860b4982b84e48c81c3e))
+
 ## [0.1.2](https://github.com/runemalm/codius-cli/compare/v0.1.1...v0.1.2) (2025-07-13)
 
 
