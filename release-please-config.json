@@ -1,19 +1,15 @@
 {
+    "release-type": "python",
     "packages":
     {
         ".":
         {
             "changelog-path": "CHANGELOG.md",
-            "release-type": "python",
-            "bump-minor-pre-major": false,
-            "bump-patch-for-minor-pre-major": false,
-            "draft": false,
-            "prerelease": false,
             "version-file":
             {
-                "path": "src/codius/__version__.py"
+                "path": "src/codius/__version__.py",
+                "pattern": "^__version__ = \"(.*)\"$"
             }
         }
-    },
-    "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+    }
 }
