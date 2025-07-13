@@ -13,8 +13,7 @@ permissions:
 
 jobs:
   publish:
-    if: github.event.workflow_run.conclusion == 'success' &&
-        startsWith(github.event.workflow_run.head_commit.message, 'chore(master): release')
+    if: github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_commit.message, 'chore(master): release')
 
     runs-on: ubuntu-latest
 
