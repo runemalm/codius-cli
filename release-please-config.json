@@ -4,12 +4,8 @@
     {
         ".":
         {
-            "changelog-path": "CHANGELOG.md",
-            "version-file":
-            {
-                "path": "src/codius/__version__.py",
-                "pattern": "^__version__ = \"(.*)\"$"
-            }
+            "release-type": "python",
+            "changelog-path": "CHANGELOG.md"
         }
     }
 }

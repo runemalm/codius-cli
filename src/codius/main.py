@@ -8,7 +8,7 @@ from codius.ui.assistant import run_assistant
 from codius.domain.services.session_service import SessionService
 from codius.infrastructure.services.logging_service import LoggingService
 from codius.infrastructure.services.project_initializer_service import ProjectInitializerService
-from codius.__version__ import __version__
+from codius.version import __version__
 
 
 def main():
