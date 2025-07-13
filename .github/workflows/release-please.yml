@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   unittests:
+    if: github.actor != 'github-actions[bot]'
     uses: ./.github/workflows/run-unittests.yml
     with:
       python-versions: '["3.9", "3.10", "3.11", "3.12"]'
