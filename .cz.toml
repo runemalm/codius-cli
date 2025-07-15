@@ -1,5 +1,0 @@
-[tool.commitizen]
-name = "cz_conventional_commits"
-version_files = ["src/codius/version.py"]
-changelog_file = ""
-changelog-type = "keep-a-changelog"

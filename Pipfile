@@ -24,6 +24,6 @@ pyfakefs = "*"
 pipfile-requirements = "*"
 flake8 = "*"
 twine = "*"
-bump2version = "*"
+build = "*"
 
 [requires]

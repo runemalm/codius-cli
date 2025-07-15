@@ -124,6 +124,10 @@ upload-test: ## upload package to testpypi repository
 upload: ## upload package to pypi repository
 	TWINE_USERNAME=$(PYPI_USERNAME) TWINE_PASSWORD=$(PYPI_PASSWORD) pipenv run twine upload --skip-existing dist/*
 
+.PHONY: act-release
+act-release: ## Run release workflow locally with act
+	@act push --job release -P ubuntu-latest=catthehacker/ubuntu:act-latest
+
 .PHONY: test-install-all-py
 test-install-all-py:
 	@for PY in 3.9 3.10 3.11 3.12; do \
