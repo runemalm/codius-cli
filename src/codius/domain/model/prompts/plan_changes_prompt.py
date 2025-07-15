@@ -49,6 +49,14 @@ class PlanChangesPrompt:
             for step in example_steps
         )
 
+        supported_templates = [
+            "domain/model/aggregate/aggregate_root",
+            "domain/model/value_object/value_object",
+            # Add more here as needed
+        ]
+
+        template_section = "\n".join(f"- {t}" for t in supported_templates)
+
         sources_section = "\n\n".join(
             f"### File: {path}\n```csharp\n{content.strip()}\n```"
             for path, content in self.sources.items()
@@ -69,23 +77,37 @@ Database provider: {self.project_metadata.get('database_provider')}
         return f"""
 You are a Domain-Driven Design (DDD) planning assistant for OpenDDD.NET.
 
-Your task is to plan the necessary code changes for the following modeling intents based on the current source files.
+Your task is to plan the necessary code changes for the following modeling intents based on the current project metadata and source files.
 
-Each plan step should be a JSON object describing:
-- Whether to **create a new file** (using a template) or **modify an existing file**
-- What operation to perform (`create_file` or `modify_file`)
-- Where to place it (`path`)
-- Either:
-  - A template name and context for creation
-  - A modification type and context for modification
-- All C# class and property names must use PascalCase.
+For each intent:
 
-Only return a **list of plan steps as valid JSON** — no markdown, no prose, no explanation.
+- Determine if a new file must be created or an existing file modified.
+- Describe each code change as a **plan step** using a JSON object with:
+  - `"type"`: `"create_file"` or `"modify_file"`.
+  - `"path"`: relative path where the file is created or modified.
+  - `"description"`: a short explanation of the change.
+  - For `"create_file"`:
+    - `"template"`: the name of the template used. Must match one of the supported templates listed below.
+    - `"context"`: all required data for the template.
+  - For `"modify_file"`:
+    - `"modification"`: the kind of modification (`add_method`, `add_property`, etc.).
+    - `"context"`: details about what to add or change.
+
+✅ All C# class, method, and property names must use PascalCase.  
+✅ Only return a **JSON list of plan steps** — no markdown, no explanations, no comments.
+
+---
+
+## Supported Templates:
+
+{template_section}
 
 ---
 
 ## Project Metadata:
 {project_context}
+
+---
 
 ## Modeling Intents:
 
@@ -93,9 +115,13 @@ Only return a **list of plan steps as valid JSON** — no markdown, no prose, no
 {intents_json}
 ```
 
+---
+
 ## Source Files:
 
 {sources_section}
+
+---
 
 ## Example Plan Steps:
 

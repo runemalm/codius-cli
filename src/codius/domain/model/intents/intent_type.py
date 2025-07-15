@@ -12,8 +12,8 @@ class IntentType(str, Enum):
     REMOVE_AGGREGATE_METHOD_PARAMETER = "remove_aggregate_method_parameter"
 
     ADD_VALUE_OBJECT = "add_value_object"
-    REMOVE_VALUE_OBJECT = "remove_value_object"
     ADD_VALUE_OBJECT_PROPERTY = "add_value_object_property"
+    REMOVE_VALUE_OBJECT = "remove_value_object"
     REMOVE_VALUE_OBJECT_PROPERTY = "remove_value_object_property"
 
     ADD_REPOSITORY = "add_repository"
