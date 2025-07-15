@@ -12,7 +12,7 @@ from codius.infrastructure.services.graph_service import GraphService
 
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
 from codius.ui.commands.slash_commands import SLASH_COMMANDS, handle_slash_command
-from codius.__version__ import __version__
+from codius.version import __version__
 
 console = Console()
 slash_completer = WordCompleter(SLASH_COMMANDS.keys(), sentence=True)

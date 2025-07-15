@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   unittests:
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
     uses: ./.github/workflows/run-unittests.yml
     with:
       python-versions: '["3.9", "3.10", "3.11", "3.12"]'
@@ -25,6 +26,5 @@ jobs:
       - name: Run Release Please
         uses: googleapis/release-please-action@v4
         with:
-          release-type: python
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json

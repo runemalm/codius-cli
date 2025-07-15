@@ -88,20 +88,8 @@ test-version: ## Run tests with a specific Python version via pyenv + pipenv. Us
 	PYTHONPATH=./src:./tests $$VENV_DIR/bin/pipenv run pytest ./tests/unit || exit 1; \
 	rm -rf $$VENV_DIR
 
-.PHONY: release-please-bootstrap
-release-please-bootstrap: ## bootstrap the release please
-	release-please bootstrap \
-		--token=${GITHUB_TOKEN} \
-		--repo-url=runemalm/codius-cli \
-		--target-branch=master \
-		--release-type=python \
-		--changelog-type=github \
-		--initial-version=0.1.0-alpha.6 \
-		--prerelease \
-		--version-file=src/codius/__version__.py
-
-.PHONY: release-please-dry-run-release-pr
-release-please-dry-run-release-pr: ## Preview next release version and change log using release-please
+.PHONY: release-please-pr-dry-run
+release-please-pr-dry-run: ## Preview next release version and change log using release-please
 	release-please release-pr \
 		--config-file release-please-config.json \
 		--manifest-file .release-please-manifest.json \
@@ -109,7 +97,6 @@ release-please-dry-run-release-pr: ## Preview next release version and change lo
 		--repo-url=runemalm/codius-cli \
 		--target-branch=master \
 		--release-type=python \
-		--changelog-type=github \
 		--debug \
 		--dry-run
 
@@ -233,3 +220,4 @@ pipenv-sync-setup-dry-run: ## Dry run: preview install_requires from Pipfile
 .PHONY: pipenv-install-cli-editable
 pipenv-install-cli-editable: ## Install the package in editable mode (for CLI use)
 	pipenv run pip install -e .
+
