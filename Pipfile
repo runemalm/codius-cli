@@ -17,13 +17,14 @@ prompt-toolkit = "*"
 rich = "*"
 tree-sitter = "0.23.2"
 tree-sitter-c-sharp = "*"
+typing-extensions = "*"
 
 [dev-packages]
-pytest = "*"
-pyfakefs = "*"
-pipfile-requirements = "*"
-flake8 = "*"
-twine = "*"
 build = "*"
+flake8 = "*"
+pipfile-requirements = "*"
+pyfakefs = "*"
+pytest = "*"
+twine = "*"
 
 [requires]
