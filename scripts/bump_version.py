@@ -22,12 +22,23 @@ def write_version(version):
     VERSION_FILE.write_text(new_content)
     print(f"Bumped to {major}.{minor}.{patch}")
 
+def get_latest_tag():
+    result = subprocess.run(["git", "describe", "--tags", "--abbrev=0"], capture_output=True, text=True)
+    if result.returncode != 0:
+        return None
+    return result.stdout.strip()
+
 def detect_bump_type():
+    latest_tag = get_latest_tag()
+    if latest_tag:
+        range_expr = f"{latest_tag}..HEAD"
+    else:
+        range_expr = "HEAD"
+
     result = subprocess.run(
-        ["git", "log", "$(git describe --tags --abbrev=0)..HEAD", "--pretty=format:%s"],
-        stdout=subprocess.PIPE,
+        ["git", "log", range_expr, "--pretty=format:%s"],
+        capture_output=True,
         text=True,
-        shell=True,
     )
 
     commits = result.stdout.splitlines()
