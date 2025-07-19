@@ -30,13 +30,15 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install pipenv and dependencies
+      - name: Install Poetry
         run: |
           python -m pip install --upgrade pip
-          pip install pipenv
-          pipenv install --dev
+          pip install poetry
 
-      - name: Auto bump version
+      - name: Install dependencies
+        run: poetry install --with dev
+
+      - name: Bump version
         id: bump
         run: |
           python scripts/bump_version.py
@@ -52,7 +54,7 @@ jobs:
           git push
 
       - name: Build package
-        run: pipenv run python -m build
+        run: poetry build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
