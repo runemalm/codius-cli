@@ -49,6 +49,7 @@ pre-commit = "*"
 pytest = "*"
 setuptools = "*"
 wheel = "*"
+pyfakefs = "*"
 
 [project.scripts]
 codius = "codius.main:main"
