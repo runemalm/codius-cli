@@ -144,6 +144,22 @@ test-install-all-py:
 		rm -rf $$VENV_DIR /tmp/test-codius; \
 	done
 
+.PHONY: test-install-version
+test-install-version: ## Test installing package from TestPyPI with a specific Python version. Usage: make test-install-version PY...
+	@if [ -z "$(PY)" ]; then \
+		echo "❌ PY is required. Usage: make test-install-version PY=3.10"; exit 1; \
+	fi
+	PYTHON_BIN=$$(pyenv prefix $(PY))/bin/python; \
+	VENV_DIR=.venv-$(PY); \
+	$$PYTHON_BIN -m venv $$VENV_DIR && \
+	$$VENV_DIR/bin/pip install --upgrade pip && \
+	$$VENV_DIR/bin/pip install --index-url https://test.pypi.org/simple/ \
+	                             --extra-index-url https://pypi.org/simple \
+	                             codius && \
+	mkdir -p /tmp/test-codius && \
+	$$VENV_DIR/bin/codius /tmp/test-codius --version || echo "❌ Failed to run codius with Python $(PY)"; \
+	rm -rf $$VENV_DIR /tmp/test-codius
+
 ################################################################################
 # PRE-COMMIT HOOKS
 ################################################################################
