@@ -32,32 +32,6 @@ help:
 test: ## run test suite
 	PYTHONPATH=$(SRC):$(TESTS) pipenv run pytest $(TESTS)
 
-##########################################################################
-# DOCS
-##########################################################################
-
-.PHONY: sphinx-quickstart
-sphinx-quickstart: ## run the sphinx quickstart
-	pipenv run docker run -it --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx sphinx-quickstart
-
-.PHONY: sphinx-html
-sphinx-html: ## build the sphinx html
-	pipenv run make -C docs html
-
-.PHONY: sphinx-rebuild
-sphinx-rebuild: ## re-build the sphinx docs
-	cd $(DOCS) && \
-	pipenv run make clean && pipenv run make html
-
-.PHONY: sphinx-autobuild
-sphinx-autobuild: ## activate autobuild of docs
-	cd $(DOCS) && \
-	pipenv run sphinx-autobuild . _build/html --watch $(SRC)
-
-################################################################################
-# WORKFLOWS
-################################################################################
-
 .PHONY: test-all-versions
 test-all-versions: ## Run tests across all supported Python versions with pyenv + pipenv
 	@for PY in 3.9 3.10 3.11 3.12; do \
@@ -88,17 +62,27 @@ test-version: ## Run tests with a specific Python version via pyenv + pipenv. Us
 	PYTHONPATH=./src:./tests $$VENV_DIR/bin/pipenv run pytest ./tests/unit || exit 1; \
 	rm -rf $$VENV_DIR
 
-.PHONY: release-please-pr-dry-run
-release-please-pr-dry-run: ## Preview next release version and change log using release-please
-	release-please release-pr \
-		--config-file release-please-config.json \
-		--manifest-file .release-please-manifest.json \
-		--token=${GITHUB_TOKEN} \
-		--repo-url=runemalm/codius-cli \
-		--target-branch=master \
-		--release-type=python \
-		--debug \
-		--dry-run
+##########################################################################
+# DOCS
+##########################################################################
+
+.PHONY: sphinx-quickstart
+sphinx-quickstart: ## run the sphinx quickstart
+	pipenv run docker run -it --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx sphinx-quickstart
+
+.PHONY: sphinx-html
+sphinx-html: ## build the sphinx html
+	pipenv run make -C docs html
+
+.PHONY: sphinx-rebuild
+sphinx-rebuild: ## re-build the sphinx docs
+	cd $(DOCS) && \
+	pipenv run make clean && pipenv run make html
+
+.PHONY: sphinx-autobuild
+sphinx-autobuild: ## activate autobuild of docs
+	cd $(DOCS) && \
+	pipenv run sphinx-autobuild . _build/html --watch $(SRC)
 
 ################################################################################
 # RELEASE (LOCALLY)
