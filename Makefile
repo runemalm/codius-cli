@@ -125,6 +125,15 @@ test-install-version: ## Test installing package from TestPyPI with a specific P
 	$$VENV_DIR/bin/codius /tmp/test-codius --version || echo "❌ Failed to run codius with Python $(PY)"; \
 	rm -rf $$VENV_DIR /tmp/test-codius
 
+.PHONY: bump-version
+bump-version: ## Bump version and update pyproject.toml
+	python scripts/bump_version.py
+	make sync-version
+
+.PHONY: sync-version
+sync-version: ## Sync version.py to pyproject.toml
+	python scripts/sync_version.py
+
 ################################################################################
 # PRE-COMMIT HOOKS
 ################################################################################

@@ -45,11 +45,15 @@ jobs:
           VERSION=$(grep '__version__' src/codius/version.py | cut -d'"' -f2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Sync version to pyproject.toml
+        run: |
+          python scripts/sync_version.py
+
       - name: Commit and push version bump
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add src/codius/version.py
+          git add src/codius/version.py pyproject.toml
           git commit -m "chore(release): bump version to ${{ steps.bump.outputs.version }}"
           git push
 
