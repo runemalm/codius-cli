@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 from collections import defaultdict
 
+from codius.domain.model.plan.steps.plan_step_type import PlanStepType
 from codius.infrastructure.services.code_generator.code_generator_service import \
     CodeGeneratorService
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
@@ -30,10 +31,14 @@ def generate_code(state: dict) -> dict:
     create_steps = []
 
     for step in plan:
-        if step["type"] == "modify_file":
-            modify_groups[step["path"]].append(step)
-        else:
+        if step["type"] == PlanStepType.CREATE_FILE:
             create_steps.append(step)
+        elif step["type"] == PlanStepType.MODIFY_FILE:
+            modify_groups[step["path"]].append(step)
+        elif step["type"] == PlanStepType.DELETE_FILE or step["type"] == PlanStepType.DELETE_DIRECTORY:
+            pass
+        else:
+            raise Exception(f"Unsupported plan step type: {step.get('type', '(none)')}")
 
     for step in create_steps:
         result = code_generator.create_file(step, output_dir, project_root)
