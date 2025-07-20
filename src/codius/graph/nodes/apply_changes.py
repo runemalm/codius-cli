@@ -26,12 +26,12 @@ def apply_changes(state: dict) -> dict:
     deleted_paths = []
     for plan_item in state.get("plan", []):
         if plan_item["type"] == "delete_directory":
-            dir_path = Path(plan_item["path"])
+            dir_path = project_root / plan_item["path"]
             if dir_path.exists() and dir_path.is_dir():
                 shutil.rmtree(dir_path)
                 deleted_paths.append(dir_path)
         elif plan_item["type"] == "delete_file":
-            file_path = Path(plan_item["path"])
+            file_path = project_root / plan_item["path"]
             if file_path.exists() and file_path.is_file():
                 file_path.unlink()
                 deleted_paths.append(file_path)
@@ -39,7 +39,7 @@ def apply_changes(state: dict) -> dict:
     file_list = "\n".join([
         f"✅ {str(f.relative_to(generated_dir))}" for f in generated_files
     ] + [
-        f"❌️ {str(p)}" for p in deleted_paths
+        f"❌️ {str(p.relative_to(project_root))}" for p in deleted_paths
     ])
 
     state["final_output"] = f"Applied changes:\n\n{file_list}"
