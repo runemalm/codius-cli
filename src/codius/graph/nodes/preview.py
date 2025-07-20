@@ -51,7 +51,7 @@ def preview(state: dict) -> dict:
 
             panel = Panel(
                 syntax,
-                title=f"[red]{file_path.relative_to(Path.cwd())}[/red]",
+                title=f"[red]{item['path']}[/red]",
                 border_style="red"
             )
             console.print(panel)
