@@ -24,8 +24,7 @@ class CodeGeneratorService:
     def create_file(self, file_plan: dict, output_dir: Path, project_root: Path) -> Optional[dict]:
         template_name = file_plan.get("template")
         context = file_plan.get("context", {})
-        absolute_path = Path(file_plan["path"]).resolve()
-        relative_path = absolute_path.relative_to(project_root)
+        relative_path = Path(file_plan["path"])
 
         try:
             template = self.jinja_env.get_template(f"{template_name}.cs.j2")
@@ -55,12 +54,11 @@ class CodeGeneratorService:
         project_root: Path,
         created_files_map: dict[str, str]
     ) -> Optional[dict]:
-        absolute_path = Path(path).resolve()
-        relative_path = absolute_path.relative_to(project_root)
-        file_path_str = str(project_root / relative_path)
+        relative_path = Path(path)
+        relative_path_str = str(relative_path)
 
-        if file_path_str in created_files_map:
-            current_code = created_files_map[file_path_str]
+        if relative_path_str in created_files_map:
+            current_code = created_files_map[relative_path_str]
         else:
             try:
                 current_code = (project_root / relative_path).read_text(encoding="utf-8")

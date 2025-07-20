@@ -22,6 +22,7 @@ def preview(state: dict) -> dict:
 
     session_id = state.get('session_id')
     generated_dir = metadata_service.get_generated_path(session_id)
+    project_root = Path(state["project_metadata"]["project_root"])
 
     console = Console()
     session = PromptSession()
@@ -41,7 +42,7 @@ def preview(state: dict) -> dict:
 
     # Show deletions
     for item in deletions:
-        file_path = Path(item["path"])
+        file_path = project_root / item["path"]
         if file_path.exists():
             try:
                 content = file_path.read_text()
