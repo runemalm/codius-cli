@@ -7,10 +7,12 @@ from codius.domain.model.config.anthropic.anthropic_llm_model import AnthropicMo
 from codius.domain.model.config.approval_mode import ApprovalMode
 from codius.domain.model.config.config import Config
 from codius.domain.model.config.llm_provider import LlmProvider
+from codius.domain.model.config.ollama.ollama_llm_model import OllamaModel
 from codius.domain.model.config.openai.openai_llm_model import OpenAiModel
 
 from codius.infrastructure.adapter.llm.anthropic.anthropic_config import AnthropicConfig
 from codius.infrastructure.adapter.llm.llm_config import LlmConfig
+from codius.infrastructure.adapter.llm.ollama.ollama_config import OllamaConfig
 from codius.infrastructure.adapter.llm.openai.openai_config import OpenAiConfig
 from codius.infrastructure.services.project_metadata_service import ProjectMetadataService
 
@@ -55,18 +57,25 @@ class ConfigService:
 
         llm_config = LlmConfig(provider=provider)
 
-        openai = llm_section.get("openai", {})
-        raw_model = openai.get("model") or "gpt-4o"
-        llm_config.openai = OpenAiConfig(
-            model=OpenAiModel(raw_model),
-            api_key=openai.get("api_key", "")
-        )
-
         anthropic = llm_section.get("anthropic", {})
         raw_model = anthropic.get("model") or "claude-3-opus"
         llm_config.anthropic = AnthropicConfig(
             model=AnthropicModel(raw_model),
             api_key=anthropic.get("api_key", "")
+        )
+
+        ollama = llm_section.get("ollama", {})
+        raw_model = ollama.get("model") or OllamaModel.GPT_OSS_20B.value
+        llm_config.ollama = OllamaConfig(
+            model=OllamaModel(raw_model),
+            server_url=ollama.get("server_url", "")
+        )
+
+        openai = llm_section.get("openai", {})
+        raw_model = openai.get("model") or "gpt-4o"
+        llm_config.openai = OpenAiConfig(
+            model=OpenAiModel(raw_model),
+            api_key=openai.get("api_key", "")
         )
 
         log_level = raw.get("log_level", "warning").lower()

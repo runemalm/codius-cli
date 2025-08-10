@@ -9,6 +9,14 @@ DEFAULT_CONFIG = {
         "openai": {
             "model": "gpt-4o",
             "api_key": "sk-... # Replace with your OpenAI API key"
+        },
+        "anthropic": {
+            "model": "claude-3-opus",
+            "api_key": "xyz-... # Replace with your Anthropic API key"
+        },
+        "ollama": {
+            "base_url": "http://localhost:11434",
+            "model": "gpt-oss:20b"
         }
     },
     "approval_mode": ApprovalMode.SUGGEST.value,

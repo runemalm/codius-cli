@@ -7,3 +7,4 @@ class LlmProvider(str, Enum):
     GOOGLE = "google"
     MISTRAL = "mistral"
     GROQ = "groq"
+    OLLAMA = "ollama"

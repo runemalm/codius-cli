@@ -3,9 +3,11 @@ import argparse
 from dependency_injection.container import DependencyContainer
 
 from codius.domain.model.config.config import Config
+from codius.domain.model.config.llm_provider import LlmProvider
 from codius.domain.model.port.llm_port import LlmPort
 from codius.domain.services.config_service import ConfigService
 from codius.domain.services.session_service import SessionService
+from codius.infrastructure.adapter.llm.ollama.ollama_llm_adapter import OllamaLlmAdapter
 
 from codius.infrastructure.adapter.llm.openai.openai_llm_adapter import OpenAiLlmAdapter
 from codius.infrastructure.repository.session_repository import SessionRepository
@@ -52,4 +54,16 @@ def register_services(config: Config, args: argparse.Namespace):
     container.register_scoped(OpenDddConventionService)
     container.register_scoped(TreeSitterService)
     container.register_scoped(LlmService)
-    container.register_scoped(LlmPort, OpenAiLlmAdapter)
+
+    adapter_by_provider = {
+        LlmProvider.OPENAI: OpenAiLlmAdapter,
+        LlmProvider.OLLAMA: OllamaLlmAdapter,
+    }
+
+    provider = config.llm.provider
+    adapter_cls = adapter_by_provider.get(provider)
+
+    if adapter_cls is None:
+        raise RuntimeError(f"Unsupported LLM provider in config: {provider}")
+
+    container.register_scoped(LlmPort, adapter_cls)

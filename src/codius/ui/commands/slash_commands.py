@@ -12,6 +12,8 @@ from rich.table import Table
 from codius.di import container
 from codius.domain.model.config.anthropic.anthropic_llm_model import AnthropicModel
 from codius.domain.model.config.config import Config
+from codius.domain.model.config.llm_provider import LlmProvider
+from codius.domain.model.config.ollama.ollama_llm_model import OllamaModel
 from codius.domain.model.config.openai.openai_llm_model import OpenAiModel
 from codius.domain.services.config_service import ConfigService
 from codius.domain.services.session_service import SessionService
@@ -22,8 +24,9 @@ from codius.ui.apps.sessions_app import show_sessions_app
 from codius.utils import format_timestamp
 
 MODEL_CHOICES = {
-    "openai": list(OpenAiModel),
-    "anthropic": list(AnthropicModel),
+    LlmProvider.OPENAI: list(OpenAiModel),
+    LlmProvider.ANTHROPIC: list(AnthropicModel),
+    LlmProvider.OLLAMA: list(OllamaModel),
 }
 
 console = Console()
@@ -149,18 +152,19 @@ def handle_slash_command(command: str):
 
         provider, model = all_combinations[int(selection) - 1]
 
-        # Prompt for API key if missing
-        llm_section = getattr(config.llm, provider, None)
-        if llm_section is None:
-            raise ValueError(f"LLM config for provider '{provider}' not found.")
+        # Prompt for API key if missing (provider not ollama)
+        if provider != LlmProvider.OLLAMA:
+            llm_section = getattr(config.llm, provider, None)
+            if llm_section is None:
+                raise ValueError(f"LLM config for provider '{provider}' not found.")
 
-        current_key = llm_section.api_key
+            current_key = llm_section.api_key
 
-        if not current_key:
-            key = getpass(
-                f"Enter API key for {provider} (leave blank to skip): ").strip()
-            if key:
-                config_service.set_config_value(f"llm.{provider}.api_key", key)
+            if not current_key:
+                key = getpass(
+                    f"Enter API key for {provider} (leave blank to skip): ").strip()
+                if key:
+                    config_service.set_config_value(f"llm.{provider}.api_key", key)
 
         # Set provider and model
         config_service.set_config_value("llm.provider", provider)
