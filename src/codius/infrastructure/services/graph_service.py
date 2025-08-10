@@ -9,6 +9,7 @@ from codius.graph.nodes.extract_relevant_sources import extract_relevant_sources
 from codius.graph.nodes.generate_code import generate_code
 from codius.graph.nodes.handle_intent_error import handle_intent_error
 from codius.graph.nodes.handle_unclear_intent import handle_unclear_intent
+from codius.graph.nodes.handle_unsupported_intent import handle_unsupported_intent
 from codius.graph.nodes.plan_changes import plan_changes
 from codius.graph.nodes.revise_intent import revise_intent
 from codius.graph.routers.approval_router import route_by_user_approval
@@ -69,6 +70,7 @@ class GraphService:
         # Add nodes
         graph.add_node("DistillIntent", distill_intent)
         graph.add_node("HandleUnclearIntent", handle_unclear_intent)
+        graph.add_node("HandleUnsupportedIntent", handle_unsupported_intent)
         graph.add_node("HandleIntentError", handle_intent_error)
         graph.add_node("ExtractProjectMetadata", extract_project_metadata)
         graph.add_node("ExtractBuildingBlocks", extract_building_blocks)
@@ -84,7 +86,8 @@ class GraphService:
         graph.add_conditional_edges("DistillIntent", route_by_intent, {
             "valid": "ExtractProjectMetadata",
             "unclear": "HandleUnclearIntent",
-            "error": "HandleIntentError"
+            "error": "HandleIntentError",
+            "unsupported": "HandleUnsupportedIntent",
         })
         graph.add_conditional_edges("Preview", route_by_user_approval, {
             "apply": "ApplyChanges",

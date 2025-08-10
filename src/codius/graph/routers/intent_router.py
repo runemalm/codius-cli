@@ -16,6 +16,8 @@ def route_by_intent(state: dict) -> str:
 
             if intent_type == "error":
                 return "error"
+            elif intent_type == "unsupported":
+                return "unsupported"
             elif intent_type and intent_type not in {"none", "greeting", "unsure"}:
                 return "valid"
 

@@ -22,6 +22,8 @@ from codius.domain.model.intents.value_object.remove_value_object_intent import 
 from codius.domain.model.intents.value_object.add_value_object_property_intent import AddValueObjectPropertyIntent
 from codius.domain.model.intents.value_object.remove_value_object_property_intent import RemoveValueObjectPropertyIntent
 from codius.domain.model.intents.repository.add_repository_intent import AddRepositoryIntent
+from codius.infrastructure.services.code_scanner.model.building_block_type import \
+    BuildingBlockType
 
 
 @dataclass(frozen=True)
@@ -48,6 +50,14 @@ class DistillIntentPrompt:
             RemoveRepositoryIntent,
             RemoveRepositoryMethodIntent,
         ]
+
+        all_blocks = {bb.value for bb in BuildingBlockType}
+        supported_blocks = {intent.building_block.value for intent in IntentType if
+                            intent != IntentType.UNSURE}
+        unsupported_blocks = all_blocks - supported_blocks
+
+        supported_blocks_text = "\n".join(f"- {b}" for b in sorted(supported_blocks))
+        unsupported_blocks_text = "\n".join(f"- {b}" for b in sorted(unsupported_blocks))
 
         example_blocks = "\n".join(
             f"### {cls.intent.value}\n```json\n{cls.to_example_json()}\n```"
@@ -88,6 +98,29 @@ For `"add_repository"` intents, the supported values are:
 **Database Providers**:
 {database_text}
 
+---
+
+### Known DDD Building Blocks
+
+These are the known building blocks in Domain-Driven Design:
+
+**Supported:**
+{supported_blocks_text}
+
+**Not yet supported:**
+{unsupported_blocks_text}
+
+If the user refers to a known DDD building block that is **not yet supported**, return:
+
+```json
+{{ "intent": "unsupported", "building_block": "<block_name>" }}
+```
+
+If the user's intent is unclear or unsupported, respond only with:
+
+```json
+{{ "intent": "unsure" }}
+
 ### Instructions
 
 - Break complex modeling instructions into small, **granular intents**.
@@ -109,9 +142,4 @@ Return a JSON array where each element is an intent object.
 ### Examples:
 
 {example_blocks}
-
-If the user's intent is unclear or unsupported, respond only with:
-
-```json
-{{ "intent": "unsure" }}
 """

@@ -27,14 +27,6 @@
 
 ---
 
-> ⚠️ **Alpha Release**
->
-> Codius is currently in alpha.  
-> Features may be incomplete, unstable, or subject to change.  
-> Use with care in production environments — and help shape it by providing feedback or contributing!
-
----
-
 ## Why Codius?
 
 > Free domain-driven designers from boilerplate and let them focus on modeling.
